@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun fact Generator - LolBeans Stats</title>
+    <link rel="icon" type="image/png" href="download.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="fun-thingies-active">
+
+    <div id="fact-sub-panel" class="sub-screen-panel">
+        <a class="back-button-top" href="fun-thingies.html">Back to Fun thingies</a>
+        <div class="fact-content">
+            <button type="button" id="generate-fact-btn">Generate fun fact</button>
+            <div id="fact-box" class="fact-box" hidden>
+                <h3 class="fact-title">Fun fact</h3>
+                <p class="fact-text"><span id="fact-text"></span><span id="fact-timer" class="fact-timer" hidden></span></p>
+                <img id="fact-image" class="fact-image" alt="" hidden>
+                <button type="button" id="fact-cookie" class="fact-cookie" aria-label="Open the lucky bean cookie" hidden></button>
+                <p id="fact-cookie-msg" class="fact-cookie-msg" aria-live="polite" hidden></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/fun-fact.js"></script>
+</body>
+</html>
