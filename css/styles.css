@@ -871,9 +871,11 @@ body.fun-thingies-active .bean-side {
 }
 
 #tag-sub-panel .tag-guide-content {
-    font-size: 24px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
     line-height: 2.2;
     color: #ffffff;
+    text-align: left;
     white-space: pre-wrap;
     width: 100%;
     max-width: 1200px;
@@ -918,7 +920,7 @@ body.fun-thingies-active .bean-side {
     color: #ffffff;
     margin-top: 60px;
     margin-bottom: 25px;
-    text-align: center;
+    text-align: left;
     display: block;
 }
 
@@ -928,14 +930,14 @@ body.fun-thingies-active .bean-side {
     color: #ffffff;
     margin-top: 45px;
     margin-bottom: 15px;
-    text-align: center;
+    text-align: left;
     display: block;
 }
 
 #tag-sub-panel p {
     margin: 25px auto;
     max-width: 900px;
-    text-align: center;
+    text-align: left;
 }
 
 /* Fixed floating back button at the top right */
