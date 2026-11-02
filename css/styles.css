@@ -64,6 +64,93 @@ h1.title {
     position: relative;
 }
 
+.skill-measure-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    width: 100%;
+    text-align: center;
+}
+
+.skill-measure-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.skill-measure-actions a.button-link,
+.skill-measure-actions button {
+    box-sizing: border-box;
+    width: 220px;
+    padding: 12px 18px;
+    border: 1px solid #ff0000;
+    border-radius: 4px;
+    background-color: #ff0000;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: normal;
+    text-align: center;
+}
+
+.skill-measure-actions a.button-link:hover,
+.skill-measure-actions button:not(:disabled):hover {
+    background-color: #cc0000;
+    border-color: #cc0000;
+}
+
+.skill-measure-actions button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.win-grinders-placeholder {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 auto auto;
+    text-align: center;
+}
+
+.win-grinders-placeholder .title {
+    margin: 0 0 24px;
+    color: #ff0000;
+}
+
+.win-grinders-placeholder p {
+    color: #cccccc;
+}
+
+.win-grinders-list {
+    width: fit-content;
+    min-width: 180px;
+    margin: 24px auto 0;
+    padding-left: 32px;
+    color: #ffffff;
+    line-height: 1.8;
+    text-align: left;
+}
+
+.win-grinders-list li {
+    min-height: 1.8em;
+}
+
+.player-stats-screen {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    overflow-x: hidden;
+}
+
+.player-stats-screen .bean-side {
+    z-index: 1;
+}
+
+.player-stats-screen #stats-panel {
+    z-index: 2;
+}
+
 #about-panel,
 #fun-panel,
 #fun-thingies-panel {
