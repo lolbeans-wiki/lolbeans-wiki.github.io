@@ -25,7 +25,10 @@
             <div class="container">
                 <p>Type your player name to see your rank and World Record gap!</p>
 
-                <input type="text" id="playerNameInput" placeholder="Enter exact player name...">
+                <div class="search-wrap">
+                    <input type="text" id="playerNameInput" placeholder="Enter player name" autocomplete="off">
+                    <div id="nameSuggestions" class="name-suggestions"></div>
+                </div>
                 <br>
                 <button type="button" id="see-stats-btn">See Player stats..</button>
 
@@ -49,6 +52,8 @@
     </main>
 
     <script src="js/sheet-data.js"></script>
+    <script src="js/lib/fuzzysort.js"></script>
+    <script src="js/fuzzy.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/common.js"></script>
 </body>

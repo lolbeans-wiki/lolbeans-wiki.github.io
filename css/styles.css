@@ -735,7 +735,6 @@ a.button-link {
 
 .map-breakdown {
     margin-top: 15px;
-    border-top: 1px solid #333;
     padding-top: 12px;
     max-height: 250px;
     overflow-y: auto;
@@ -1228,4 +1227,52 @@ a.button-link {
 
 a.back-button-top {
     text-decoration: none;
+}
+
+
+/* Hi its MrBlankCoding, ima just add my shit here */
+/* This is all for fuzzy search */
+.search-wrap {
+    position: relative;
+    margin: 0 auto 20px auto;
+}
+
+.search-wrap input {
+    width: 100%;
+    margin-bottom: 0;
+    box-sizing: border-box;
+}
+
+.name-suggestions {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background-color: #111111;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 30;
+}
+
+.name-suggestions.open {
+    display: block;
+}
+
+.suggestion-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 12px;
+    font-size: 15px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+    background-color: #292929;
 }

@@ -5,8 +5,46 @@ function setStatus(message) {
 }
 
 const SHEET_ID = '1g7lA2WkLydwbukZ3asJHS784rklojqsC7MfSAxOcCwk';
+
+// MrBlankCoding
+// Cache the file for 24 hours to avoid Google Sheets API
+const CACHE_KEY = 'lolbeansLeaderboardCacheV1';
+const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000; 
+
 let leaderboardData = [];
 let mapHeaders = [];
+
+function saveCachedData() {
+    try {
+        const payload = {
+            savedAt: Date.now(),
+            mapHeaders,
+            data: leaderboardData
+        };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
+    } catch (err) {
+        // Turned off local storage or its full
+        // weird case
+        console.warn("Failed :(", err);
+    }
+}
+
+// return true when we have the data cached
+function loadCachedData(allowStale = false) {
+    try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return false;
+        const payload = JSON.parse(raw);
+        if (!payload || !Array.isArray(payload.data) || !payload.data.length) return false;
+        const isFresh = Date.now() - payload.savedAt <= CACHE_MAX_AGE_MS;
+        if (!allowStale && !isFresh) return false;
+        mapHeaders = Array.isArray(payload.mapHeaders) ? payload.mapHeaders : [];
+        leaderboardData = payload.data;
+        return true;
+    } catch (err) {
+        return false;
+    }
+}
 
 function handleResponse(json) {
     try {
@@ -65,7 +103,7 @@ function handleResponse(json) {
             }
         }
 
-        console.log("Cleaned Leaderboard Data (Total:", leaderboardData.length, "):", leaderboardData);
+        if (leaderboardData.length) saveCachedData();
         setStatus("");
         if (typeof renderSizeComparison === 'function') renderSizeComparison();
     } catch (err) {
@@ -75,10 +113,23 @@ function handleResponse(json) {
 }
 
 function loadSheetData() {
+    // Fresh cache
+    if (loadCachedData()) {
+        if (typeof renderSizeComparison === 'function') renderSizeComparison();
+        setStatus("");
+        return;
+    }
+
     const script = document.createElement('script');
     script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?headers=0&tqx=out:json;responseHandler:handleResponse`;
     script.onerror = function() {
-        setStatus("Failed to load Google Sheet.");
+        // offline handeling
+        if (loadCachedData(true)) {
+            setStatus("Couldn't reach the sheet — showing cached leaderboard data.");
+            if (typeof renderSizeComparison === 'function') renderSizeComparison();
+        } else {
+            setStatus("Failed to load Google Sheet.");
+        }
     };
     document.body.appendChild(script);
 }
