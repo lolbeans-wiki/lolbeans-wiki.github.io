@@ -109,8 +109,14 @@ h1.title {
 .win-grinders-placeholder {
     box-sizing: border-box;
     width: 100%;
+    max-width: 900px;
     margin: 0 auto auto;
     text-align: center;
+}
+
+.sub-screen-panel.win-grinders-screen {
+    padding-right: clamp(16px, 4vw, 60px);
+    padding-left: clamp(16px, 4vw, 60px);
 }
 
 .win-grinders-placeholder .title {
@@ -120,20 +126,45 @@ h1.title {
 
 .win-grinders-placeholder p {
     color: #cccccc;
+    font-size: 1.1rem;
 }
 
 .win-grinders-list {
-    width: fit-content;
-    min-width: 180px;
+    box-sizing: border-box;
+    width: min(100%, 800px);
     margin: 24px auto 0;
-    padding-left: 32px;
+    padding-left: 2.5em;
+    padding-right: 12px;
     color: #ffffff;
+    font-size: clamp(1.1rem, 2vw, 1.45rem);
     line-height: 1.8;
     text-align: left;
 }
 
 .win-grinders-list li {
     min-height: 1.8em;
+}
+
+.win-grinder-name {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 0.75em;
+    width: 100%;
+    padding: 0.1em 0.4em;
+    border-radius: 0.2em;
+    background-color: hsl(0 0% var(--highlight-shade));
+}
+
+.win-grinder-player {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.win-grinder-score {
+    flex: 0 0 auto;
+    margin-left: auto;
+    white-space: nowrap;
 }
 
 .player-stats-screen {
