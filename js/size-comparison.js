@@ -46,7 +46,7 @@ function renderSizeComparison(searchTerm = '') {
     topFigure.style.setProperty('--bean-width', `${baseBeanWidth}px`);
 
     const topImage = document.createElement('img');
-    topImage.src = 'LolbeansRender.webp';
+    topImage.src = 'images/LolbeansRender.webp';
     topImage.alt = `Top 1: ${joshy.name}`;
     topImage.draggable = false;
     if (!beanHues.has(joshy.name)) beanHues.set(joshy.name, Math.floor(Math.random() * 360));
@@ -62,7 +62,7 @@ function renderSizeComparison(searchTerm = '') {
     matchedFigure.style.setProperty('--bean-width', `${matchedBeanWidth}px`);
 
     const matchedImage = document.createElement('img');
-    matchedImage.src = 'LolbeansRender.webp';
+    matchedImage.src = 'images/LolbeansRender.webp';
     matchedImage.alt = `${matchedPlayer.name}`;
     matchedImage.draggable = false;
     if (!beanHues.has(matchedPlayer.name)) beanHues.set(matchedPlayer.name, Math.floor(Math.random() * 360));

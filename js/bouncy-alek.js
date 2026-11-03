@@ -88,7 +88,7 @@ function stopCrossingAleks() {
     previousCrossingFrame = 0;
 }
 
-const explosionImage = 'images.jpeg';
+const explosionImage = 'images/images.jpeg';
 const clickExplosionAlek = document.getElementById('click-explosion-alek');
 clickExplosionAlek.addEventListener('click', () => {
     clickExplosionAlek.querySelector('.alek-image').src = explosionImage;
