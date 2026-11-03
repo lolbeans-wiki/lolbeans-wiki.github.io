@@ -90,7 +90,7 @@ const FUN_FACTS = [
     { image: null, text: `Back in the day, monthly crown grinders were so crazy that someone got 2.7k wins in one month only.` },
     { image: null, text: `Rayan(Bockbockri) is a player With over 10k wins in lolbeans, he is like top 2-7 I think in most wins in the game... That's the best I could find.` },
     { image: null, text: `The came used to have only like 10 different colors, they were all pretty dark.` },
-    { image: null, text: `you know their a bot if they have the reindeer horns hat on....` },
+    { image: "Screenshot%202026-11-02%20at%208.59.23%20PM.png", text: `you know their a bot if they have the reindeer horns hat on....` },
     { image: null, text: `First NEW MAPS release were Silly slide and Boulder hill that made the game have 5 maps randomized` },
     { image: null, text: `the UI system where it shows you which map is getting picked was a long awaited feature that took a bit too long to finally come out. If im not wrong the game used to say which map is next.` },
     { image: null, text: `Sounds only came out after more than 20 individual updates, also to those confused YES the game has sounds 😭` },

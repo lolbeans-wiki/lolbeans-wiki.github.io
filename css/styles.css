@@ -79,12 +79,22 @@ h1.title {
     flex-direction: column;
     align-items: center;
     gap: 16px;
+    width: 220px;
+}
+
+.skill-measure-featured {
+    --search-button-width: 220px;
+    --search-button-half-width: 110px;
+    position: relative;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
 }
 
 .skill-measure-actions a.button-link,
 .skill-measure-actions button {
     box-sizing: border-box;
-    width: 220px;
+    width: 100%;
     padding: 12px 18px;
     border: 1px solid #ff0000;
     border-radius: 4px;
@@ -93,6 +103,31 @@ h1.title {
     font-size: 16px;
     font-weight: normal;
     text-align: center;
+}
+
+.skill-measure-featured .skill-measure-arrow {
+    position: absolute;
+    top: 50%;
+    left: calc(50% + var(--search-button-half-width) + 8px);
+    transform: translateY(-50%);
+    color: #ff0000;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.skill-measure-featured a.skill-measure-comparison {
+    position: absolute;
+    top: 50%;
+    left: calc(50% + var(--search-button-half-width) + 36px);
+    transform: translateY(-50%);
+    width: auto;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.skill-measure-featured a.skill-measure-search {
+    flex: 0 0 var(--search-button-width);
+    width: var(--search-button-width);
 }
 
 .skill-measure-actions a.button-link:hover,
@@ -104,6 +139,33 @@ h1.title {
 .skill-measure-actions button:disabled {
     opacity: 0.65;
     cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    .skill-measure-actions {
+        width: min(220px, calc(100vw - 32px));
+    }
+
+    .skill-measure-featured {
+        --search-button-width: 36vw;
+        --search-button-half-width: 18vw;
+    }
+
+    .skill-measure-featured a.skill-measure-search {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+
+    .skill-measure-featured a.skill-measure-comparison {
+        left: calc(50% + var(--search-button-half-width) + 26px);
+        padding: 6px 4px;
+        font-size: 10px;
+    }
+
+    .skill-measure-featured .skill-measure-arrow {
+        left: calc(50% + var(--search-button-half-width) + 4px);
+        font-size: 18px;
+    }
 }
 
 .win-grinders-placeholder {
@@ -172,10 +234,6 @@ h1.title {
     width: 100%;
     max-width: none;
     overflow-x: hidden;
-}
-
-.player-stats-screen .bean-side {
-    z-index: 1;
 }
 
 .player-stats-screen #stats-panel {
