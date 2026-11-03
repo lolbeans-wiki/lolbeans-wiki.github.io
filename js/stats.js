@@ -53,8 +53,7 @@ function getMapEvaluation(mapIndex, mapName, time) {
         else evalText = "Horrible";
     } else if (m === 8) {
         if (t <= 17) evalText = "NICEEEE";
-        else if (t === 1.000) evalText = "GREAT";
-        else if (t >= 19.000 && t <= 24.999) evalText = "Good orbit bro";
+        else if (t <= 24.999) evalText = "Good orbit bro";
         else if (t >= 25.000 && t <= 40.999) evalText = "Mastur orbit maybe?";
         else if (t >= 41.000 && t <= 60.999) evalText = "Bad";
         else evalText = "Horrible";
@@ -199,9 +198,30 @@ function getMapEvaluation(mapIndex, mapName, time) {
     return `${mapName} (${t}) ${evalText}`;
 }
 
+const DEFAULT_MAP_NAMES = [
+    "Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup",
+    "Lava Lake", "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze",
+    "Mill Valley", "Monster Manor", "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light",
+    "Rickety Run", "Risky Cliffs", "Shark Park", "Silly Slide", "Spiky Slopes", "Splash Dash",
+    "Tricky Traps", "Tumble Town", "UFO Attack"
+];
+
+function getMapName(mapIndex) {
+    return DEFAULT_MAP_NAMES[mapIndex] || (
+        mapHeaders[mapIndex] && !mapHeaders[mapIndex].startsWith('Col')
+            ? mapHeaders[mapIndex]
+            : `Map ${mapIndex + 1}`
+    );
+}
+// exact match than fuzzy 
+function findPlayer(query) {
+    if (typeof fuzzySearchPlayers !== 'function') return null;
+    const matches = fuzzySearchPlayers(query, 1);
+    return matches.length ? matches[0] : null;
+}
+
 function calculateStats() {
     const searchInput = document.getElementById('playerNameInput').value.trim();
-    const searchName = searchInput.toLowerCase();
     const errorDiv = document.getElementById('error-msg');
     const statsCard = document.getElementById('statsCard');
 
@@ -217,24 +237,31 @@ function calculateStats() {
         return;
     }
 
-    let playerIndex = leaderboardData.findIndex(item => item.name.toLowerCase() === searchName);
-    if (playerIndex === -1) {
-        playerIndex = leaderboardData.findIndex(item => 
-            item.name.toLowerCase().includes(searchName) || 
-            item.rawCells.some(c => String(c).toLowerCase().includes(searchName))
-        );
-    }
+    const match = findPlayer(searchInput);
 
-    if (playerIndex === -1) {
+    if (!match) {
         statsCard.style.display = "none";
-        errorDiv.innerText = `Player "${searchInput}" was not found on the sheet.`;
+        const suggestions = closestPlayerNames(searchInput, 3)
+            .map(candidate => `"${candidate.player.name}"`)
+            .join(', ');
+        errorDiv.innerText = `Player "${searchInput}" was not found on the sheet.` +
+            (suggestions ? ` Try these :p: ${suggestions}?` : '');
         return;
     }
 
+    if (match.score < 1000) {
+        errorDiv.innerText = `Showing closest match: ${match.player.name}`;
+    } else {
+        errorDiv.innerText = "";
+    }
+
+    showPlayerStatistics(match.player, match.index);
+}
+
+function showPlayerStatistics(player, playerIndex) {
     const totalPlayers = 352;
     const playerRank = playerIndex + 1;
-    const player = leaderboardData[playerIndex];
-    const worldRecord = leaderboardData[0]; 
+    const worldRecord = leaderboardData[0];
 
     const wrGap = Math.abs(player.score - worldRecord.score).toFixed(3);
 
@@ -254,7 +281,8 @@ function calculateStats() {
     document.getElementById('displayPercentile').innerText = `Better than ${percentile}% of players`;
 
     const mapContainer = document.getElementById('displayMapBreakdown');
-    mapContainer.replaceChildren();
+    statsCard.style.display = "block";
+
     const mapWorldRecords = [];
     for (let mapIndex = 0; mapIndex < player.mapScores.length; mapIndex++) {
         let bestTime = Infinity;
@@ -267,20 +295,9 @@ function calculateStats() {
         mapWorldRecords.push(bestTime === Infinity ? null : bestTime);
     }
 
-    const defaultMapNames = [
-        "Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup",
-        "Lava Lake", "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze",
-        "Mill Valley", "Monster Manor", "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light",
-        "Rickety Run", "Risky Cliffs", "Shark Park", "Silly Slide", "Spiky Slopes", "Splash Dash",
-        "Tricky Traps", "Tumble Town", "UFO Attack"
-    ];
-
+    mapContainer.replaceChildren();
     player.mapScores.forEach((scoreVal, idx) => {
-        const mapName = defaultMapNames[idx] || (
-            mapHeaders[idx] && !mapHeaders[idx].startsWith('Col')
-                ? mapHeaders[idx]
-                : `Map ${idx + 1}`
-        );
+        const mapName = getMapName(idx);
         const evalString = getMapEvaluation(idx, mapName, scoreVal);
         const mapWorldRecord = mapWorldRecords[idx];
         const percentageSlower = mapWorldRecord && scoreVal > 0
@@ -310,8 +327,17 @@ function calculateStats() {
         mapContainer.appendChild(div);
     });
 
-    statsCard.style.display = "block";
+    statsCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
+
+attachNameAutocomplete({
+    input: document.getElementById('playerNameInput'),
+    listEl: document.getElementById('nameSuggestions'),
+    onSelect: (player) => {
+        const index = leaderboardData.indexOf(player);
+        if (index !== -1) calculateStats();
+    }
+});
 
 document.getElementById('see-stats-btn').addEventListener('click', calculateStats);
 document.getElementById('playerNameInput').addEventListener('keydown', (event) => {
