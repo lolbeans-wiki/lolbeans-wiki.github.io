@@ -1007,17 +1007,34 @@ body.fun-thingies-active .bean-side {
 
 .fun-content {
     position: fixed;
-    top: 50%;
+    top: 100px;
+    bottom: 80px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
+    box-sizing: border-box;
     width: 100%;
     max-width: 550px;
+    overflow-y: auto;
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: clamp(6px, 1.2vh, 12px);
     align-items: center;
     justify-content: center;
+}
+
+.fun-content h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 4vh, 2rem);
+    line-height: 1.1;
+}
+
+.fun-content a.button-link {
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: clamp(8px, 1.3vh, 12px) clamp(12px, 2vw, 24px);
+    font-size: clamp(14px, 2vh, 17px);
+    line-height: 1.2;
 }
 
 /* Black screen sub-panel styles */
