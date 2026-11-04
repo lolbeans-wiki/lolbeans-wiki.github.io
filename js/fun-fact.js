@@ -2,7 +2,7 @@
 // To add images: set image: "yourfile.png" on any fact. To add facts: add another line.
 const FUN_FACTS = [
     { image: null, text: `You can actually jump over the fence without needing a partner in devils trick, it requires you to time it and waste a very short second, The player Aspect has gotten 4 seconds with this trick before. But its not easy to do.` },
-    { image: null, text: `Nasty Seals used to have a bug that let you skip through the entire level in 1-2 seconds, it got patched tho.` },
+    { image: "images/nasty-seals-1-9s.png", text: `Nasty Seals used to have a bug that let you skip through the entire level in 1-2 seconds, it got patched tho.` },
     { image: null, text: `With horrible EXTREMELY high ping, you can make it so after you fall in the void your bean spawns in the last checkpoint letting you complete the level in less than 10 seconds, this bug is completely luck based and doesn't count in speedrunning if you manage to do it. Barely anyone ever gets it.` },
     { image: "images/third-purple-cube-route.png", text: `You can get this 3rd purple cube in the lobby by walking to the end of the yellow boost up slide, going up diagonally and jumping, reach the top, walk down the yellow slide from its top, jump on the purple cube section, perhaps do a neo, and get the Purple cube!` },
     { image: null, text: `The top 10 player Speeder√ is actually a pro race car driver IRL, Dont remember which exact category.` },
@@ -26,7 +26,7 @@ const FUN_FACTS = [
     { image: null, text: `The OG speed runner channels were blorkie, neo, and NoobyAtLolbeans, sadly, all of them quit the game for different reasons.` },
     { image: null, text: `Ar.Naud is considered the oldest Lolbeans Player, in his 60s, problem with this is that there's no way to prove if its true or not. Ar.Naud himself claims it is, so people decide to believe him.` },
     { image: null, text: `If a noob says your hacking, thats the best way to know your skill is above their comprehensions, there is no better feeling than getting called a hacker after doing orbit in front of their faces.` },
-    { image: null, text: `To do orbit, most players jump off the ramp, but I find it much more easier to walk off instead of jumping since I think its easier to align yourself like that. It doesn't make you slower and its a great option to try if your still attempting orbit!` },
+    { image: "images/orbit-walk-off.png", text: `To do orbit, most players jump off the ramp, but I find it much more easier to walk off instead of jumping since I think its easier to align yourself like that. It doesn't make you slower and its a great option to try if your still attempting orbit!` },
     { image: null, text: `The Tag Gamemode actually does have dedicated players in it that play it like its battle royale. Shoutout to people like SleepyTed and (10s) Mr Marsh!` },
     { image: null, text: `I'm very new to this game and only joined 3 months ago, so some things here might be wrong lol. Dont take it seriously its a fun facts page!` },
     { image: null, text: `Even if you make a super good community level, chances of it getting more than 4 stars is surprisingly low` },
