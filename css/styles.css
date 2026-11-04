@@ -11,6 +11,29 @@ body {
     box-sizing: border-box;
 }
 
+* {
+    scrollbar-color: #e00000 transparent;
+    scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background: #e00000;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #ff2222;
+}
+
 h1.title {
     color: #ff0000;
     font-size: 2rem;
@@ -56,6 +79,89 @@ h1.title {
 
 .tab-button:hover {
     background: #171717;
+}
+
+.discord-invite-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.discord-invite {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    box-sizing: border-box;
+    width: min(210px, calc(100vw - 24px));
+    padding: 5px 7px;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    background: rgba(12, 12, 12, 0.94);
+    color: #dddddd;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: left;
+    cursor: pointer;
+}
+
+.discord-invite-url {
+    color: #8db8ff;
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+}
+
+.discord-invite:hover .discord-invite-url {
+    color: #b7d2ff;
+}
+
+.discord-invite img {
+    display: block;
+    flex: 0 0 27px;
+    width: 27px;
+    height: 27px;
+    object-fit: contain;
+}
+
+.discord-invite:hover {
+    background: #202020;
+    color: #ffffff;
+}
+
+.discord-invite-go {
+    padding: 3px 12px;
+    border: 1px solid #aa0000;
+    border-radius: 4px;
+    background: #e00000;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+}
+
+.discord-invite-go:hover {
+    background: #ff2222;
+}
+
+.discord-invite-go[hidden] {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .discord-invite {
+        width: min(180px, calc(100vw - 16px));
+        padding: 4px 5px;
+        font-size: 9px;
+    }
+
+    .discord-invite img {
+        flex-basis: 23px;
+        width: 23px;
+        height: 23px;
+    }
 }
 
 .tab-panel {
