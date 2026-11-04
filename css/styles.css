@@ -1141,6 +1141,29 @@ body.fun-thingies-active .bean-side {
     line-height: 1.2;
 }
 
+.maps-how-to {
+    width: 100%;
+    text-align: left;
+}
+
+.fun-content .maps-how-to h2 {
+    margin: 8px 0 12px;
+    color: #ff0000;
+    font-size: clamp(1.5rem, 3vh, 2rem);
+}
+
+.maps-how-to-steps {
+    display: grid;
+    gap: 12px;
+    color: #ffffff;
+    font-size: clamp(13px, 1.8vh, 16px);
+    line-height: 1.5;
+}
+
+.maps-how-to-steps p {
+    margin: 0;
+}
+
 /* Black screen sub-panel styles */
 .sub-screen-panel {
     position: fixed;
