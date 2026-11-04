@@ -95,12 +95,13 @@ h1.title {
 .skill-measure-actions button {
     box-sizing: border-box;
     width: 100%;
-    padding: 12px 18px;
+    height: 52px;
+    padding: 14px 18px;
     border: 1px solid #ff0000;
     border-radius: 4px;
     background-color: #ff0000;
     color: #ffffff;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: normal;
     text-align: center;
 }
@@ -121,8 +122,9 @@ h1.title {
     left: calc(50% + var(--search-button-half-width) + 36px);
     transform: translateY(-50%);
     width: auto;
-    padding: 8px 12px;
-    font-size: 13px;
+    height: 42px;
+    padding: 10px 12px;
+    font-size: 15px;
 }
 
 .skill-measure-featured a.skill-measure-search {
@@ -152,14 +154,16 @@ h1.title {
     }
 
     .skill-measure-featured a.skill-measure-search {
+        height: 48px;
         padding: 10px 8px;
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .skill-measure-featured a.skill-measure-comparison {
         left: calc(50% + var(--search-button-half-width) + 26px);
-        padding: 6px 4px;
-        font-size: 10px;
+        height: 38px;
+        padding: 8px 4px;
+        font-size: 11px;
     }
 
     .skill-measure-featured .skill-measure-arrow {
@@ -268,8 +272,18 @@ h1.title {
     display: block;
     box-sizing: border-box;
     width: min(100%, 420px);
-    margin: 0 auto 30px;
+    margin: 0 auto;
     text-align: center;
+}
+
+.size-search-wrap {
+    z-index: 3;
+    width: min(100%, 420px);
+    margin: 0 auto 30px;
+}
+
+.size-search-wrap .size-player-search {
+    width: 100%;
 }
 
 .size-comparison-stage {
@@ -311,10 +325,10 @@ h1.title {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: var(--ruler-bottom);
+    top: var(--ruler-top);
     height: 0;
     pointer-events: none;
-    z-index: 1;
+    z-index: 3;
 }
 
 .size-ruler-line {
@@ -333,6 +347,88 @@ h1.title {
     background: rgba(0, 0, 0, 0.8);
     padding: 2px 6px;
     border-radius: 4px;
+}
+
+.size-leaderboard {
+    width: 100%;
+    margin: 0 auto 32px;
+    text-align: left;
+}
+
+.size-leaderboard h2 {
+    margin: 0 0 16px;
+    text-align: center;
+}
+
+.size-leaderboard-status {
+    color: #888888;
+    text-align: center;
+}
+
+.size-leaderboard-status[hidden] {
+    display: none;
+}
+
+.size-player-chart {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 6px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.size-player-chart-row {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    min-width: 0;
+    min-height: 130px;
+    padding: 8px 5px;
+    border: 1px solid #333333;
+    border-radius: 5px;
+    background: #101010;
+    text-align: center;
+}
+
+.size-player-chart-details {
+    min-width: 0;
+    width: 100%;
+}
+
+.size-player-chart-details h3 {
+    margin: 0 0 3px;
+    font-size: 0.8rem;
+    overflow-wrap: anywhere;
+}
+
+.size-player-chart-details p {
+    margin: 0;
+    color: #cccccc;
+    font-size: 0.7rem;
+    overflow-wrap: anywhere;
+}
+
+.size-player-chart-figure {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 82px;
+    margin: 0;
+}
+
+.size-player-chart-figure img {
+    display: block;
+    width: var(--bean-width);
+    max-width: 100%;
+    max-height: 82px;
+    object-fit: contain;
 }
 
 .bouncy-world {
@@ -1012,15 +1108,16 @@ body.fun-thingies-active .bean-side {
     left: 50%;
     transform: translateX(-50%);
     box-sizing: border-box;
-    width: 100%;
-    max-width: 550px;
+    width: max-content;
+    max-width: min(550px, calc(100vw - 32px));
     overflow-y: auto;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(6px, 1.2vh, 12px);
-    align-items: center;
+    display: grid;
+    grid-template-columns: minmax(0, max-content);
+    gap: clamp(12px, 2vh, 20px);
+    justify-items: stretch;
     justify-content: center;
+    align-content: center;
 }
 
 .fun-content h2 {
@@ -1029,10 +1126,17 @@ body.fun-thingies-active .bean-side {
     line-height: 1.1;
 }
 
+.fun-content h2.fun-content-secondary-title {
+    margin-top: 24px;
+}
+
 .fun-content a.button-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     box-sizing: border-box;
-    max-width: 100%;
-    padding: clamp(8px, 1.3vh, 12px) clamp(12px, 2vw, 24px);
+    height: 40px;
+    padding: 4px 14px;
     font-size: clamp(14px, 2vh, 17px);
     line-height: 1.2;
 }
