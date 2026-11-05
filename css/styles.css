@@ -1903,16 +1903,6 @@ body.fun-thingies-active .bean-side {
     font-weight: normal;
 }
 
-.bean-offline-earnings {
-    color: #8dff8d;
-    font-size: 12px;
-    font-weight: normal;
-}
-
-.bean-offline-earnings[hidden] {
-    display: none;
-}
-
 .bean-coin-row {
     position: relative;
     width: min(42vmin, 340px);

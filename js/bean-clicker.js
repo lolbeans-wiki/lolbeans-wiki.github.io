@@ -1,22 +1,25 @@
 const beanCoin = document.querySelector('#bean-coin');
 const beanCoinCount = document.querySelector('#bean-coin-count');
 const beanPanel = beanCoin.closest('.sub-screen-panel');
-const beanLastActiveStorageKey = 'lolbeans-bean-last-active';
-const beanWorkerStorageKey = 'lolbeans-bean-workers';
-const beanClickPowerStorageKey = 'lolbeans-bean-click-power';
-const beanMahjicStorageKey = 'lolbeans-mahjic-upgrade';
-const beanMajikHandStorageKey = 'lolbeans-majik-hand-upgrade';
-const beanNotSusBikerStorageKey = 'lolbeans-not-sus-biker-upgrade';
-const beanFastClickRewardStorageKey = 'lolbeans-fast-click-reward';
-const beanFunFactUnlockedStorageKey = 'lolbeans-fun-fact-unlocked';
-const beanBouncyAlekUnlockedStorageKey = 'lolbeans-bouncy-alek-unlocked';
+[
+    'lolbeans-bean-coins',
+    'lolbeans-bean-lifetime-coins',
+    'lolbeans-bean-last-active',
+    'lolbeans-bean-workers',
+    'lolbeans-bean-click-power',
+    'lolbeans-mahjic-upgrade',
+    'lolbeans-majik-hand-upgrade',
+    'lolbeans-not-sus-biker-upgrade',
+    'lolbeans-fast-click-reward',
+    'lolbeans-fun-fact-unlocked',
+    'lolbeans-bouncy-alek-unlocked'
+].forEach((key) => localStorage.removeItem(key));
 const beanRain = document.querySelector('#bean-rain');
 const beanTravelers = document.querySelector('#bean-travelers');
 const beanFastClickReward = document.querySelector('#bean-fast-click-reward');
 const beanWorkerCostElement = document.querySelector('#bean-worker-cost');
 const beanWorkerOwnedCount = document.querySelector('#bean-worker-owned-count');
 const beanWorkersPerSecond = document.querySelector('#bean-coins-per-second');
-const beanOfflineEarnings = document.querySelector('#bean-offline-earnings');
 const buyBeanWorkerButton = document.querySelector('#buy-bean-worker');
 const beanClickUpgradeCostElement = document.querySelector('#bean-click-upgrade-cost');
 const beanClickUpgradeOwnedCount = document.querySelector('#bean-click-upgrade-owned-count');
@@ -28,26 +31,17 @@ const buyMajikHandUpgradeButton = document.querySelector('#buy-majik-hand-upgrad
 const buyNotSusBikerUpgradeButton = document.querySelector('#buy-not-sus-biker-upgrade');
 const beanNotSusBikerOwnedCount = document.querySelector('#bean-not-sus-biker-owned-count');
 const beanRefreshButton = document.querySelector('#bean-refresh');
-const storedBeanWorkers = Number(localStorage.getItem(beanWorkerStorageKey));
-const storedBeanClickUpgrades = Number(localStorage.getItem(beanClickPowerStorageKey));
-const storedBeanLastActive = Number(localStorage.getItem(beanLastActiveStorageKey));
-localStorage.removeItem('lolbeans-bean-coins');
-localStorage.removeItem('lolbeans-bean-lifetime-coins');
 let beanCoins = 0;
 let beanLifetimeCoins = 0;
-let beanWorkers = Number.isSafeInteger(storedBeanWorkers) && storedBeanWorkers >= 0
-    ? storedBeanWorkers
-    : 0;
-let beanClickUpgrades = Number.isSafeInteger(storedBeanClickUpgrades) && storedBeanClickUpgrades >= 0
-    ? storedBeanClickUpgrades
-    : 0;
-let hasMahjicUpgrade = localStorage.getItem(beanMahjicStorageKey) === 'true';
-let hasMajikHandUpgrade = localStorage.getItem(beanMajikHandStorageKey) === 'true';
-let hasNotSusBikerUpgrade = localStorage.getItem(beanNotSusBikerStorageKey) === 'true';
-let hasFastClickReward = localStorage.getItem(beanFastClickRewardStorageKey) === 'true';
+let beanWorkers = 0;
+let beanClickUpgrades = 0;
+let hasMahjicUpgrade = false;
+let hasMajikHandUpgrade = false;
+let hasNotSusBikerUpgrade = false;
+let hasFastClickReward = false;
 const beanClickTimestamps = [];
-let nextWorkerCost = Math.ceil(100 * (1.15 ** beanWorkers));
-let nextClickUpgradeCost = Math.ceil(1000 * (1.15 ** beanClickUpgrades));
+let nextWorkerCost = 100;
+let nextClickUpgradeCost = 1000;
 
 function getBeanProgress() {
     const milestones = Math.floor(beanLifetimeCoins / 1000);
@@ -60,41 +54,6 @@ function getBeanProgress() {
 function addBeanCoins(amount) {
     beanCoins += amount;
     beanLifetimeCoins += amount;
-}
-
-function addOfflineBeanCoins(now) {
-    if (!Number.isFinite(storedBeanLastActive)
-        || storedBeanLastActive <= 0
-        || storedBeanLastActive >= now) {
-        return 0;
-    }
-
-    let remainingSeconds = (now - storedBeanLastActive) / 1000;
-    const startingCoins = beanCoins;
-    const baseCoinsPerSecond = beanWorkers * 0.5 * (hasMahjicUpgrade ? 5 : 1)
-        + (hasNotSusBikerUpgrade ? 1000 : 0);
-    if (baseCoinsPerSecond === 0) return 0;
-
-    while (remainingSeconds > 0) {
-        const { speed } = getBeanProgress();
-        const nextMilestone = (Math.floor(beanLifetimeCoins / 1000) + 1) * 1000;
-        if (speed >= 3) {
-            addBeanCoins(baseCoinsPerSecond * speed * remainingSeconds);
-            break;
-        }
-
-        const secondsToMilestone = (nextMilestone - beanLifetimeCoins)
-            / (baseCoinsPerSecond * speed);
-        if (remainingSeconds < secondsToMilestone) {
-            addBeanCoins(baseCoinsPerSecond * speed * remainingSeconds);
-            break;
-        }
-
-        addBeanCoins(nextMilestone - beanLifetimeCoins);
-        remainingSeconds -= secondsToMilestone;
-    }
-
-    return beanCoins - startingCoins;
 }
 
 function formatBeanCoins(amount) {
@@ -168,38 +127,17 @@ function updateBeanTravelers() {
     beanTravelers.replaceChildren(travelers);
 }
 
-function saveBeanClickerProgress() {
-    localStorage.setItem(beanLastActiveStorageKey, String(Date.now()));
-    localStorage.setItem(beanWorkerStorageKey, String(beanWorkers));
-    localStorage.setItem(beanClickPowerStorageKey, String(beanClickUpgrades));
-    localStorage.setItem(beanMahjicStorageKey, String(hasMahjicUpgrade));
-    localStorage.setItem(beanMajikHandStorageKey, String(hasMajikHandUpgrade));
-    localStorage.setItem(beanNotSusBikerStorageKey, String(hasNotSusBikerUpgrade));
-    if (beanCoins >= 1000) {
-        localStorage.setItem(beanFunFactUnlockedStorageKey, 'true');
-    }
-    if (beanCoins >= 10000) {
-        localStorage.setItem(beanBouncyAlekUnlockedStorageKey, 'true');
-    }
-}
-
-const offlineEarnings = addOfflineBeanCoins(Date.now());
 updateBeanClickerDisplay();
 updateBeanTravelers();
 beanFastClickReward.hidden = true;
-if (offlineEarnings > 0) {
-    beanOfflineEarnings.textContent = `+${formatBeanCoins(offlineEarnings)} coins while away`;
-    beanOfflineEarnings.hidden = false;
-    window.setTimeout(() => {
-        beanOfflineEarnings.hidden = true;
-    }, 3000);
-}
-saveBeanClickerProgress();
+let lastIncomeUpdate = performance.now();
 
-if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+window.setTimeout(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const beans = document.createDocumentFragment();
 
-    for (let i = 0; i < 250; i += 1) {
+    for (let i = 0; i < 100; i += 1) {
         const bean = document.createElement('img');
         const duration = 8 + Math.random() * 14;
         bean.src = 'images/bean-rain.png';
@@ -213,7 +151,7 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     }
 
     beanRain.appendChild(beans);
-}
+}, 0);
 
 beanCoin.addEventListener('click', () => {
     const now = performance.now();
@@ -231,7 +169,6 @@ beanCoin.addEventListener('click', () => {
         beanFastClickReward.hidden = false;
     }
     updateBeanClickerDisplay();
-    saveBeanClickerProgress();
     beanCoin.classList.remove('is-clicked');
     void beanCoin.offsetWidth;
     beanCoin.classList.add('is-clicked');
@@ -243,9 +180,7 @@ beanFastClickReward.addEventListener('click', () => {
     addBeanCoins(1000);
     hasFastClickReward = true;
     beanFastClickReward.hidden = true;
-    localStorage.setItem(beanFastClickRewardStorageKey, 'true');
     updateBeanClickerDisplay();
-    saveBeanClickerProgress();
 });
 
 buyBeanWorkerButton.addEventListener('click', () => {
@@ -256,7 +191,6 @@ buyBeanWorkerButton.addEventListener('click', () => {
     nextWorkerCost = Math.ceil(nextWorkerCost * 1.15);
     updateBeanClickerDisplay();
     updateBeanTravelers();
-    saveBeanClickerProgress();
 });
 
 buyBeanClickUpgradeButton.addEventListener('click', () => {
@@ -267,7 +201,6 @@ buyBeanClickUpgradeButton.addEventListener('click', () => {
     nextClickUpgradeCost = Math.ceil(nextClickUpgradeCost * 1.15);
     updateBeanClickerDisplay();
     updateBeanTravelers();
-    saveBeanClickerProgress();
 });
 
 buyMahjicUpgradeButton.addEventListener('click', () => {
@@ -276,7 +209,6 @@ buyMahjicUpgradeButton.addEventListener('click', () => {
     beanCoins -= 500;
     hasMahjicUpgrade = true;
     updateBeanClickerDisplay();
-    saveBeanClickerProgress();
 });
 
 buyMajikHandUpgradeButton.addEventListener('click', () => {
@@ -285,7 +217,6 @@ buyMajikHandUpgradeButton.addEventListener('click', () => {
     beanCoins -= 1000;
     hasMajikHandUpgrade = true;
     updateBeanClickerDisplay();
-    saveBeanClickerProgress();
 });
 
 buyNotSusBikerUpgradeButton.addEventListener('click', () => {
@@ -295,18 +226,19 @@ buyNotSusBikerUpgradeButton.addEventListener('click', () => {
     hasNotSusBikerUpgrade = true;
     updateBeanClickerDisplay();
     updateBeanTravelers();
-    saveBeanClickerProgress();
 });
 
 window.setInterval(() => {
+    const now = performance.now();
+    const elapsedSeconds = (now - lastIncomeUpdate) / 1000;
+    lastIncomeUpdate = now;
     const { speed } = getBeanProgress();
     const coinsPerSecond = (beanWorkers * 0.5 * (hasMahjicUpgrade ? 5 : 1)
         + (hasNotSusBikerUpgrade ? 1000 : 0)) * speed;
     if (coinsPerSecond === 0) return;
 
-    addBeanCoins(coinsPerSecond);
+    addBeanCoins(coinsPerSecond * elapsedSeconds);
     updateBeanClickerDisplay();
-    saveBeanClickerProgress();
 }, 1000);
 
 beanCoin.addEventListener('animationend', () => {
@@ -314,16 +246,5 @@ beanCoin.addEventListener('animationend', () => {
 });
 
 beanRefreshButton.addEventListener('click', () => {
-    localStorage.removeItem('lolbeans-bean-coins');
-    localStorage.removeItem('lolbeans-bean-lifetime-coins');
-    localStorage.removeItem(beanLastActiveStorageKey);
-    localStorage.removeItem(beanWorkerStorageKey);
-    localStorage.removeItem(beanClickPowerStorageKey);
-    localStorage.removeItem(beanMahjicStorageKey);
-    localStorage.removeItem(beanMajikHandStorageKey);
-    localStorage.removeItem(beanNotSusBikerStorageKey);
-    localStorage.removeItem(beanFastClickRewardStorageKey);
-    localStorage.removeItem(beanFunFactUnlockedStorageKey);
-    localStorage.removeItem(beanBouncyAlekUnlockedStorageKey);
     window.location.reload();
 });
