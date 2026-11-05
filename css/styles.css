@@ -13,12 +13,12 @@ body {
 
 * {
     scrollbar-color: #e00000 transparent;
-    scrollbar-width: thin;
+    scrollbar-width: auto;
 }
 
 *::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 12px;
+    height: 12px;
 }
 
 *::-webkit-scrollbar-track {
@@ -26,8 +26,11 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
+    min-height: 40px;
+    border: 3px solid transparent;
     border-radius: 6px;
     background: #e00000;
+    background-clip: content-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
@@ -1164,6 +1167,34 @@ a.button-link {
 .bean-side-right {
     right: 116px;
     animation-delay: -4s;
+}
+
+.maps-page .map-practice-preview {
+    width: min(22vw, 280px, 42vh, calc((100vw - 550px) / 2 - 24px));
+    height: auto;
+    aspect-ratio: auto;
+    animation: none;
+}
+
+.maps-page .map-practice-preview.bean-side-left {
+    left: 12px;
+    transform: translateY(-50%);
+}
+
+.maps-page .map-practice-preview.bean-side-right {
+    right: 12px;
+}
+
+.maps-page .map-practice-preview img {
+    height: auto;
+    border-radius: 6px;
+    object-fit: contain;
+}
+
+@media (max-width: 800px) {
+    .maps-page .map-practice-preview {
+        display: none;
+    }
 }
 
 h1.title,
