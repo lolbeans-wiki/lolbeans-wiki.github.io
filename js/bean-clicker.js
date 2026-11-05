@@ -3,6 +3,7 @@ const beanCoinCount = document.querySelector('#bean-coin-count');
 const beanPanel = beanCoin.closest('.sub-screen-panel');
 const beanCoinStorageKey = 'lolbeans-bean-coins';
 const beanLifetimeCoinsStorageKey = 'lolbeans-bean-lifetime-coins';
+const beanLastActiveStorageKey = 'lolbeans-bean-last-active';
 const beanWorkerStorageKey = 'lolbeans-bean-workers';
 const beanClickPowerStorageKey = 'lolbeans-bean-click-power';
 const beanMahjicStorageKey = 'lolbeans-mahjic-upgrade';
@@ -17,6 +18,7 @@ const beanFastClickReward = document.querySelector('#bean-fast-click-reward');
 const beanWorkerCostElement = document.querySelector('#bean-worker-cost');
 const beanWorkerOwnedCount = document.querySelector('#bean-worker-owned-count');
 const beanWorkersPerSecond = document.querySelector('#bean-coins-per-second');
+const beanOfflineEarnings = document.querySelector('#bean-offline-earnings');
 const buyBeanWorkerButton = document.querySelector('#buy-bean-worker');
 const beanClickUpgradeCostElement = document.querySelector('#bean-click-upgrade-cost');
 const beanClickUpgradeOwnedCount = document.querySelector('#bean-click-upgrade-owned-count');
@@ -31,6 +33,7 @@ const beanRefreshButton = document.querySelector('#bean-refresh');
 const storedBeanCoins = Number(localStorage.getItem(beanCoinStorageKey));
 const storedBeanWorkers = Number(localStorage.getItem(beanWorkerStorageKey));
 const storedBeanClickUpgrades = Number(localStorage.getItem(beanClickPowerStorageKey));
+const storedBeanLastActive = Number(localStorage.getItem(beanLastActiveStorageKey));
 let beanCoins = Number.isFinite(storedBeanCoins) && storedBeanCoins >= 0
     ? storedBeanCoins
     : 0;
@@ -63,6 +66,41 @@ function getBeanProgress() {
 function addBeanCoins(amount) {
     beanCoins += amount;
     beanLifetimeCoins += amount;
+}
+
+function addOfflineBeanCoins(now) {
+    if (!Number.isFinite(storedBeanLastActive)
+        || storedBeanLastActive <= 0
+        || storedBeanLastActive >= now) {
+        return 0;
+    }
+
+    let remainingSeconds = (now - storedBeanLastActive) / 1000;
+    const startingCoins = beanCoins;
+    const baseCoinsPerSecond = beanWorkers * 0.5 * (hasMahjicUpgrade ? 5 : 1)
+        + (hasNotSusBikerUpgrade ? 1000 : 0);
+    if (baseCoinsPerSecond === 0) return 0;
+
+    while (remainingSeconds > 0) {
+        const { speed } = getBeanProgress();
+        const nextMilestone = (Math.floor(beanLifetimeCoins / 1000) + 1) * 1000;
+        if (speed >= 3) {
+            addBeanCoins(baseCoinsPerSecond * speed * remainingSeconds);
+            break;
+        }
+
+        const secondsToMilestone = (nextMilestone - beanLifetimeCoins)
+            / (baseCoinsPerSecond * speed);
+        if (remainingSeconds < secondsToMilestone) {
+            addBeanCoins(baseCoinsPerSecond * speed * remainingSeconds);
+            break;
+        }
+
+        addBeanCoins(nextMilestone - beanLifetimeCoins);
+        remainingSeconds -= secondsToMilestone;
+    }
+
+    return beanCoins - startingCoins;
 }
 
 function formatBeanCoins(amount) {
@@ -139,6 +177,7 @@ function updateBeanTravelers() {
 function saveBeanClickerProgress() {
     localStorage.setItem(beanCoinStorageKey, String(beanCoins));
     localStorage.setItem(beanLifetimeCoinsStorageKey, String(beanLifetimeCoins));
+    localStorage.setItem(beanLastActiveStorageKey, String(Date.now()));
     localStorage.setItem(beanWorkerStorageKey, String(beanWorkers));
     localStorage.setItem(beanClickPowerStorageKey, String(beanClickUpgrades));
     localStorage.setItem(beanMahjicStorageKey, String(hasMahjicUpgrade));
@@ -152,9 +191,18 @@ function saveBeanClickerProgress() {
     }
 }
 
+const offlineEarnings = addOfflineBeanCoins(Date.now());
 updateBeanClickerDisplay();
 updateBeanTravelers();
 beanFastClickReward.hidden = true;
+if (offlineEarnings > 0) {
+    beanOfflineEarnings.textContent = `+${formatBeanCoins(offlineEarnings)} coins while away`;
+    beanOfflineEarnings.hidden = false;
+    window.setTimeout(() => {
+        beanOfflineEarnings.hidden = true;
+    }, 3000);
+}
+saveBeanClickerProgress();
 
 if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const beans = document.createDocumentFragment();
@@ -276,6 +324,7 @@ beanCoin.addEventListener('animationend', () => {
 beanRefreshButton.addEventListener('click', () => {
     localStorage.removeItem(beanCoinStorageKey);
     localStorage.removeItem(beanLifetimeCoinsStorageKey);
+    localStorage.removeItem(beanLastActiveStorageKey);
     localStorage.removeItem(beanWorkerStorageKey);
     localStorage.removeItem(beanClickPowerStorageKey);
     localStorage.removeItem(beanMahjicStorageKey);
