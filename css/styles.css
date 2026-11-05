@@ -1278,6 +1278,41 @@ body.fun-thingies-active .bean-side {
     line-height: 1.2;
 }
 
+.fun-content a.unlockable-game-link {
+    flex-direction: column;
+    gap: 1px;
+    height: 48px;
+}
+
+.game-unlock-note {
+    font-size: 10px;
+    line-height: 1;
+}
+
+.game-unlock-note[hidden] {
+    display: none;
+}
+
+.fun-content a.bean-clicker-link {
+    gap: 4px;
+}
+
+.bean-clicker-link img {
+    width: 1em;
+    height: 1em;
+    object-fit: contain;
+}
+
+.fun-content a.button-link.is-locked {
+    background: #555555;
+    color: #bdbdbd;
+    cursor: not-allowed;
+}
+
+.fun-content a.button-link.is-locked:hover {
+    background: #555555;
+}
+
 .maps-how-to {
     width: 100%;
     text-align: left;
@@ -1581,6 +1616,375 @@ body.fun-thingies-active .bean-side {
 .fact-cookie:disabled { cursor: default; transform: none; opacity: 0.6; }
 .fact-cookie[hidden], .fact-cookie-msg[hidden] { display: none; }
 .fact-cookie-msg { margin: 14px 0 0; font-size: 17px; color: #00ffcc; }
+
+.bean-clicker {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48vh;
+    padding-top: 80px;
+    box-sizing: border-box;
+}
+
+.bean-upgrades {
+    position: relative;
+    align-self: flex-start;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 4px;
+    width: min(700px, calc(100% + 60px));
+    min-height: 64px;
+    margin: 12px 0 24px -15px;
+    box-sizing: border-box;
+}
+
+.bean-upgrades h2 {
+    margin: 0;
+    color: #ffe600;
+    font-size: 12px;
+}
+
+.bean-upgrades .bean-upgrade-offer {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    gap: 4px;
+    max-width: 150px;
+}
+
+.bean-upgrades .bean-upgrade-offer > img {
+    width: 28px;
+}
+
+.bean-upgrades .bean-upgrade-offer .bean-worker-details h3 {
+    margin: 0;
+    color: #ffe600;
+    font-size: 10px;
+}
+
+.bean-upgrades .bean-upgrade-offer .bean-worker-details p {
+    margin: 1px 0 2px;
+    font-size: 8px;
+}
+
+.bean-upgrades .bean-upgrade-offer .bean-worker-cost {
+    font-size: 10px;
+}
+
+.bean-mahjic-upgrade[hidden] {
+    display: none;
+}
+
+.bean-majik-hand-upgrade[hidden] {
+    display: none;
+}
+
+.bean-refresh {
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    z-index: 120;
+    padding: 4px 8px;
+    border: 1px solid #8a0000;
+    border-radius: 4px;
+    background: #d90000;
+    color: #ffffff;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.bean-refresh:hover {
+    background: #ff2222;
+}
+
+.bean-worker-offer {
+    position: absolute;
+    top: 72px;
+    left: 16px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: min(320px, calc(100vw - 32px));
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.bean-worker-offer > img {
+    display: block;
+    width: 88px;
+    height: auto;
+    flex: 0 0 auto;
+    mix-blend-mode: screen;
+}
+
+.bean-worker-details h2,
+.bean-worker-details p {
+    margin: 0;
+}
+
+.bean-worker-details h2 {
+    color: #ffe600;
+    font-size: 16px;
+}
+
+.bean-owned-count {
+    display: inline-block;
+    margin-left: 4px;
+    color: #ffffff;
+}
+
+.bean-worker-details p {
+    margin: 3px 0 7px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.bean-worker-cost {
+    padding: 0;
+    color: #ff0000;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.bean-worker-offer:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.bean-worker-offer:hover:not(:disabled) .bean-worker-cost {
+    color: #ff6666;
+}
+
+.bean-click-upgrade {
+    top: 216px;
+}
+
+.bean-not-sus-biker-offer {
+    top: 395px;
+}
+
+.bean-rain {
+    position: fixed;
+    z-index: 0;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.18;
+}
+
+.bean-rain-drop {
+    position: absolute;
+    top: -24px;
+    left: var(--bean-x);
+    width: var(--bean-size);
+    height: auto;
+    animation: bean-rain-fall var(--bean-duration) linear var(--bean-delay) infinite;
+    will-change: transform;
+}
+
+.bean-rain.has-mahjic-upgrade .bean-rain-drop {
+    animation-duration: calc(var(--bean-duration) * 0.7);
+}
+
+.bean-rain.has-majik-hand-upgrade .bean-rain-drop {
+    animation-duration: calc(var(--bean-duration) * 0.4);
+}
+
+.bean-travelers {
+    position: fixed;
+    z-index: 1;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bean-traveler {
+    position: absolute;
+    top: var(--traveler-y);
+    left: 0;
+    width: 42px;
+    height: auto;
+    opacity: 0.2;
+    animation: bean-traveler-cross-screen var(--traveler-duration) linear var(--traveler-delay) infinite;
+    will-change: transform;
+}
+
+@keyframes bean-traveler-cross-screen {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(100vw);
+    }
+}
+
+@keyframes bean-rain-fall {
+    to {
+        transform: translate3d(0, calc(100vh + 48px), 0) rotate(360deg);
+    }
+}
+
+.bean-clicker-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin: 0 0 16px;
+    color: #ffe600;
+    font-size: clamp(24px, 4vw, 36px);
+}
+
+#bean-coins-per-second,
+#bean-coins-per-click {
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.bean-coin-row {
+    position: relative;
+    width: min(42vmin, 340px);
+}
+
+.bean-coin {
+    width: 100%;
+    aspect-ratio: 1;
+    transform: translateX(8px);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.bean-fast-click-reward {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 12px);
+    transform: translateY(-50%);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #ffe600;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.bean-fast-click-reward[hidden] {
+    display: none;
+}
+
+.bean-coin img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 160ms ease;
+}
+
+.bean-coin:hover img {
+    animation: bean-coin-hover-wiggle 900ms ease-in-out infinite;
+}
+
+.bean-coin.is-clicked img {
+    animation: bean-coin-click-wiggle 460ms ease-in-out;
+}
+
+@media (max-width: 600px) {
+    .bean-worker-offer {
+        top: 72px;
+        left: 8px;
+        gap: 6px;
+    }
+
+    .bean-worker-offer > img {
+        width: 64px;
+    }
+
+    .bean-traveler {
+        width: 32px;
+    }
+
+    .bean-click-upgrade {
+        top: 176px;
+    }
+
+    .bean-not-sus-biker-offer {
+        top: 315px;
+    }
+
+    .bean-upgrades {
+        margin-top: 8px;
+        gap: 8px;
+    }
+
+    .bean-worker-details h2 {
+        font-size: 14px;
+    }
+
+    .bean-worker-details p,
+    .bean-worker-cost {
+        font-size: 10px;
+    }
+
+    .bean-clicker {
+        padding-top: 112px;
+    }
+
+    .bean-fast-click-reward {
+        left: calc(100% + 6px);
+        font-size: 11px;
+    }
+}
+
+@keyframes bean-coin-hover-wiggle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(-3deg) scale(1.015); }
+    75% { transform: rotate(3deg) scale(1.015); }
+}
+
+@keyframes bean-coin-click-wiggle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    20% { transform: rotate(-16deg) scale(1.12); }
+    45% { transform: rotate(12deg) scale(0.96); }
+    70% { transform: rotate(-8deg) scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bean-rain {
+        display: none;
+    }
+
+    .bean-coin:hover img,
+    .bean-coin.is-clicked img {
+        animation: none;
+    }
+
+    .bean-coin:active img {
+        transform: scale(1.06);
+    }
+
+    .bean-traveler {
+        animation: none;
+        transform: translateX(calc(50vw - 50%));
+    }
+}
 
 /* ---- Added when splitting into multiple pages ---- */
 .tab-button {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fun Game info - LolBeans Stats</title>
     <link rel="icon" type="image/png" href="images/download.png">
-    <link rel="stylesheet" href="css/styles.css?v=20261104-red-scrollbar">
+    <link rel="stylesheet" href="css/styles.css?v=20261105-unlock-labels">
 </head>
 <body class="fun-active" data-discord-invite>
 
@@ -35,11 +35,22 @@
             <a class="button-link" href="maps.html">Download and practice the maps!</a>
             <a class="button-link" href="minecraft-editor.html">Transform Minecraft Chunks to Lolbeans Editor</a>
             <h2 class="fun-content-secondary-title">More Fun Stuff</h2>
-            <a class="button-link" href="bouncy-alek.html">Bouncy Alek</a>
-            <a class="button-link" href="fun-fact.html">Fun fact Generator</a>
+            <a class="button-link bean-clicker-link" href="bean-clicker.html">
+                Bean Clicker
+                <img src="images/bean-coin.png" alt="">
+            </a>
+            <a class="button-link unlockable-game-link fun-fact-link" href="fun-fact.html" aria-disabled="true" title="Collect 1,000 Bean Coins in Bean Clicker to unlock Fun fact Generator">
+                <span>Fun fact Generator</span>
+                <span class="game-unlock-note">1k coins in Bean Clicker to unlock</span>
+            </a>
+            <a class="button-link unlockable-game-link bouncy-alek-link" href="bouncy-alek.html" aria-disabled="true" title="Collect 10,000 Bean Coins in Bean Clicker to unlock Bouncy Alek">
+                <span>Bouncy Alek</span>
+                <span class="game-unlock-note">10k coins in Bean Clicker to unlock</span>
+            </a>
         </div>
     </section>
 
+    <script src="js/bean-lock.js"></script>
     <script src="js/common.js"></script>
 </body>
 </html>
