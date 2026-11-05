@@ -1837,6 +1837,7 @@ body.fun-thingies-active .bean-side {
     width: var(--bean-size);
     height: auto;
     opacity: 0.7;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
     animation: bean-rain-fall var(--bean-duration) linear var(--bean-delay) infinite;
 }
 
@@ -1859,6 +1860,7 @@ body.fun-thingies-active .bean-side {
     left: var(--bean-x);
     width: var(--bean-size);
     height: auto;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
     animation: bean-rain-fall calc(var(--bean-duration) * var(--bean-speed, 1)) linear var(--bean-delay) infinite;
 }
 
