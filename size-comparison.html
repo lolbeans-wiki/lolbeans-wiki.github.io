@@ -5,19 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Size Comparison - LolBeans Stats</title>
     <link rel="icon" type="image/png" href="images/download.png">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=20261104-red-scrollbar">
 </head>
 <body>
 
     <div id="size-sub-panel" class="sub-screen-panel">
         <a class="back-button-top" href="index.html">Back to Skill Measure</a>
         <div class="size-comparison">
-            <input class="size-player-search" id="size-player-search" type="search" placeholder="Search a player..." autocomplete="off">
+            <h1 class="title">Size Comparison by Skill</h1>
+            <div class="search-wrap size-search-wrap">
+                <input class="size-player-search" id="size-player-search" type="search" placeholder="Search a player..." autocomplete="off">
+                <div id="size-name-suggestions" class="name-suggestions"></div>
+            </div>
             <div class="size-comparison-stage" id="size-comparison-stage" aria-live="polite"></div>
+            <section class="size-leaderboard" aria-labelledby="size-leaderboard-title">
+                <p id="size-leaderboard-status" class="size-leaderboard-status" aria-live="polite">Loading leaderboard...</p>
+                <ol class="size-player-chart" id="size-leaderboard-rows" aria-label="Players ranked by size"></ol>
+            </section>
         </div>
     </div>
 
     <script src="js/sheet-data.js"></script>
+    <script src="js/lib/fuzzysort.js"></script>
+    <script src="js/fuzzy.js"></script>
     <script src="js/size-comparison.js"></script>
+    <script src="js/common.js"></script>
 </body>
 </html>
