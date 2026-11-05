@@ -16,6 +16,10 @@ body {
     scrollbar-width: auto;
 }
 
+img {
+    -webkit-user-drag: none;
+}
+
 *::-webkit-scrollbar {
     width: 12px;
     height: 12px;
@@ -552,14 +556,14 @@ h1.title {
 
 .bouncy-world .alek-dancer {
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     display: block;
     width: 120px;
     aspect-ratio: 0.8;
     padding: 0;
     border: 0;
     border-radius: 0;
-    background: transparent;
+    background: #000000;
     color: #a80707;
     line-height: 0;
 }
@@ -688,8 +692,10 @@ h1.title {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 3;
     width: 74px;
     aspect-ratio: 0.8;
+    background: #000000;
     pointer-events: none;
     animation: alek-fast-bounce 1.1s linear infinite;
 }
@@ -827,6 +833,7 @@ body.bouncy-active .bean-side {
 .about-content {
     width: 100%;
     max-width: none;
+    background-color: transparent;
     padding: 20px 0;
     margin-top: 20px;
     display: grid;
@@ -1765,6 +1772,17 @@ body.fun-thingies-active .bean-side {
     opacity: 0.5;
 }
 
+.bean-clicker-count,
+.bean-worker-offer,
+.bean-upgrades h2 {
+    text-shadow: 0 0 var(--bean-glow-blur, 4px) rgba(255, 230, 0, var(--bean-glow-opacity, 0.15));
+}
+
+.bean-coin img,
+.bean-worker-offer > img {
+    filter: drop-shadow(0 0 var(--bean-glow-blur, 4px) rgba(255, 230, 0, var(--bean-glow-opacity, 0.15)));
+}
+
 .bean-worker-offer:hover:not(:disabled) .bean-worker-cost {
     color: #ff6666;
 }
@@ -1786,22 +1804,53 @@ body.fun-thingies-active .bean-side {
     opacity: 0.18;
 }
 
+.bean-character-rain {
+    position: fixed;
+    z-index: 0;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.bean-character-rain-drop {
+    position: absolute;
+    top: -36px;
+    left: var(--bean-x);
+    width: var(--bean-size);
+    height: auto;
+    opacity: 0.7;
+    animation: bean-rain-fall var(--bean-duration) linear var(--bean-delay) infinite;
+}
+
+.bean-rain-clickable-static {
+    position: relative;
+}
+
+.bean-rain-clickable-raised {
+    z-index: 1;
+}
+
+.bean-character-rain-drop {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
 .bean-rain-drop {
     position: absolute;
     top: -24px;
     left: var(--bean-x);
     width: var(--bean-size);
     height: auto;
-    animation: bean-rain-fall var(--bean-duration) linear var(--bean-delay) infinite;
-    will-change: transform;
+    animation: bean-rain-fall calc(var(--bean-duration) * var(--bean-speed, 1)) linear var(--bean-delay) infinite;
 }
 
 .bean-rain.has-mahjic-upgrade .bean-rain-drop {
-    animation-duration: calc(var(--bean-duration) * 0.7);
+    animation-duration: calc(var(--bean-duration) * 0.7 * var(--bean-speed, 1));
 }
 
 .bean-rain.has-majik-hand-upgrade .bean-rain-drop {
-    animation-duration: calc(var(--bean-duration) * 0.4);
+    animation-duration: calc(var(--bean-duration) * 0.4 * var(--bean-speed, 1));
 }
 
 .bean-travelers {
@@ -1819,8 +1868,7 @@ body.fun-thingies-active .bean-side {
     width: 42px;
     height: auto;
     opacity: 0.2;
-    animation: bean-traveler-cross-screen var(--traveler-duration) linear var(--traveler-delay) infinite;
-    will-change: transform;
+    animation: bean-traveler-cross-screen calc(var(--traveler-duration) * var(--bean-speed, 1)) linear var(--traveler-delay) infinite;
 }
 
 @keyframes bean-traveler-cross-screen {
@@ -1899,11 +1947,11 @@ body.fun-thingies-active .bean-side {
 }
 
 .bean-coin:hover img {
-    animation: bean-coin-hover-wiggle 900ms ease-in-out infinite;
+    animation: bean-coin-hover-wiggle calc(900ms * var(--bean-speed, 1)) ease-in-out infinite;
 }
 
 .bean-coin.is-clicked img {
-    animation: bean-coin-click-wiggle 460ms ease-in-out;
+    animation: bean-coin-click-wiggle calc(460ms * var(--bean-speed, 1)) ease-in-out;
 }
 
 @media (max-width: 600px) {
