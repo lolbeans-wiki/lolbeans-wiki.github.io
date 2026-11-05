@@ -1694,7 +1694,19 @@ body.fun-thingies-active .bean-side {
     display: none;
 }
 
-.bean-refresh {
+.bean-save-status,
+.bean-offline-earnings {
+    margin: 4px 0;
+    color: #ffe600;
+    font-size: 12px;
+}
+
+.bean-save-status:not([hidden]),
+.bean-offline-earnings:not([hidden]) {
+    display: block;
+}
+
+.bean-reset-progress {
     position: fixed;
     right: 12px;
     bottom: 10px;
@@ -1708,8 +1720,13 @@ body.fun-thingies-active .bean-side {
     cursor: pointer;
 }
 
-.bean-refresh:hover {
+.bean-reset-progress:hover:not(:disabled) {
     background: #ff2222;
+}
+
+.bean-reset-progress:disabled {
+    cursor: wait;
+    opacity: 0.65;
 }
 
 .bean-worker-offer {

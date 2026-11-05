@@ -42,6 +42,10 @@
                 <span id="bean-coins-per-second">0 coins per second</span>
                 <span id="bean-coins-per-click">1 coin per click</span>
             </h1>
+            <p class="bean-save-status" id="bean-save-status" role="status" aria-live="polite">
+                Loading saved progress...
+            </p>
+            <p class="bean-offline-earnings" id="bean-offline-earnings" role="status" hidden></p>
             <div class="bean-coin-row">
                 <button class="bean-coin" id="bean-coin" type="button" aria-label="Collect a bean coin">
                     <img src="images/bean-coin.png" alt="">
@@ -70,7 +74,9 @@
                 </div>
             </button>
         </section>
-        <button class="bean-refresh" id="bean-refresh" type="button">Refresh</button>
+        <button class="bean-reset-progress" id="bean-reset-progress" type="button" disabled>
+            Reset Progress
+        </button>
     </div>
     <script src="js/common.js"></script>
     <script src="js/bean-clicker.js"></script>
