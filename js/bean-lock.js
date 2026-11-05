@@ -1,4 +1,3 @@
-const beanCoinStorageKey = 'lolbeans-bean-coins';
 const beanGameUnlockStorageKeys = {
     'fun-fact.html': 'lolbeans-fun-fact-unlocked',
     'bouncy-alek.html': 'lolbeans-bouncy-alek-unlocked'
@@ -18,23 +17,11 @@ const unlockableGames = [
     }
 ];
 
-function getSavedBeanCoins() {
-    const savedCoins = Number(localStorage.getItem(beanCoinStorageKey));
-    return Number.isFinite(savedCoins) && savedCoins >= 0 ? savedCoins : 0;
-}
-
 function updateUnlockableGameAccess() {
-    const savedCoins = getSavedBeanCoins();
-
     unlockableGames.forEach(({ selector, page, requiredCoins, label }) => {
         const link = document.querySelector(selector);
         const unlockStorageKey = beanGameUnlockStorageKeys[page];
-        const wasUnlocked = localStorage.getItem(unlockStorageKey) === 'true';
-        const isUnlocked = wasUnlocked || savedCoins >= requiredCoins;
-
-        if (isUnlocked && !wasUnlocked) {
-            localStorage.setItem(unlockStorageKey, 'true');
-        }
+        const isUnlocked = localStorage.getItem(unlockStorageKey) === 'true';
         if (!link) return;
         link.classList.toggle('is-locked', !isUnlocked);
         link.setAttribute('aria-disabled', String(!isUnlocked));
@@ -49,19 +36,17 @@ function updateUnlockableGameAccess() {
 updateUnlockableGameAccess();
 window.addEventListener('storage', updateUnlockableGameAccess);
 
-unlockableGames.forEach(({ selector, page, requiredCoins }) => {
+unlockableGames.forEach(({ selector, page }) => {
     const unlockStorageKey = beanGameUnlockStorageKeys[page];
     const link = document.querySelector(selector);
     link?.addEventListener('click', (event) => {
-        if (getSavedBeanCoins() < requiredCoins
-            && localStorage.getItem(unlockStorageKey) !== 'true') {
+        if (localStorage.getItem(unlockStorageKey) !== 'true') {
             event.preventDefault();
             updateUnlockableGameAccess();
         }
     });
 
     if (window.location.pathname.endsWith(`/${page}`)
-        && getSavedBeanCoins() < requiredCoins
         && localStorage.getItem(unlockStorageKey) !== 'true') {
         window.location.replace('extras.html');
     }

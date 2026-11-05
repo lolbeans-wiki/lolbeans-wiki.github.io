@@ -1,8 +1,6 @@
 const beanCoin = document.querySelector('#bean-coin');
 const beanCoinCount = document.querySelector('#bean-coin-count');
 const beanPanel = beanCoin.closest('.sub-screen-panel');
-const beanCoinStorageKey = 'lolbeans-bean-coins';
-const beanLifetimeCoinsStorageKey = 'lolbeans-bean-lifetime-coins';
 const beanLastActiveStorageKey = 'lolbeans-bean-last-active';
 const beanWorkerStorageKey = 'lolbeans-bean-workers';
 const beanClickPowerStorageKey = 'lolbeans-bean-click-power';
@@ -30,17 +28,13 @@ const buyMajikHandUpgradeButton = document.querySelector('#buy-majik-hand-upgrad
 const buyNotSusBikerUpgradeButton = document.querySelector('#buy-not-sus-biker-upgrade');
 const beanNotSusBikerOwnedCount = document.querySelector('#bean-not-sus-biker-owned-count');
 const beanRefreshButton = document.querySelector('#bean-refresh');
-const storedBeanCoins = Number(localStorage.getItem(beanCoinStorageKey));
 const storedBeanWorkers = Number(localStorage.getItem(beanWorkerStorageKey));
 const storedBeanClickUpgrades = Number(localStorage.getItem(beanClickPowerStorageKey));
 const storedBeanLastActive = Number(localStorage.getItem(beanLastActiveStorageKey));
-let beanCoins = Number.isFinite(storedBeanCoins) && storedBeanCoins >= 0
-    ? storedBeanCoins
-    : 0;
-const storedLifetimeCoins = Number(localStorage.getItem(beanLifetimeCoinsStorageKey));
-let beanLifetimeCoins = Number.isFinite(storedLifetimeCoins) && storedLifetimeCoins >= beanCoins
-    ? storedLifetimeCoins
-    : beanCoins;
+localStorage.removeItem('lolbeans-bean-coins');
+localStorage.removeItem('lolbeans-bean-lifetime-coins');
+let beanCoins = 0;
+let beanLifetimeCoins = 0;
 let beanWorkers = Number.isSafeInteger(storedBeanWorkers) && storedBeanWorkers >= 0
     ? storedBeanWorkers
     : 0;
@@ -175,8 +169,6 @@ function updateBeanTravelers() {
 }
 
 function saveBeanClickerProgress() {
-    localStorage.setItem(beanCoinStorageKey, String(beanCoins));
-    localStorage.setItem(beanLifetimeCoinsStorageKey, String(beanLifetimeCoins));
     localStorage.setItem(beanLastActiveStorageKey, String(Date.now()));
     localStorage.setItem(beanWorkerStorageKey, String(beanWorkers));
     localStorage.setItem(beanClickPowerStorageKey, String(beanClickUpgrades));
@@ -322,8 +314,8 @@ beanCoin.addEventListener('animationend', () => {
 });
 
 beanRefreshButton.addEventListener('click', () => {
-    localStorage.removeItem(beanCoinStorageKey);
-    localStorage.removeItem(beanLifetimeCoinsStorageKey);
+    localStorage.removeItem('lolbeans-bean-coins');
+    localStorage.removeItem('lolbeans-bean-lifetime-coins');
     localStorage.removeItem(beanLastActiveStorageKey);
     localStorage.removeItem(beanWorkerStorageKey);
     localStorage.removeItem(beanClickPowerStorageKey);
