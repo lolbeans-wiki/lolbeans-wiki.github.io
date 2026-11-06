@@ -121,7 +121,7 @@ body,
     display: inline !important;
     max-width: none !important;
     padding: 0 !important;
-    color: #d3dae4 !important;
+    color: var(--user-accent) !important;
     font-size: 13px !important;
     font-weight: 600 !important;
     opacity: 1 !important;
