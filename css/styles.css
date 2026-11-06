@@ -1091,41 +1091,16 @@ a.button-link {
     background: #ff2222;
 }
 
-.live-chat-online-note {
-    margin: -8px 0 0;
-    color: #cccccc;
-    font-size: 13px;
-    text-align: right;
-}
-
 .live-chat-chat-layout {
     display: grid;
-    grid-template-columns: minmax(0, 900px) 104px;
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    gap: 14px;
-}
-
-.live-chat-presence {
-    display: grid;
-    justify-items: center;
-    gap: 3px;
-    margin-top: 12px;
-    padding: 12px 8px;
-    border: 1px solid #e00000;
-    border-radius: 8px;
-    background: #111111;
-    color: #ff2222;
-    font-weight: 700;
-    text-align: center;
-}
-
-.live-chat-presence-count {
-    font-size: 1.8rem;
-    line-height: 1;
 }
 
 .live-chat-frame {
     position: relative;
+    width: 100%;
+    min-width: 0;
     height: min(700px, calc(100vh - 150px));
     min-height: 400px;
     overflow: hidden;
@@ -1149,51 +1124,25 @@ a.button-link {
     border: 0;
 }
 
-.live-chat-mask {
-    position: absolute;
-    z-index: 2;
-    background: #2b0008;
-    pointer-events: none;
-}
-
-.live-chat-mask-header {
-    top: 0;
-    right: 0;
-    left: 0;
-    height: 55px;
-}
-
-.live-chat-mask-sidebar {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 300px;
-}
-
-@media (max-width: 480px) {
+@media (max-width: 760px) {
     .live-chat-nickname-controls {
         flex-direction: column;
     }
 
+    .live-chat-frame {
+        min-height: 360px;
+        height: calc(100vh - 230px);
+    }
+}
+
+@media (max-width: 480px) {
     .live-chat-chat-layout {
         display: flex;
         flex-direction: column;
     }
 
-    .live-chat-presence {
-        align-self: flex-end;
-        margin-top: 0;
-    }
-
     .live-chat-frame {
-        min-height: 360px;
         height: calc(100vh - 250px);
-    }
-
-    .live-chat-mask-sidebar {
-        right: auto;
-        left: 0;
-        width: 82%;
     }
 }
 
