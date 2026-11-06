@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+
 html,
 body,
 .chat,
@@ -103,15 +105,83 @@ body,
 }
 
 .post-meta {
-    display: none !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    display: block !important;
+    margin: 0 0 6px !important;
+    padding: 0 12px !important;
+    color: #c4cbd5 !important;
+    text-align: left !important;
+}
+
+.post-name,
+.post-name--twitter {
+    position: static !important;
+    display: inline !important;
+    max-width: none !important;
+    padding: 0 !important;
+    color: #d3dae4 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
 }
 
 .post-reply {
     display: none !important;
 }
 
-.post-message i[data-smiley] {
+.post-time {
+    position: static !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    margin: 0 0 8px !important;
+}
+
+.post-time-dot {
     display: none !important;
+}
+
+.post-time-tag {
+    position: static !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 0 4px 0 8px !important;
+    border: 1px solid #59616d !important;
+    border-radius: 6px !important;
+    background: #353b45 !important;
+    color: #d3dae4 !important;
+    line-height: 28px !important;
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+}
+
+.post-time-tag:after {
+    content: none !important;
+}
+
+.post-time-label {
+    padding: 0 4px !important;
+    color: #c4cbd5 !important;
+}
+
+.post-time-button {
+    padding: 0 9px !important;
+    border: 0 !important;
+    border-radius: 4px !important;
+    background: #4a525e !important;
+    color: #f0f3f8 !important;
+    font: inherit !important;
+    line-height: 22px !important;
+}
+
+.post-time-button:hover {
+    background: #5b6573 !important;
+    color: #ffffff !important;
 }
 
 .post-message {
@@ -121,6 +191,7 @@ body,
     border-radius: 12px !important;
     background: var(--user-surface) !important;
     color: #f5f7fb !important;
+    font-family: Arial, 'Noto Color Emoji', sans-serif !important;
     line-height: 1.45 !important;
 }
 

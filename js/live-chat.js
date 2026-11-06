@@ -14,7 +14,7 @@ nicknameForm.addEventListener('submit', (event) => {
     const parameters = new URLSearchParams({
         nickname,
         theme: 'theme--night',
-        custom_css_path: 'https://lolbeans-wiki.github.io/css/live-chat-overrides.css?v=20261106-chat-users-v4',
+        custom_css_path: 'https://lolbeans-wiki.github.io/css/live-chat-overrides.css?v=20261106-chat-users-v5',
     });
     chat.src = `https://embed.tlk.io/lolbeans-wiki-live-chat?${parameters}`;
     chat.title = 'LolBeans Wiki live chat';
