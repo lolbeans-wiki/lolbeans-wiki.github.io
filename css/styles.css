@@ -1058,6 +1058,10 @@ a.button-link {
     font-weight: 700;
 }
 
+.live-chat-nickname-form[hidden] {
+    display: none;
+}
+
 .live-chat-nickname-controls {
     display: flex;
     gap: 8px;
