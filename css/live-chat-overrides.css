@@ -54,36 +54,6 @@ body,
     color: #f5f7fb !important;
 }
 
-.post:nth-of-type(7n + 2) {
-    --user-accent: #ffb36b;
-    --user-surface: #433322;
-}
-
-.post:nth-of-type(7n + 3) {
-    --user-accent: #f2dc68;
-    --user-surface: #413c24;
-}
-
-.post:nth-of-type(7n + 4) {
-    --user-accent: #7cda9b;
-    --user-surface: #233d2d;
-}
-
-.post:nth-of-type(7n + 5) {
-    --user-accent: #71c6ff;
-    --user-surface: #223b4b;
-}
-
-.post:nth-of-type(7n + 6) {
-    --user-accent: #969cff;
-    --user-surface: #2e3049;
-}
-
-.post:nth-of-type(7n) {
-    --user-accent: #d69aff;
-    --user-surface: #3b2a46;
-}
-
 .post[data-user-id$="0"],
 .post[data-user-id$="7"],
 .post[data-user-id$="e" i] {
@@ -133,39 +103,14 @@ body,
 }
 
 .post-meta {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    display: flex !important;
-    align-items: flex-start !important;
-    gap: 10px !important;
-    width: auto !important;
-    min-height: 34px !important;
-    padding: 0 12px 8px !important;
-    color: var(--user-accent) !important;
-}
-
-.post-name {
-    position: static !important;
-    display: block !important;
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    padding: 0 !important;
-    overflow: visible !important;
-    overflow-wrap: anywhere !important;
-    color: var(--user-accent) !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    line-height: 1.35 !important;
-    text-overflow: clip !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    transform: none !important;
-    white-space: normal !important;
+    display: none !important;
 }
 
 .post-reply {
+    display: none !important;
+}
+
+.post-message i[data-smiley] {
     display: none !important;
 }
 
