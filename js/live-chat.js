@@ -4,7 +4,7 @@ const chatFrame = document.querySelector('#live-chat-frame');
 
 nicknameForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    const nickname = nicknameInput.value.trim();
+    const nickname = nicknameInput.value.trim().slice(0, 20);
     if (!nickname) {
         nicknameInput.focus();
         return;
@@ -14,7 +14,7 @@ nicknameForm.addEventListener('submit', (event) => {
     const parameters = new URLSearchParams({
         nickname,
         theme: 'theme--night',
-        custom_css_path: 'https://lolbeans-wiki.github.io/css/live-chat-overrides.css?v=20261106-chat-spacing-v2',
+        custom_css_path: 'https://lolbeans-wiki.github.io/css/live-chat-overrides.css?v=20261106-chat-users-v3',
     });
     chat.src = `https://embed.tlk.io/lolbeans-wiki-live-chat?${parameters}`;
     chat.title = 'LolBeans Wiki live chat';

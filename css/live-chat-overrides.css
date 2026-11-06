@@ -44,8 +44,8 @@ body,
 }
 
 .post {
-    --user-accent: #9dc1ff;
-    --user-surface: #202b40;
+    --user-accent: #ff8585;
+    --user-surface: #432727;
     margin: 18px 0 !important;
     padding: 0 !important;
     border: 0 !important;
@@ -54,39 +54,78 @@ body,
     color: #f5f7fb !important;
 }
 
-.post:nth-of-type(8n + 2) {
-    --user-accent: #d5a7ff;
-    --user-surface: #30243d;
+.post:nth-of-type(7n + 2) {
+    --user-accent: #ffb36b;
+    --user-surface: #433322;
 }
 
-.post:nth-of-type(8n + 3) {
-    --user-accent: #82e0c3;
-    --user-surface: #1e3835;
+.post:nth-of-type(7n + 3) {
+    --user-accent: #f2dc68;
+    --user-surface: #413c24;
 }
 
-.post:nth-of-type(8n + 4) {
-    --user-accent: #ffd18b;
-    --user-surface: #3b3021;
+.post:nth-of-type(7n + 4) {
+    --user-accent: #7cda9b;
+    --user-surface: #233d2d;
 }
 
-.post:nth-of-type(8n + 5) {
-    --user-accent: #8edcff;
-    --user-surface: #203642;
+.post:nth-of-type(7n + 5) {
+    --user-accent: #71c6ff;
+    --user-surface: #223b4b;
 }
 
-.post:nth-of-type(8n + 6) {
-    --user-accent: #ffabbc;
-    --user-surface: #3c252d;
+.post:nth-of-type(7n + 6) {
+    --user-accent: #969cff;
+    --user-surface: #2e3049;
 }
 
-.post:nth-of-type(8n + 7) {
-    --user-accent: #c4e895;
-    --user-surface: #2d3926;
+.post:nth-of-type(7n) {
+    --user-accent: #d69aff;
+    --user-surface: #3b2a46;
 }
 
-.post:nth-of-type(8n) {
-    --user-accent: #c8c8ff;
-    --user-surface: #2d2e40;
+.post[data-user-id$="0"],
+.post[data-user-id$="7"],
+.post[data-user-id$="e" i] {
+    --user-accent: #ff8585;
+    --user-surface: #432727;
+}
+
+.post[data-user-id$="1"],
+.post[data-user-id$="8"],
+.post[data-user-id$="f" i] {
+    --user-accent: #ffb36b;
+    --user-surface: #433322;
+}
+
+.post[data-user-id$="2"],
+.post[data-user-id$="9"] {
+    --user-accent: #f2dc68;
+    --user-surface: #413c24;
+}
+
+.post[data-user-id$="3"],
+.post[data-user-id$="a" i] {
+    --user-accent: #7cda9b;
+    --user-surface: #233d2d;
+}
+
+.post[data-user-id$="4"],
+.post[data-user-id$="b" i] {
+    --user-accent: #71c6ff;
+    --user-surface: #223b4b;
+}
+
+.post[data-user-id$="5"],
+.post[data-user-id$="c" i] {
+    --user-accent: #969cff;
+    --user-surface: #2e3049;
+}
+
+.post[data-user-id$="6"],
+.post[data-user-id$="d" i] {
+    --user-accent: #d69aff;
+    --user-surface: #3b2a46;
 }
 
 .post:before {
@@ -98,7 +137,7 @@ body,
     top: auto !important;
     left: auto !important;
     display: flex !important;
-    align-items: center !important;
+    align-items: flex-start !important;
     gap: 10px !important;
     width: auto !important;
     min-height: 34px !important;
@@ -113,25 +152,21 @@ body,
     min-width: 0 !important;
     max-width: none !important;
     padding: 0 !important;
+    overflow: visible !important;
+    overflow-wrap: anywhere !important;
     color: var(--user-accent) !important;
     font-size: 15px !important;
     font-weight: 700 !important;
+    line-height: 1.35 !important;
+    text-overflow: clip !important;
     visibility: visible !important;
     opacity: 1 !important;
     transform: none !important;
+    white-space: normal !important;
 }
 
 .post-reply {
-    position: relative !important;
-    flex: 0 0 30px !important;
-    width: 30px !important;
-    height: 30px !important;
-}
-
-.post-avatar--troll {
-    background: var(--user-surface) !important;
-    color: var(--user-accent) !important;
-    box-shadow: inset 0 0 0 2px var(--user-accent) !important;
+    display: none !important;
 }
 
 .post-message {
