@@ -27,12 +27,14 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const characterRain = document.createElement('div');
     characterRain.className = 'bean-character-rain';
     const beans = document.createDocumentFragment();
+    const rainImage = document.body.dataset.rainImage;
+    const beanCount = rainImage ? 48 : 24;
 
-    for (let i = 0; i < 24; i += 1) {
+    for (let i = 0; i < beanCount; i += 1) {
         const bean = document.createElement('img');
-        const duration = 18 + Math.random() * 12;
+        const duration = (18 + Math.random() * 12) / (rainImage ? 2 : 1);
         const beanImage = (i % 15) + 1;
-        bean.src = `images/bean-rain/bean-${String(beanImage).padStart(2, '0')}.png`;
+        bean.src = rainImage || `images/bean-rain/bean-${String(beanImage).padStart(2, '0')}.png`;
         bean.alt = '';
         bean.className = 'bean-character-rain-drop';
         bean.draggable = false;

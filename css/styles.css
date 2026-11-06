@@ -1830,6 +1830,10 @@ body.fun-thingies-active .bean-side {
     opacity: 0.5;
 }
 
+body[data-rain-image] .bean-character-rain {
+    opacity: 0.65;
+}
+
 .bean-character-rain-drop {
     position: absolute;
     top: -36px;
@@ -1839,6 +1843,11 @@ body.fun-thingies-active .bean-side {
     opacity: 0.7;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
     animation: bean-rain-fall var(--bean-duration) linear var(--bean-delay) infinite;
+}
+
+body[data-rain-image] .bean-character-rain-drop {
+    opacity: 0.9;
+    filter: none;
 }
 
 .bean-rain-clickable-static {
