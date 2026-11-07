@@ -2210,6 +2210,24 @@ a.back-button-top {
     text-decoration: none;
 }
 
+button:not(:disabled),
+a.button-link,
+a.tab-button,
+a.back-button-top,
+a.live-chat-back,
+a.discord-invite-go {
+    transition: border-radius 160ms ease;
+}
+
+button:not(:disabled):hover,
+a.button-link:hover,
+a.tab-button:hover,
+a.back-button-top:hover,
+a.live-chat-back:hover,
+a.discord-invite-go:hover {
+    border-radius: 16px;
+}
+
 
 /* Hi its MrBlankCoding, ima just add my shit here */
 /* This is all for fuzzy search */

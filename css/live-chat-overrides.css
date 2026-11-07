@@ -186,11 +186,14 @@ body,
     color: #f0f3f8 !important;
     font: inherit !important;
     line-height: 10px !important;
+    border-radius: 8px !important;
+    transition: border-radius 160ms ease !important;
 }
 
 .post-time-button:hover {
     background: #5b6573 !important;
     color: #ffffff !important;
+    border-radius: 12px !important;
 }
 
 .post-message {

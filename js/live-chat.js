@@ -8,7 +8,7 @@ function joinChat(nickname) {
     const parameters = new URLSearchParams({
         nickname,
         theme: 'theme--night',
-        custom_css_path: 'https://lolbeans-wiki.github.io/css/live-chat-overrides.css?v=20261106-chat-users-v10',
+        custom_css_path: 'https://lolbeans-wiki.github.io/css/live-chat-overrides.css?v=20261107-button-hover-v6',
     });
     chat.src = `https://embed.tlk.io/lolbeans-wiki-live-chat?${parameters}`;
     chat.title = 'LolBeans Wiki live chat';
