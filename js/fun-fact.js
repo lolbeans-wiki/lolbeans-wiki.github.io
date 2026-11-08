@@ -99,7 +99,7 @@ const FUN_FACTS = [
     { image: null, text: `You used to not know about this games existence` },
     { image: null, text: `To the person reading this, I hope that whatever isrogen that your okay` },
     { image: null, text: `I hope this website will succeed....` },
-    { image: null, text: `Lolbeans is a great game` }
+    { image: null, text: `Lolbeans is a great game` },
     { image: null, text: `Apperently a player named "CheepSkipper" was the first to discover b-hop? HUH?!` }
 ];
 
