@@ -935,6 +935,21 @@ body.bouncy-active .bean-side {
     font-size: 14px;
 }
 
+.about-server a.about-stats-toggle,
+.about-server a.about-stats-toggle:visited,
+.about-server a.about-stats-toggle:hover,
+.about-server a.about-stats-toggle:focus-visible {
+    display: inline-block;
+    padding: 7px 12px;
+    border: 1px solid #8b0000;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #ff0000 0%, #8b0000 100%);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
 .about-server img {
     width: 150px;
     aspect-ratio: 1;
@@ -948,6 +963,32 @@ body.bouncy-active .bean-side {
 .about-server a {
     color: #8db8ff;
     overflow-wrap: anywhere;
+}
+
+.server-stats-page {
+    display: block;
+    min-height: 100vh;
+    padding: 0;
+    background: #000000;
+}
+
+.server-stats-back {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 110;
+    padding: 8px 12px;
+    border: 1px solid #555555;
+    border-radius: 6px;
+    background: #333333;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.server-stats-back:hover {
+    background: #444444;
 }
 
 @media (max-width: 900px) {
