@@ -2275,3 +2275,10 @@ a.discord-invite-go:hover {
 .suggestion-item.active {
     background-color: #292929;
 }
+
+.tab-panel button,
+.tab-panel a.button-link:not(.is-locked),
+.skill-measure-actions button,
+.skill-measure-actions a.button-link {
+    background: linear-gradient(135deg, #ff0000 0%, #8b0000 100%);
+}
