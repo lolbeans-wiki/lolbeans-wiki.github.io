@@ -2356,3 +2356,145 @@ a.discord-invite-go:hover {
 .skill-measure-actions a.button-link {
     background: linear-gradient(135deg, #ff0000 0%, #8b0000 100%);
 }
+/* Push the entire section down from the title */
+.tier-container {
+    margin-top: 50px;
+}
+
+/* Centered white section titles */
+.section-role-title {
+    color: #ffffff;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Character gallery container */
+.character-gallery {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 60px;
+    padding: 10px 50px;
+}
+
+/* Individual character wrapper - centered layout */
+.character-wrapper {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    text-align: center;
+}
+
+/* Hide placeholder wrappers from visitors */
+.character-wrapper:has(.placeholder-box) {
+    display: none !important;
+}
+
+/* Red player name tag directly centered above the bean */
+.player-name-tag {
+    background-color: #ff2222;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin: 0 auto 12px auto;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    display: inline-block;
+}
+
+/* Clean transparent images with extra brightness and hover scaling */
+.gallery-icon {
+    border: none;
+    outline: none;
+    background: transparent;
+    object-fit: contain;
+    filter: brightness(1.25);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.gallery-icon:hover {
+    transform: scale(1.08);
+    filter: brightness(1.4);
+}
+
+/* TIER 1 (Owners): Large Sizing */
+.tier-owners .gallery-icon {
+    width: 180px;
+    height: auto;
+}
+
+/* TIER 2 (Admins): Medium-Large */
+.tier-admins .gallery-icon {
+    width: 120px;
+    height: auto;
+}
+
+/* TIER 3 (Mods): Medium */
+.tier-mods .gallery-icon {
+    width: 90px;
+    height: auto;
+}
+
+/* TIER 4 (Members): Smallest */
+.tier-members .gallery-icon {
+    width: 65px;
+    height: auto;
+}
+
+/* Placeholder box fallback helper */
+.placeholder-box {
+    display: none;
+}
+
+/* Spaced out white separator lines */
+.tier-separator {
+    border: none;
+    height: 2px;
+    background-color: #ffffff;
+    width: 85%;
+    margin: 50px auto;
+}
+
+/* Achievement-style tooltip box */
+.achievement-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #111111, #222222);
+    color: #ffd700;
+    border: 2px solid #ff4444;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    width: 180px;
+    white-space: normal;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 100;
+    pointer-events: none;
+}
+
+/* Show achievement box on hover */
+.character-wrapper:hover .achievement-tooltip {
+    visibility: visible;
+    opacity: 1;
+}

@@ -101,6 +101,7 @@ const FUN_FACTS = [
     { image: null, text: `I hope this website will succeed....` },
     { image: null, text: `Lolbeans is a great game` },
     { image: null, text: `Apperently a player named "CheepSkipper" was the first to discover b-hop? HUH?!` },
+    { image: null, text: `https://www.youtube.com/watch?v=gxLdOLgBIQ8 this is the most popular lolbeans video as far as I know, surpassing over 230k views!` },
 ];
 
 let factTimerInterval = null;
