@@ -2400,20 +2400,23 @@ a.discord-invite-go:hover {
 }
 
 /* Red player name tag directly centered above the bean */
+/* Red player name tag - perfectly scaled to text with a safe maximum width */
 .player-name-tag {
     background-color: #ff2222;
     color: #ffffff;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: bold;
-    padding: 3px 10px;
+    padding: 3px 8px;
     border-radius: 4px;
-    margin: 0 auto 12px auto;
+    margin: 0 auto 10px auto;
     text-align: center;
+    max-width: 140px;           /* Prevents buttons from getting too wide */
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;    /* Keeps long names tidy */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-    display: inline-block;
+    display: inline-block;      /* Scales tightly to each name size */
 }
-
 /* Clean transparent images with extra brightness and hover scaling */
 .gallery-icon {
     border: none;
@@ -2431,31 +2434,142 @@ a.discord-invite-go:hover {
     filter: brightness(1.4);
 }
 
-/* TIER 1 (Owners): Large Sizing */
+/* Push the entire section down from the title */
+.tier-container {
+    margin-top: 50px;
+}
+
+/* Centered white section titles */
+/* Base player name tag - lowered spacing */
+.player-name-tag {
+    background-color: #ff2222;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 4px;
+    margin: 0 auto 20px auto;       /* Lowers buttons away from title */
+    text-align: center;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: normal;
+    line-height: 1.1;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* Tier 1: OWNERS (Largest) */
+.tier-owners .player-name-tag {
+    width: 170px;
+    height: 36px;
+    font-size: 12px;
+    padding: 6px 10px;
+}
+
+/* Tier 2: ADMINS (Medium-Large) */
+.tier-admins .player-name-tag {
+    width: 150px;
+    height: 32px;
+    font-size: 11px;
+    padding: 5px 8px;
+}
+
+/* Tier 3: MODS (Medium-Small) */
+.tier-mods .player-name-tag {
+    width: 130px;
+    height: 28px;
+    font-size: 10px;
+    padding: 4px 6px;
+}
+
+/* Tier 4: MEMBERS (Smallest) */
+.tier-members .player-name-tag {
+    width: 110px;
+    height: 24px;
+    font-size: 9px;
+    padding: 3px 4px;
+}
+/* Character gallery container - closer spacing */
+.character-gallery {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px; /* Reduced gap so beans sit closer together */
+    padding: 10px 20px;
+}
+
+/* Individual character wrapper */
+.character-wrapper {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Hide placeholder wrappers from visitors */
+.character-wrapper:has(.placeholder-box) {
+    display: none !important;
+}
+
+/* Red player name tag directly centered above the bean */
+.player-name-tag {
+    background-color: #ff2222;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin: 0 auto 10px auto;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    display: inline-block;
+}
+
+/* Uniform image sizing & proportions */
+.gallery-icon {
+    border: none;
+    outline: none;
+    background: transparent;
+    object-fit: contain;
+    filter: brightness(1.25);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.gallery-icon:hover {
+    transform: scale(1.08);
+    filter: brightness(1.4);
+}
+
+/* Fixed uniform tier heights */
 .tier-owners .gallery-icon {
-    width: 180px;
-    height: auto;
+    height: 180px;
+    width: auto;
 }
 
-/* TIER 2 (Admins): Medium-Large */
 .tier-admins .gallery-icon {
-    width: 120px;
-    height: auto;
+    height: 120px;
+    width: auto;
 }
 
-/* TIER 3 (Mods): Medium */
 .tier-mods .gallery-icon {
-    width: 90px;
-    height: auto;
+    height: 90px;
+    width: auto;
 }
 
-/* TIER 4 (Members): Smallest */
 .tier-members .gallery-icon {
-    width: 65px;
-    height: auto;
+    height: 65px;
+    width: auto;
 }
 
-/* Placeholder box fallback helper */
+/* Placeholder box helper */
 .placeholder-box {
     display: none;
 }
@@ -2469,7 +2583,7 @@ a.discord-invite-go:hover {
     margin: 50px auto;
 }
 
-/* Achievement-style tooltip box */
+/* Floating Hover Achievement Tooltip Box */
 .achievement-tooltip {
     visibility: hidden;
     opacity: 0;
@@ -2493,7 +2607,7 @@ a.discord-invite-go:hover {
     pointer-events: none;
 }
 
-/* Show achievement box on hover */
+/* Show achievement popup box ONLY on hover */
 .character-wrapper:hover .achievement-tooltip {
     visibility: visible;
     opacity: 1;
