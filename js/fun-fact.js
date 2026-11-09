@@ -100,7 +100,9 @@ const FUN_FACTS = [
     { image: null, text: `To the person reading this, I hope that whatever isrogen that your okay` },
     { image: null, text: `I hope this website will succeed....` },
     { image: null, text: `Lolbeans is a great game` },
-    { image: null, text: `Apperently a player named "CheepSkipper" was the first to discover b-hop? HUH?!` }
+    { image: null, text: `Apperently a player named "CheepSkipper" was the first to discover b-hop? HUH?!` },
+    { image: "/Users/dennisdimov/lolbeans-wiki.github.io/Screenshot", text: `Ublock Origin Lite is the best adblocker extension for lolbeans if you still wanna get coins, its free, and takes 2 clicks on chrome. Haven't tested it on fox and other browsers but you can give it a go"` },
+
 ];
 
 let factTimerInterval = null;
