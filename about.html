@@ -23,7 +23,7 @@
     <nav class="tab-list" aria-label="Page sections">
         <a class="tab-button" href="index.html">Home</a>
         <a class="tab-button" href="skill-measure.html">Skill Measure</a>
-       <a class="tab-button" href="extras.html" aria-current="page">Super Cool stuff</a>
+       <a class="tab-button" href="extras.html">Super Cool stuff</a>
 
         <a class="tab-button" href="about.html" aria-current="page">About</a>
     </nav>
@@ -61,3 +61,28 @@
     <script src="js/common.js"></script>
 </body>
 </html>
+<a class="button-link super-little-gray-button" href="javascript:void(0)" onclick="openPlanningOverlay()">stuff im planning to add</a>
+<!-- Planning Overlay -->
+<div id="planning-overlay" class="planning-overlay" aria-hidden="true">
+  <div class="planning-content">
+    <h2>Stuff we Planning to Add for the future but idk</h2>
+    <ul class="planning-list">
+      <li>Add ALL the battle royal maps </li>
+      <li>Finish Home page</li>
+      <li>Finish Minecraft Chunks to lolbeans editor guide</li>
+       <li>TON of mobile fixes</li>
+        <li>Add a clear daily/monthly/yearly Lolbeans visit statistics page better than the current ones but connected to their source</li>
+        <li>More things?! You tell me!</li>
+    </ul>
+    <button class="overlay-back-btn" onclick="closePlanningOverlay()">← Go Back</button>
+  </div>
+</div>
+
+<script>
+  function openPlanningOverlay() {
+    document.getElementById('planning-overlay').style.display = 'flex';
+  }
+  function closePlanningOverlay() {
+    document.getElementById('planning-overlay').style.display = 'none';
+  }
+</script>

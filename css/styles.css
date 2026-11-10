@@ -2612,3 +2612,62 @@ a.discord-invite-go:hover {
     visibility: visible;
     opacity: 1;
 }
+.super-little-gray-button {
+  display: inline-block !important;
+  font-size: 10px !important;
+  color: #aaaaaa !important;
+  background-color: #1f1f1f !important;
+  border: 1px solid #333333 !important;
+  padding: 2px 6px !important;
+  border-radius: 3px !important;
+  text-decoration: none !important;
+  margin-top: 15px !important;
+}
+
+.super-little-gray-button:hover,
+.super-little-gray-button:active,
+.super-little-gray-button:focus {
+  background-color: #2a2a2a !important;
+  color: #cccccc !important;
+  text-decoration: none !important;}
+  .planning-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0b0b0b;
+  z-index: 99999;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.planning-overlay h2 {
+  color: #ffffff !important;
+  font-size: 28px !important;
+  margin-bottom: 20px !important;
+}
+
+.planning-overlay .planning-list li {
+  color: #cccccc !important;
+  font-size: 16px !important;
+  padding: 6px 0;
+  border-bottom: 1px solid #222222;
+}
+
+.overlay-back-btn {
+  background-color: #222222 !important;
+  color: #ffffff !important;
+  border: 1px solid #444444 !important;
+  padding: 10px 20px !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  margin-top: 25px !important;
+}
+
+.overlay-back-btn:hover {
+  background-color: #3a3a3a !important;
+}
