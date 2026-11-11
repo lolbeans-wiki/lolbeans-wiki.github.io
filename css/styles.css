@@ -2671,3 +2671,39 @@ a.discord-invite-go:hover {
 .overlay-back-btn:hover {
   background-color: #3a3a3a !important;
 }
+/* Base page styling */
+body.server-stats-page {
+    background-color: #1a1a1a; /* Fallback dark/grey tone, or use #e5e5e5 for a light grey */
+    position: relative;
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #ffffff; /* Ensures text stays readable */
+}
+
+/* Ambient Red, White, and Blue Blurry Background Spots */
+body.server-stats-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* Keeps the effect strictly behind all your content */
+    background-color: #2b2b2d; /* Slightly grey background base */
+    
+    /* Blurry glowing color spots */
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(235, 59, 90, 0.45) 0%, transparent 40%),  /* Red spot */
+        radial-gradient(circle at 80% 20%, rgba(56, 103, 214, 0.45) 0%, transparent 45%), /* Blue spot */
+        radial-gradient(circle at 50% 70%, rgba(240, 240, 240, 0.25) 0%, transparent 50%),/* White spot */
+        radial-gradient(circle at 90% 85%, rgba(220, 50, 50, 0.35) 0%, transparent 40%),  /* Extra Red spot */
+        radial-gradient(circle at 10% 80%, rgba(40, 116, 240, 0.35) 0%, transparent 45%); /* Extra Blue spot */
+        
+    /* Extreme blur to make the spots soft and dreamy */
+    filter: blur(80px);
+    -webkit-filter: blur(80px);
+    
+    /* Performance booster */
+    pointer-events: none;
+}
