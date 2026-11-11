@@ -2692,9 +2692,19 @@ body.server-stats-page::before {
     z-index: -1; /* Keeps the effect strictly behind all your content */
     background-color: #2b2b2d; /* Slightly grey background base */
 }
-/* --- ABSOLUTE MIDNIGHT ABYSS BACKGROUND --- */
+/* --- BACKGROUND --- */
 body {
-    background-color: #010103 !important;
+    background-color: #030305 !important;
+    position: relative;
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #ffffff !important;
+}
+
+/* --- BACKGROUND --- */
+body {
+    background-color: #020204 !important;
     position: relative;
     margin: 0;
     min-height: 100vh;
@@ -2710,37 +2720,14 @@ body::before {
     width: 100vw;
     height: 100vh;
     z-index: -1;
-    background-color: #010103 !important;
+    background-color: #020204 !important;
     background-image: 
-        radial-gradient(circle at 20% 30%, rgba(180, 15, 45, 0.20) 0%, transparent 40%),
-        radial-gradient(circle at 80% 20%, rgba(15, 60, 160, 0.20) 0%, transparent 45%),
-        radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
-        radial-gradient(circle at 90% 85%, rgba(150, 10, 35, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 10% 80%, rgba(10, 50, 140, 0.15) 0%, transparent 45%);
-    filter: blur(110px);
-    -webkit-filter: blur(110px);
+        radial-gradient(circle at 20% 30%, rgba(160, 15, 40, 0.17) 0%, transparent 43%),
+        radial-gradient(circle at 80% 20%, rgba(15, 55, 150, 0.17) 0%, transparent 47%),
+        radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.02) 0%, transparent 52%),
+        radial-gradient(circle at 90% 85%, rgba(125, 8, 30, 0.12) 0%, transparent 42%),
+        radial-gradient(circle at 10% 80%, rgba(8, 40, 125, 0.12) 0%, transparent 45%);
+    filter: blur(115px);
+    -webkit-filter: blur(115px);
     pointer-events: none;
-}
-/* --- DISSOLVE THE BLACK BACKGROUND VIA CSS --- */
-.gallery-icon {
-    width: 150px !important;
-    height: 150px !important;
-    object-fit: contain !important;
-    mix-blend-mode: screen !important; /* Instantly makes black pixels transparent against the dark background */
-    background: transparent !important;
-}
-/* --- FADES OUT THE BLACK BACKGROUND EDGES COMPLETELY --- */
-.gallery-icon {
-    width: 150px !important;
-    height: 150px !important;
-    object-fit: contain !important;
-    background: transparent !important;
-    border-radius: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    mix-blend-mode: normal !important;
-    
-    /* This creates a smooth fade mask that erases the square black corners into the dark background */
-    -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 80%);
-    mask-image: radial-gradient(circle, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 80%);
 }
