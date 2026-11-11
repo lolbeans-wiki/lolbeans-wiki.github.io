@@ -6,6 +6,67 @@
     <title>Server Stats – US Lolbeans server Web</title>
     <link rel="icon" type="image/png" href="images/download.png">
     <link rel="stylesheet" href="css/styles.css?v=20261109-server-stats-v8">
+    <style>
+        /* Ensures cards render side-by-side in a flexible row */
+        .character-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        /* Scopes hover tooltips strictly to individual player cards */
+        .character-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Tooltip positioning, text wrapping, and boundary fixes */
+        .character-wrapper .achievement-tooltip {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: normal;       /* Allows text to wrap into multiple lines */
+            max-width: 220px;          /* Prevents the tooltip box from becoming too wide */
+            width: max-content;        /* Fits neatly around shorter text */
+            text-align: center;
+            word-wrap: break-word;     /* Wraps long words properly */
+            z-index: 10;
+        }
+
+        .character-wrapper:hover > .achievement-tooltip {
+            display: block;
+        }
+
+        /* Scaled-down layout specifically for the Bots section */
+        .tier-bots {
+            gap: 10px;
+        }
+
+        .tier-bots .character-wrapper {
+            transform: scale(0.85);
+            transform-origin: top center;
+        }
+
+        .tier-bots .player-name-tag {
+            font-size: 0.85em;
+        }
+
+        .tier-bots .gallery-icon {
+            max-width: 70px;
+            max-height: 70px;
+        }
+
+        .tier-bots .achievement-tooltip {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            max-width: 150px;
+        }
+    </style>
 </head>
 <body class="server-stats-page">
     <a class="server-stats-back" href="about.html">Back to About</a>
@@ -42,7 +103,7 @@
 
     <hr class="tier-separator">
 
-   <!-- ADMINS -->
+    <!-- ADMINS -->
     <div class="tier-container">
         <h2 class="section-role-title">Admins</h2>
         <div class="character-gallery tier-admins">
@@ -57,7 +118,7 @@
             <!-- Admin 2: Goat(Feesh) -->
             <div class="character-wrapper">
                 <div class="player-name-tag">Goat(Feesh)</div>
-                <img src="images/Screenshot_2026-11-09_at_5.24.55_PM-removebg-preview.png" alt="Goat(Feesh)" class="gallery-icon">
+                <img src="images/Screenshot_2026-11-11_at_2.12.11_PM-removebg-preview.png" alt="Goat(Feesh)" class="gallery-icon">
                 <div class="achievement-tooltip">just a Fish, A very Handsome one</div>
             </div>
 
@@ -71,21 +132,21 @@
         <h2 class="section-role-title">Mods</h2>
         <div class="character-gallery tier-mods">
 
-           <!-- Mod 1: Alek17 -->
+            <!-- Mod 1: Alek17 -->
             <div class="character-wrapper">
                 <div class="player-name-tag">Alek17</div>
                 <img src="images/Screenshot_2026-11-11_at_12.18.53_AM-removebg-preview.png" alt="Alek17" class="gallery-icon">
                 <div class="achievement-tooltip">A little tiny blue guy who likes Hotdogs</div>
             </div>
 
-             <!-- Mod 2: Wizard✔ -->
+            <!-- Mod 2: Wizard✔ -->
             <div class="character-wrapper">
                 <div class="player-name-tag">Wizard✔</div>
                 <img src="images/Screenshot_2026-11-11_at_12.27.02_AM-removebg-preview.png" alt="Wizard" class="gallery-icon">
                 <div class="achievement-tooltip">HE IS A WIZARDDDDDDD</div>
             </div>
 
-             <!-- Mod 3: Beans -->
+            <!-- Mod 3: Beans -->
             <div class="character-wrapper">
                 <div class="player-name-tag">Beans</div>
                 <img src="images/Screenshot_2026-11-11_at_12.29.29_AM-removebg-preview.png" alt="Beans" class="gallery-icon">
@@ -105,6 +166,7 @@
                 <img src="images/Screenshot_2026-11-11_at_12.32.59_AM-removebg-preview.png" alt="JTGreen" class="gallery-icon">
                 <div class="achievement-tooltip">If I had a water everytime he changed his skin, It would be VERY watery</div>
             </div>
+
         </div>
     </div>
 
@@ -114,12 +176,102 @@
     <div class="tier-container">
         <h2 class="section-role-title">Members</h2>
         <div class="character-gallery tier-members">
+
+            <!-- Member 1: The Clod God -->
             <div class="character-wrapper">
-                <div class="player-name-tag">PLAYER NAME HERE</div>
-                <div class="gallery-icon placeholder-box"></div>
-                <div class="achievement-tooltip">EDITABLE ACHIEVEMENT TOOLTIP</div>
+                <div class="player-name-tag">The Clod God</div>
+                <img src="images/Screenshot_2026-11-11_at_2.17.40_PM-removebg-preview.png" alt="the clod god" class="gallery-icon">
+                <div class="achievement-tooltip">The Clod God is an UwU Daddy of mine slay frfr skibidi</div>
+            </div>
+
+            <!-- Member 2: Future_Pilot_999 -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">Future_Pilot_999</div>
+                <img src="images/Screenshot_2026-11-11_at_2.24.50_PM-removebg-preview.png" alt="Firebird" class="gallery-icon">
+                <div class="achievement-tooltip">Thought he had 4 9's in his name as in 4 isnt 3 but 3 isnt 4 equaly to 9</div>
+            </div>
+
+        </div>
+    </div>
+
+    <hr class="tier-separator">
+
+    <!-- BOTS -->
+    <div class="tier-container">
+        <h2 class="section-role-title">Bots</h2>
+        <div class="character-gallery tier-bots">
+
+            <!-- Bot 1: CatBot  -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">CatBot</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_2.35.10_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">sfiuhsvzefiuegsvfiseguvfsiguvghdfghdfjdjgdfghhdt"</div>
+            </div>
+
+               <!-- Bot 2: Counting  -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">Counting</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_2.39.48_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">Timmy can Count!</div>
+            </div>
+
+             <!-- Bot 3: Counting Bot  -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">Counting Bot</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_2.43.11_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">I Guess he's a twin?</div>
+            </div>
+
+            <!-- Bot 4: Countr -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">Countr</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_2.48.17_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">Anotha one! I guess everyone can count!</div>
+            </div>
+
+            <!-- Bot 5: Dynor -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">Dyno</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_2.51.01_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">I dunno a Dinasour I think</div>
+            </div>
+
+             <!-- Bot 5: NeonUtil -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">NeonUtil</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_2.56.53_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">Js a chill bot I think, is it even worth my time writing these for literal bots?</div>
+            </div>
+
+             <!-- Bot 6: OwO -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">OwO</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_3.03.24_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">One day I wanna get humped by Her</div>
+            </div>
+
+             <!-- Bot 7: Pancake -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">Pancake</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_3.04.14_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">Gets used to play the most horrible pop culture songs imaginable</div>
+            </div>
+
+             <!-- Bot 9: Peak bot -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">Peak Bot</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_3.05.11_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">Shows Server stats or smth, are you even reading these?</div>
+            </div>
+
+             <!-- Bot 10: Virtual Fisher -->
+            <div class="character-wrapper">
+                <div class="player-name-tag">Virtual Fisher</div>
+                <img src="/Users/dennisdimov/lolbeans-wiki.github.io/images/Screenshot_2026-11-11_at_3.07.32_PM-removebg-preview.png" class="gallery-icon">
+                <div class="achievement-tooltip">Seems like a chill guy, I lowk wanna fish with him</div>
             </div>
         </div>
     </div>
+
 </body>
 </html>
