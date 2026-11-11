@@ -2682,7 +2682,7 @@ body.server-stats-page {
 }
 
 /* Ambient Red, White, and Blue Blurry Background Spots */
-body.server-stats-page::before {
+body.server-stats-page::before { 
     content: '';
     position: fixed;
     top: 0;
@@ -2691,19 +2691,56 @@ body.server-stats-page::before {
     height: 100vh;
     z-index: -1; /* Keeps the effect strictly behind all your content */
     background-color: #2b2b2d; /* Slightly grey background base */
-    
-    /* Blurry glowing color spots */
+}
+/* --- ABSOLUTE MIDNIGHT ABYSS BACKGROUND --- */
+body {
+    background-color: #010103 !important;
+    position: relative;
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #ffffff !important;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-color: #010103 !important;
     background-image: 
-        radial-gradient(circle at 20% 30%, rgba(235, 59, 90, 0.45) 0%, transparent 40%),  /* Red spot */
-        radial-gradient(circle at 80% 20%, rgba(56, 103, 214, 0.45) 0%, transparent 45%), /* Blue spot */
-        radial-gradient(circle at 50% 70%, rgba(240, 240, 240, 0.25) 0%, transparent 50%),/* White spot */
-        radial-gradient(circle at 90% 85%, rgba(220, 50, 50, 0.35) 0%, transparent 40%),  /* Extra Red spot */
-        radial-gradient(circle at 10% 80%, rgba(40, 116, 240, 0.35) 0%, transparent 45%); /* Extra Blue spot */
-        
-    /* Extreme blur to make the spots soft and dreamy */
-    filter: blur(80px);
-    -webkit-filter: blur(80px);
-    
-    /* Performance booster */
+        radial-gradient(circle at 20% 30%, rgba(180, 15, 45, 0.20) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(15, 60, 160, 0.20) 0%, transparent 45%),
+        radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+        radial-gradient(circle at 90% 85%, rgba(150, 10, 35, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 10% 80%, rgba(10, 50, 140, 0.15) 0%, transparent 45%);
+    filter: blur(110px);
+    -webkit-filter: blur(110px);
     pointer-events: none;
+}
+/* --- DISSOLVE THE BLACK BACKGROUND VIA CSS --- */
+.gallery-icon {
+    width: 150px !important;
+    height: 150px !important;
+    object-fit: contain !important;
+    mix-blend-mode: screen !important; /* Instantly makes black pixels transparent against the dark background */
+    background: transparent !important;
+}
+/* --- FADES OUT THE BLACK BACKGROUND EDGES COMPLETELY --- */
+.gallery-icon {
+    width: 150px !important;
+    height: 150px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    mix-blend-mode: normal !important;
+    
+    /* This creates a smooth fade mask that erases the square black corners into the dark background */
+    -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 80%);
+    mask-image: radial-gradient(circle, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 80%);
 }
