@@ -105,16 +105,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Helper to play sound effects safely with logs
-    function playSound(path, speed = 1.0) {
-        console.log("Attempting to play sound:", path);
+    // Helper to play sound effects safely at 1x speed
+    function playSound(path) {
         const sound = new Audio(path);
-        sound.playbackRate = speed;
-        sound.play().then(() => {
-            console.log("Successfully played:", path);
-        }).catch(err => {
-            console.warn("Audio play blocked or failed for:", path, err);
-        });
+        sound.play().catch(err => console.warn("Audio play failed:", err));
     }
 
     const explosionSoundSrc = "audio/explosion.mp3";
@@ -127,14 +121,11 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
     const explosionImage = 'images/images.jpeg';
 
-    // 1. "Dont clek me" Alek
+    // 1. "Dont clek me" Alek -> triggers explosion.mp3
     const clickExplosionAlek = document.getElementById('click-explosion-alek');
-    if (!clickExplosionAlek) {
-        console.error("ERROR: Could not find element with id 'click-explosion-alek' in HTML!");
-    } else {
+    if (clickExplosionAlek) {
         clickExplosionAlek.addEventListener('click', () => {
-            console.log("Click detected on #click-explosion-alek");
-            playSound(explosionSoundSrc, 1.0);
+            playSound(explosionSoundSrc);
             const img = clickExplosionAlek.querySelector('.alek-image');
             if (img) img.src = explosionImage;
             clickExplosionAlek.classList.add('is-transformed');
@@ -142,14 +133,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { once: true });
     }
 
-    // 2. Thanky Alek (Non-spinning)
+    // 2. Thanky Alek (Non-spinning) -> triggers cleck-sound.mp3 at 1x speed
     const thankyAlek = document.getElementById('thanky-alek');
-    if (!thankyAlek) {
-        console.error("ERROR: Could not find element with id 'thanky-alek' in HTML!");
-    } else {
+    if (thankyAlek) {
         thankyAlek.addEventListener('click', () => {
-            console.log("Click detected on #thanky-alek");
-            playSound(cleckSoundSrc, 2.0);
+            playSound(cleckSoundSrc);
             thankyAlek.classList.add('is-stopped');
             const img = thankyAlek.querySelector('.alek-image');
             if (img) img.src = explosionImage;
@@ -159,11 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { once: true });
     }
 
-    // 4. Spinning Alek
+    // 4. Spinning Alek -> triggers spin sounds, then explosion.mp3
     const spinAlek = document.getElementById('spin-alek');
-    if (!spinAlek) {
-        console.error("ERROR: Could not find element with id 'spin-alek' in HTML!");
-    } else {
+    if (spinAlek) {
         let spinClickCount = 0;
         const maxSpinClicks = 8;
 
@@ -174,9 +160,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (spinClickCount < maxSpinClicks) {
                 const randomSound = spinSounds[Math.floor(Math.random() * spinSounds.length)];
-                playSound(randomSound, 1.0);
+                playSound(randomSound);
             } else {
-                playSound(explosionSoundSrc, 1.0);
+                playSound(explosionSoundSrc);
                 const img = spinAlek.querySelector('.alek-image');
                 if (img) img.src = explosionImage;
                 spinAlek.classList.add('is-transformed');
