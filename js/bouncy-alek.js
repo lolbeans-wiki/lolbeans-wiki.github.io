@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const explosionSoundSrc = "audio/explosion.mp3";
-    const cleckSoundSrc = "audio/cleck-sound.mp3"; // Corrected back to original file
+    const cleckSoundSrc = "audio/cleck-sound.mp3";
     const spinSounds = [
         "audio/spin-1.mp3",
         "audio/spin-2.mp3",
@@ -122,35 +122,33 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
     const explosionImage = 'images/images.jpeg';
 
-    // 2. Exploding Alek ("dont clek me") - Plays cleck-sound.mp3 at 2x speed
+    // 1. "Dont clek me" Alek -> triggers explosion.mp3
     const clickExplosionAlek = document.getElementById('click-explosion-alek');
     if (clickExplosionAlek) {
         clickExplosionAlek.addEventListener('click', () => {
-            playSound(cleckSoundSrc, 2.0);
+            playSound(explosionSoundSrc, 1.0);
             const img = clickExplosionAlek.querySelector('.alek-image');
             if (img) img.src = explosionImage;
             clickExplosionAlek.classList.add('is-transformed');
             clickExplosionAlek.disabled = true;
-            clickExplosionAlek.setAttribute('aria-label', 'Alek transformed');
         }, { once: true });
     }
 
-    // 3. Thanky Alek (Non-spinning Alek) - Triggers explosion.mp3 + transform
+    // 2. Thanky Alek (Non-spinning) -> triggers cleck-sound.mp3 at 2x speed
     const thankyAlek = document.getElementById('thanky-alek');
     if (thankyAlek) {
         thankyAlek.addEventListener('click', () => {
-            playSound(explosionSoundSrc, 1.0);
+            playSound(cleckSoundSrc, 2.0);
             thankyAlek.classList.add('is-stopped');
             const img = thankyAlek.querySelector('.alek-image');
             if (img) img.src = explosionImage;
             thankyAlek.classList.add('is-transformed');
-            thankyAlek.setAttribute('aria-pressed', 'true');
             const thankyMsg = document.getElementById('thanky-message');
             if (thankyMsg) thankyMsg.textContent = 'thanki yoyu';
         }, { once: true });
     }
 
-    // 4. Spinning Alek
+    // 4. Spinning Alek -> triggers spin sounds, then explosion.mp3
     const spinAlek = document.getElementById('spin-alek');
     if (spinAlek) {
         let spinClickCount = 0;
@@ -170,7 +168,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (img) img.src = explosionImage;
                 spinAlek.classList.add('is-transformed');
                 spinAlek.disabled = true;
-                spinAlek.setAttribute('aria-label', 'Alek spun into the latest image');
             }
         });
     }
