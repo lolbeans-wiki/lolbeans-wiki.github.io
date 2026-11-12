@@ -91,38 +91,32 @@ function stopCrossingAleks() {
 startCrossingAleks();
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("Audio script loaded!");
-
     // 1. Background Music Loop Handler
     const bgMusic = document.getElementById("bg-music");
     if (bgMusic) {
         bgMusic.volume = 0.4;
-        bgMusic.play().then(() => {
-            console.log("Background music started playing successfully!");
-        }).catch(err => {
-            console.log("Background music blocked by browser autoplay policy. Waiting for first click...");
-            const unlockAudio = () => {
-                bgMusic.play().then(() => console.log("Background music unlocked & playing!")).catch(e => console.error("Still blocked:", e));
-                window.removeEventListener("click", unlockAudio);
-            };
+        
+        const unlockAudio = () => {
+            bgMusic.play().catch(e => console.log("Waiting for user interaction"));
+            window.removeEventListener("click", unlockAudio);
+            window.removeEventListener("keydown", unlockAudio);
+        };
+
+        bgMusic.play().catch(() => {
             window.addEventListener("click", unlockAudio);
+            window.addEventListener("keydown", unlockAudio);
         });
-    } else {
-        console.error("Error: #bg-music audio element not found in HTML!");
     }
 
-    // Helper to play sound effects with logging
-    function playSound(path) {
-        console.log("Attempting to play sound:", path);
+    // Helper to play sound effects
+    function playSound(path, speed = 1.0) {
         const sound = new Audio(path);
-        sound.play().then(() => {
-            console.log("Successfully played:", path);
-        }).catch(err => {
-            console.error("Failed to play sound (" + path + "):", err);
-        });
+        sound.playbackRate = speed; // Set playback speed (e.g. 2.0 for 2x faster)
+        sound.play().catch(err => console.warn("Audio play failed:", err));
     }
 
     const explosionSoundSrc = "audio/explosion.mp3";
+    const cleckSoundSrc = "audio/cleck-sound.mp3";[cite: 9]
     const spinSounds = [
         "audio/spin-1.mp3",
         "audio/spin-2.mp3",
@@ -131,16 +125,16 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
     const explosionImage = 'images/images.jpeg';
 
-    // 2. Exploding Alek ("dont clek me")
+    // 2. Exploding Alek ("dont clek me") - Plays 2x faster and only once
     const clickExplosionAlek = document.getElementById('click-explosion-alek');
     if (clickExplosionAlek) {
         clickExplosionAlek.addEventListener('click', () => {
-            playSound(explosionSoundSrc);
+            playSound(cleckSoundSrc, 2.0); // Plays 2x faster
             clickExplosionAlek.querySelector('.alek-image').src = explosionImage;
             clickExplosionAlek.classList.add('is-transformed');
             clickExplosionAlek.disabled = true;
             clickExplosionAlek.setAttribute('aria-label', 'Alek transformed');
-        });
+        }, { once: true }); // { once: true } ensures this click handler only fires once!
     }
 
     // 3. Thanky Alek
@@ -167,9 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (spinClickCount < maxSpinClicks) {
                 const randomSound = spinSounds[Math.floor(Math.random() * spinSounds.length)];
-                playSound(randomSound);
+                playSound(randomSound, 1.0);
             } else {
-                playSound(explosionSoundSrc);
+                playSound(explosionSoundSrc, 1.0);
                 spinAlek.querySelector('.alek-image').src = explosionImage;
                 spinAlek.classList.add('is-transformed');
                 spinAlek.disabled = true;
