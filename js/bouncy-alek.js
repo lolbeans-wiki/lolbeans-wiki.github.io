@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const explosionSoundSrc = "audio/explosion.mp3";
-    const cleckSoundSrc = "audio/brain-fart-extended-youtube-poop-soundboard.mp3"; // Updated to your new sound file name
+    const cleckSoundSrc = "audio/cleck-sound.mp3"; // Corrected back to original file
     const spinSounds = [
         "audio/spin-1.mp3",
         "audio/spin-2.mp3",
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
     const explosionImage = 'images/images.jpeg';
 
-    // 2. Exploding Alek ("dont clek me") - Plays 2x faster, exactly once
+    // 2. Exploding Alek ("dont clek me") - Plays cleck-sound.mp3 at 2x speed
     const clickExplosionAlek = document.getElementById('click-explosion-alek');
     if (clickExplosionAlek) {
         clickExplosionAlek.addEventListener('click', () => {
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { once: true });
     }
 
-    // 3. Thanky Alek (Non-spinning Alek) - Now triggers the explosion sound + transform
+    // 3. Thanky Alek (Non-spinning Alek) - Triggers explosion.mp3 + transform
     const thankyAlek = document.getElementById('thanky-alek');
     if (thankyAlek) {
         thankyAlek.addEventListener('click', () => {
