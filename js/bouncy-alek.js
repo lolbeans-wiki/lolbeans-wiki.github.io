@@ -88,36 +88,93 @@ function stopCrossingAleks() {
     previousCrossingFrame = 0;
 }
 
-const explosionImage = 'images/images.jpeg';
-const clickExplosionAlek = document.getElementById('click-explosion-alek');
-clickExplosionAlek.addEventListener('click', () => {
-    clickExplosionAlek.querySelector('.alek-image').src = explosionImage;
-    clickExplosionAlek.classList.add('is-transformed');
-    clickExplosionAlek.disabled = true;
-    clickExplosionAlek.setAttribute('aria-label', 'Alek transformed');
-});
+startCrossingAleks();
 
-const thankyAlek = document.getElementById('thanky-alek');
-thankyAlek.addEventListener('click', () => {
-    thankyAlek.classList.add('is-stopped');
-    thankyAlek.setAttribute('aria-pressed', 'true');
-    document.getElementById('thanky-message').textContent = 'thanki yoyu';
-});
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Audio script loaded!");
 
-const spinAlek = document.getElementById('spin-alek');
-let spinClickCount = 0;
-spinAlek.addEventListener('click', () => {
-    spinClickCount += 1;
-    const spinDuration = Math.max(0.28, 1.4 - spinClickCount * 0.14);
-    spinAlek.style.setProperty('--spin-duration', `${spinDuration}s`);
+    // 1. Background Music Loop Handler
+    const bgMusic = document.getElementById("bg-music");
+    if (bgMusic) {
+        bgMusic.volume = 0.4;
+        bgMusic.play().then(() => {
+            console.log("Background music started playing successfully!");
+        }).catch(err => {
+            console.log("Background music blocked by browser autoplay policy. Waiting for first click...");
+            const unlockAudio = () => {
+                bgMusic.play().then(() => console.log("Background music unlocked & playing!")).catch(e => console.error("Still blocked:", e));
+                window.removeEventListener("click", unlockAudio);
+            };
+            window.addEventListener("click", unlockAudio);
+        });
+    } else {
+        console.error("Error: #bg-music audio element not found in HTML!");
+    }
 
-    if (spinClickCount >= 8) {
-        spinAlek.querySelector('.alek-image').src = explosionImage;
-        spinAlek.classList.add('is-transformed');
-        spinAlek.disabled = true;
-        spinAlek.setAttribute('aria-label', 'Alek spun into the latest image');
-        return;
+    // Helper to play sound effects with logging
+    function playSound(path) {
+        console.log("Attempting to play sound:", path);
+        const sound = new Audio(path);
+        sound.play().then(() => {
+            console.log("Successfully played:", path);
+        }).catch(err => {
+            console.error("Failed to play sound (" + path + "):", err);
+        });
+    }
+
+    const explosionSoundSrc = "audio/explosion.mp3";
+    const spinSounds = [
+        "audio/spin-1.mp3",
+        "audio/spin-2.mp3",
+        "audio/spin-3.mp3",
+        "audio/spin-4.mp3"
+    ];
+    const explosionImage = 'images/images.jpeg';
+
+    // 2. Exploding Alek ("dont clek me")
+    const clickExplosionAlek = document.getElementById('click-explosion-alek');
+    if (clickExplosionAlek) {
+        clickExplosionAlek.addEventListener('click', () => {
+            playSound(explosionSoundSrc);
+            clickExplosionAlek.querySelector('.alek-image').src = explosionImage;
+            clickExplosionAlek.classList.add('is-transformed');
+            clickExplosionAlek.disabled = true;
+            clickExplosionAlek.setAttribute('aria-label', 'Alek transformed');
+        });
+    }
+
+    // 3. Thanky Alek
+    const thankyAlek = document.getElementById('thanky-alek');
+    if (thankyAlek) {
+        thankyAlek.addEventListener('click', () => {
+            thankyAlek.classList.add('is-stopped');
+            thankyAlek.setAttribute('aria-pressed', 'true');
+            const thankyMsg = document.getElementById('thanky-message');
+            if (thankyMsg) thankyMsg.textContent = 'thanki yoyu';
+        });
+    }
+
+    // 4. Spinning Alek
+    const spinAlek = document.getElementById('spin-alek');
+    if (spinAlek) {
+        let spinClickCount = 0;
+        const maxSpinClicks = 8;
+
+        spinAlek.addEventListener('click', () => {
+            spinClickCount += 1;
+            const spinDuration = Math.max(0.28, 1.4 - spinClickCount * 0.14);
+            spinAlek.style.setProperty('--spin-duration', `${spinDuration}s`);
+
+            if (spinClickCount < maxSpinClicks) {
+                const randomSound = spinSounds[Math.floor(Math.random() * spinSounds.length)];
+                playSound(randomSound);
+            } else {
+                playSound(explosionSoundSrc);
+                spinAlek.querySelector('.alek-image').src = explosionImage;
+                spinAlek.classList.add('is-transformed');
+                spinAlek.disabled = true;
+                spinAlek.setAttribute('aria-label', 'Alek spun into the latest image');
+            }
+        });
     }
 });
-
-startCrossingAleks();
