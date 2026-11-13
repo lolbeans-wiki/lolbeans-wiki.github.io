@@ -411,11 +411,37 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(script);
     }
 
+    // ===== KEEP PLAYER NAMES IN ENGLISH (never machine-translated) =====
+    // Add more selectors to any list below to protect more things.
+    // '*' = every page. Other keys are page file names (without .html).
+    // You can also add  translate="no"  or  data-keep-english  to any element in the HTML.
+    const NAME_GUESSES = ['[class*="name" i]', '[class*="row" i]', '[class*="entry" i]', '[class*="item" i]', '[class*="result" i]', '[class*="suggest" i]', 'td', 'li'];
+    const KEEP_ENGLISH = {
+        '*': ['input', 'datalist', '[data-keep-english]'],
+        'player-stats': NAME_GUESSES,
+        'stats2': NAME_GUESSES,
+        'win-grinders': NAME_GUESSES,
+        'server-stats': NAME_GUESSES.concat(['button'])
+    };
+    const pageName = (location.pathname.split('/').pop() || 'index').replace(/\.html?$/i, '').toLowerCase();
+    const keepSelector = [].concat(KEEP_ENGLISH['*'], KEEP_ENGLISH[pageName] || []).join(',');
+
+    function protectNames(node) {
+        if (!keepSelector || !node) return;
+        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+        if (!el || el.nodeType !== Node.ELEMENT_NODE) return;
+        const mark = (e) => { e.setAttribute('translate', 'no'); e.classList.add('notranslate'); };
+        const hit = el.closest(keepSelector);
+        if (hit) mark(hit);
+        el.querySelectorAll(keepSelector).forEach(mark);
+    }
+
     // --- Main function (same name your menu already uses) ---
     function applySiteLanguage(lang, userInitiated) {
         if (!siteTranslations[lang]) lang = 'en';
 
         applyDictionary(lang);
+        protectNames(document.body);
         document.documentElement.lang = lang;
         document.documentElement.dir = RTL_LANGS.includes(lang) ? 'rtl' : 'ltr';
         document.querySelectorAll('.lang-option').forEach((btn) => {
@@ -438,6 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const lang = localStorage.getItem('siteLanguage') || 'en';
         mutations.forEach((m) => m.addedNodes.forEach((n) => {
             if (n.nodeType === Node.ELEMENT_NODE) applyDictionary(lang, n);
+            protectNames(n);
         }));
     }).observe(document.body, { childList: true, subtree: true });
 
