@@ -421,6 +421,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'player-stats': NAME_GUESSES,
         'stats2': NAME_GUESSES,
         'win-grinders': NAME_GUESSES,
+        // Size comparison: only the player-name part of each card (keeps "smaller than leader" translated)
+        'size-comparison': ['[class*="name" i]', '[class*="player" i] h3', '[class*="player" i] h4', '[class*="card" i] h3', '[class*="card" i] h4', '[class*="card" i] strong', '[class*="card" i] b'],
         'server-stats': NAME_GUESSES.concat(['button'])
     };
     const pageName = (location.pathname.split('/').pop() || 'index').replace(/\.html?$/i, '').toLowerCase();
