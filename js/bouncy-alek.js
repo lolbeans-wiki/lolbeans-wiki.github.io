@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===== Sound-reactive popup image =====
     // Appears with a sound, changes size / stretches every time the sound hits,
     // and disappears when the sound is finished.
-    const revealImageSrc = 'images/Screenshot%202026-11-12%20at%2010.00.41%20PM.png';
+    const revealImageSrc = 'images/Screenshot%202026-11-13%20at%205.04.38%20PM.png';
     new Image().src = revealImageSrc; // preload so it shows instantly
     let audioCtx = null;
 
