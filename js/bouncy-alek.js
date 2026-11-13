@@ -111,6 +111,98 @@ document.addEventListener("DOMContentLoaded", () => {
         sound.play().catch(err => console.warn("Audio play failed:", err));
     }
 
+    // ===== Sound-reactive popup image =====
+    // Appears with a sound, changes size / stretches every time the sound hits,
+    // and disappears when the sound is finished.
+    const revealImageSrc = 'images/Screenshot%202026-11-12%20at%2010.00.41%20PM.png';
+    new Image().src = revealImageSrc; // preload so it shows instantly
+    let audioCtx = null;
+
+    function playWithReactiveImage(soundPath, imageSrc) {
+        const sound = new Audio(soundPath);
+        const img = document.createElement('img');
+        img.src = imageSrc;
+        img.alt = '';
+        img.draggable = false;
+        img.style.cssText = 'position:fixed;left:50%;top:50%;width:28vmin;height:auto;' +
+            'transform:translate(-50%,-50%);transition:transform 70ms ease-out;' +
+            'z-index:9999;pointer-events:none;user-select:none;';
+
+        let analyser = null;
+        let data = null;
+        let rafId = 0;
+        let finished = false;
+
+        // Listen to the real audio volume (only on a real website; on file:// it would mute the sound)
+        if (location.protocol.indexOf('http') === 0) {
+            try {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                audioCtx = audioCtx || new AC();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const source = audioCtx.createMediaElementSource(sound);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                data = new Uint8Array(analyser.frequencyBinCount);
+            } catch (err) {
+                analyser = null;
+            }
+        }
+
+        function finish() {
+            if (finished) return;
+            finished = true;
+            cancelAnimationFrame(rafId);
+            img.remove();
+        }
+
+        let lastLevel = 0;
+        let lastSwitch = 0;
+        let size = 1, stretchX = 1, stretchY = 1;
+
+        function pickNewShape() {
+            size = 0.7 + Math.random() * 1.0;                 // 0.7x to 1.7x
+            if (Math.random() < 0.5) {                        // wide and squashed
+                stretchX = 1.4 + Math.random() * 0.8;
+                stretchY = 0.6 + Math.random() * 0.3;
+            } else {                                          // tall and skinny
+                stretchX = 0.6 + Math.random() * 0.3;
+                stretchY = 1.4 + Math.random() * 0.8;
+            }
+        }
+
+        function frame(now) {
+            if (finished) return;
+            let level;
+            if (analyser) {
+                analyser.getByteFrequencyData(data);
+                let sum = 0;
+                for (let i = 0; i < data.length; i++) sum += data[i];
+                level = (sum / data.length) / 255;
+            } else {
+                level = 0.2 + Math.random() * 0.6;            // fallback when the volume can't be read
+            }
+
+            const hit = level > lastLevel + 0.05 || now - lastSwitch > 160;
+            if (hit && level > 0.02) {
+                pickNewShape();
+                lastSwitch = now;
+            }
+            lastLevel = level;
+
+            const pulse = 1 + level * 0.4;
+            img.style.transform = 'translate(-50%,-50%) scale(' +
+                (stretchX * size * pulse) + ',' + (stretchY * size * pulse) + ')';
+            rafId = requestAnimationFrame(frame);
+        }
+
+        sound.addEventListener('ended', finish);
+        sound.addEventListener('error', finish);
+        document.body.appendChild(img);
+        sound.play().then(() => { rafId = requestAnimationFrame(frame); }).catch(finish);
+    }
+
     const explosionSoundSrc = "audio/explosion.mp3";
     const cleckSoundSrc = "audio/cleck-sound.mp3";
     const spinSounds = [
@@ -133,11 +225,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { once: true });
     }
 
-    // 2. Thanky Alek (Non-spinning) -> triggers cleck-sound.mp3 at 1x speed
+    // 2. "Click me" Alek -> cleck sound + sound-reactive popup image
     const thankyAlek = document.getElementById('thanky-alek');
     if (thankyAlek) {
         thankyAlek.addEventListener('click', () => {
-            playSound(cleckSoundSrc);
+            playWithReactiveImage(cleckSoundSrc, revealImageSrc);
             thankyAlek.classList.add('is-stopped');
             const img = thankyAlek.querySelector('.alek-image');
             if (img) img.src = explosionImage;
