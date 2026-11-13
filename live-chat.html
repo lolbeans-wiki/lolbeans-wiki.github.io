@@ -6,6 +6,76 @@
     <title data-i18n="liveChatTitle">Live Chat - US Lolbeans server Web</title>
     <link rel="icon" type="image/png" href="images/download.png">
     <link rel="stylesheet" href="css/styles.css?v=20261107-button-hover-v6">
+    <style>
+        /* Chat on the left (as wide as possible), Lolbeans game on the right */
+        .live-chat-shell {
+            width: min(2200px, calc(100% - 24px)) !important;
+            max-width: none !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            box-sizing: border-box;
+        }
+        .live-chat-chat-layout {
+            display: flex !important;
+            gap: 16px;
+            align-items: stretch;
+            width: 100% !important;
+            max-width: none !important;
+        }
+        .live-chat-chat-layout > .live-chat-frame {
+            flex: 1 1 0 !important;   /* takes ALL the leftover space */
+            min-width: 0 !important;
+            width: auto !important;
+            max-width: none !important;
+        }
+        .live-chat-game {
+            flex: 0 0 clamp(520px, 38vw, 720px);   /* Lolbeans width: unchanged */
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .live-chat-game-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 12px;
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+        .live-chat-game-bar a,
+        .live-chat-game-bar button {
+            color: #fff;
+            background: #e63c2f;
+            border: 0;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .live-chat-game-actions { display: flex; gap: 8px; }
+        .live-chat-game iframe {
+            flex: 1;
+            width: 100%;
+            min-height: 640px;
+            border: 0;
+            background: #000;
+        }
+        .live-chat-game.is-hidden iframe { display: none; }
+        .live-chat-game.is-hidden { flex: 0 0 auto; }
+        @media (max-width: 1000px) {
+            .live-chat-chat-layout { flex-direction: column; }
+            .live-chat-game { flex: 0 0 auto; width: 100%; }
+            .live-chat-game iframe { min-height: 420px; }
+        }
+    </style>
 </head>
 <body class="live-chat-page">
     <main class="live-chat-shell">
@@ -18,11 +88,46 @@
             </div>
         </form>
         <div class="live-chat-chat-layout">
+            <!-- Left: the chat -->
             <div class="live-chat-frame" id="live-chat-frame">
                 <p class="live-chat-prompt" id="live-chat-prompt" data-i18n="liveChatPrompt">Choose a nickname to join the chat.</p>
             </div>
+
+            <!-- Right: Lolbeans.io game to play when bored -->
+            <section class="live-chat-game" id="live-chat-game">
+                <div class="live-chat-game-bar">
+                    <span>Bored? Play Lolbeans.io</span>
+                    <span class="live-chat-game-actions">
+                        <a href="https://lolbeans.io/" target="_blank" rel="noopener noreferrer">Open in new tab</a>
+                        <button type="button" id="live-chat-game-toggle" aria-expanded="true">Hide</button>
+                    </span>
+                </div>
+                <iframe id="live-chat-game-frame"
+                        src="https://lolbeans.io/"
+                        title="Lolbeans.io"
+                        allow="autoplay; fullscreen; gamepad; clipboard-write"
+                        allowfullscreen
+                        referrerpolicy="no-referrer"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-forms"></iframe>
+            </section>
         </div>
     </main>
+    <script>
+        // Hide/Show the game (hiding also stops the game and its sound)
+        (function () {
+            const box = document.getElementById('live-chat-game');
+            const frame = document.getElementById('live-chat-game-frame');
+            const btn = document.getElementById('live-chat-game-toggle');
+            const url = frame.getAttribute('src');
+            btn.addEventListener('click', () => {
+                const hide = !box.classList.contains('is-hidden');
+                box.classList.toggle('is-hidden', hide);
+                frame.setAttribute('src', hide ? 'about:blank' : url);
+                btn.textContent = hide ? 'Show' : 'Hide';
+                btn.setAttribute('aria-expanded', String(!hide));
+            });
+        })();
+    </script>
     <script src="js/live-chat.js"></script>
     <script src="js/common.js"></script>
 </body>
