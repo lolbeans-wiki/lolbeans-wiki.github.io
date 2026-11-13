@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bean Editor - US Lolbeans server Web</title>
+    <title data-i18n="beanClickerPageTitle">Bean Editor - US Lolbeans server Web</title>
     <link rel="icon" type="image/png" href="images/download.png">
     <link rel="stylesheet" href="css/styles.css?v=20261107-button-hover-v6">
 </head>
@@ -11,38 +11,38 @@
     <div class="sub-screen-panel">
         <div class="bean-rain" id="bean-rain" aria-hidden="true"></div>
         <div class="bean-travelers" id="bean-travelers" aria-hidden="true"></div>
-        <a class="back-button-top" href="extras.html">Back to Extras</a>
+        <a class="back-button-top" href="extras.html" data-i18n="backToExtras">Back to Extras</a>
         <button class="bean-worker-offer" id="buy-bean-worker" type="button" aria-label="Buy Bean Worker for 100 coins">
             <img src="images/bean-worker.png" alt="">
             <div class="bean-worker-details">
-                <h2>Bean Worker <span class="bean-owned-count" id="bean-worker-owned-count">0</span></h2>
-                <p>+0.5 Bean Coins per second</p>
+                <h2 data-i18n="beanWorkerHeading">Bean Worker <span class="bean-owned-count" id="bean-worker-owned-count">0</span></h2>
+                <p data-i18n="beanWorkerDesc">+0.5 Bean Coins per second</p>
                 <span class="bean-worker-cost"><span id="bean-worker-cost">100</span></span>
             </div>
         </button>
         <button class="bean-worker-offer bean-click-upgrade" id="buy-bean-click-upgrade" type="button" aria-label="Buy Bean Editor for 1,000 coins">
             <img src="images/bean-click-upgrade.png" alt="">
             <div class="bean-worker-details">
-                <h2>Bean Editor <span class="bean-owned-count" id="bean-click-upgrade-owned-count">0</span></h2>
-                <p>+1 Bean Coin per click</p>
+                <h2 data-i18n="beanEditorHeading">Bean Editor <span class="bean-owned-count" id="bean-click-upgrade-owned-count">0</span></h2>
+                <p data-i18n="beanEditorDesc">+1 Bean Coin per click</p>
                 <span class="bean-worker-cost"><span id="bean-click-upgrade-cost">1000</span></span>
             </div>
         </button>
         <button class="bean-worker-offer bean-not-sus-biker-offer" id="buy-not-sus-biker-upgrade" type="button" aria-label="Buy NOT sus biker for 20,000 coins">
             <img src="images/bean-not-sus-biker.png" alt="">
             <div class="bean-worker-details">
-                <h2>NOT sus biker <span class="bean-owned-count" id="bean-not-sus-biker-owned-count">0</span></h2>
+                <h2 data-i18n="notSusBikerHeading">NOT sus biker <span class="bean-owned-count" id="bean-not-sus-biker-owned-count">0</span></h2>
                 <span class="bean-worker-cost"><span id="not-sus-biker-upgrade-cost">20000</span></span>
             </div>
         </button>
         <main class="bean-clicker">
             <h1 class="bean-clicker-count">
-                <span>Bean Coins</span>
+                <span data-i18n="beanCoinsLabel">Bean Coins</span>
                 <span id="bean-coin-count" aria-live="polite">0</span>
-                <span id="bean-coins-per-second">0 coins per second</span>
-                <span id="bean-coins-per-click">1 coin per click</span>
+                <span id="bean-coins-per-second" data-i18n="coinsPerSec">0 coins per second</span>
+                <span id="bean-coins-per-click" data-i18n="coinPerClick">1 coin per click</span>
             </h1>
-            <p class="bean-save-status" id="bean-save-status" role="status" aria-live="polite">
+            <p class="bean-save-status" id="bean-save-status" role="status" aria-live="polite" data-i18n="loadingProgress">
                 Loading saved progress...
             </p>
             <p class="bean-offline-earnings" id="bean-offline-earnings" role="status" hidden></p>
@@ -50,31 +50,31 @@
                 <button class="bean-coin" id="bean-coin" type="button" aria-label="Collect a bean coin">
                     <img src="images/bean-coin.png" alt="">
                 </button>
-                <button class="bean-fast-click-reward" id="bean-fast-click-reward" type="button" hidden>
+                <button class="bean-fast-click-reward" id="bean-fast-click-reward" type="button" data-i18n="tiredOfClicking" hidden>
                     Tired of clicking?
                 </button>
             </div>
         </main>
         <section class="bean-upgrades" aria-labelledby="bean-upgrades-title">
-            <h2 id="bean-upgrades-title">Upgrades</h2>
+            <h2 id="bean-upgrades-title" data-i18n="upgradesHeading">Upgrades</h2>
             <button class="bean-worker-offer bean-upgrade-offer bean-mahjic-upgrade" id="buy-mahjic-upgrade" type="button" aria-label="Buy mahjic for 500 coins">
                 <img src="images/bean-worker-efficiency.png" alt="">
                 <div class="bean-worker-details">
-                    <h3>mahjic</h3>
-                    <p>5x worker efficiency</p>
+                    <h3 data-i18n="mahjicHeading">mahjic</h3>
+                    <p data-i18n="mahjicDesc">5x worker efficiency</p>
                     <span class="bean-worker-cost"><span id="mahjic-upgrade-cost">500</span></span>
                 </div>
             </button>
             <button class="bean-worker-offer bean-upgrade-offer bean-majik-hand-upgrade" id="buy-majik-hand-upgrade" type="button" aria-label="Buy Majik hand for 1,000 coins">
                 <img src="images/bean-majik-hand.png" alt="">
                 <div class="bean-worker-details">
-                    <h3>Majik hand</h3>
-                    <p>5x Editor efficiency</p>
+                    <h3 data-i18n="majikHandHeading">Majik hand</h3>
+                    <p data-i18n="majikHandDesc">5x Editor efficiency</p>
                     <span class="bean-worker-cost"><span id="majik-hand-upgrade-cost">1000</span></span>
                 </div>
             </button>
         </section>
-        <button class="bean-reset-progress" id="bean-reset-progress" type="button" disabled>
+        <button class="bean-reset-progress" id="bean-reset-progress" type="button" data-i18n="resetProgressBtn" disabled>
             Reset Progress
         </button>
     </div>

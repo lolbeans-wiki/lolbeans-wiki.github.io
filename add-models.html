@@ -3,70 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How to Add your own models - US Lolbeans server Web</title>
+    <title data-i18n="addModelsPageTitle">How to Add your own models - US Lolbeans server Web</title>
     <link rel="icon" type="image/png" href="images/download.png">
     <link rel="stylesheet" href="css/styles.css?v=20261107-button-hover-v6">
 </head>
 <body class="fun-active">
 
     <div id="models-sub-panel" class="sub-screen-panel">
-        <p class="models-guide-credit">Credits: @omoriboycentral also known as 10s mr marsh, and @mrblankcoding also known as E</p>
-        <a class="back-button-top" href="extras.html">Back to Extras</a>
+        <p class="models-guide-credit" data-i18n="modelsGuideCredit">Credits: @omoriboycentral also known as 10s mr marsh, and @mrblankcoding also known as E</p>
+        <a class="back-button-top" href="extras.html" data-i18n="backToExtras">Back to Extras</a>
         <main class="models-guide-content">
-            <h1>How to use any model as your player model in Lolbeans!</h1>
-            <p>This guide uses a third-party userscript to change how your character looks in your browser. The script runs on lolbeans.io and modifies the game's page locally. Review it before installing, and only use code and models you trust.</p>
+            <h1 data-i18n="modelsGuideHeading">How to use any model as your player model in Lolbeans!</h1>
+            <p data-i18n="modelsGuideIntro">This guide uses a third-party userscript to change how your character looks in your browser. The script runs on lolbeans.io and modifies the game's page locally. Review it before installing, and only use code and models you trust.</p>
 
             <ol>
-                <li>I believe chrome is needed for this, I tested on firefox and it doesn't work</li>
-                <li>install extension CodeTweak, made by e!, on chrome web store</li>
-                <li>Manage the extension and enable Userscripts</li>
-                <li>Copy the entire script from the bottom of this page</li>
-                <li>Click on the extension then press the plus icon</li>
-                <li>Simply copy and paste into the CodeTweak editor, and save the script</li>
-                <li>Load lolbeans.io, and press escape, and then you will have the menu to load skins</li>
-                <li>The editor accepts .glb files, I personally use sketchfab to find these</li>
+                <li data-i18n="modelsStep1">I believe chrome is needed for this, I tested on firefox and it doesn't work</li>
+                <li data-i18n="modelsStep2">install extension CodeTweak, made by e!, on chrome web store</li>
+                <li data-i18n="modelsStep3">Manage the extension and enable Userscripts</li>
+                <li data-i18n="modelsStep4">Copy the entire script from the bottom of this page</li>
+                <li data-i18n="modelsStep5">Click on the extension then press the plus icon</li>
+                <li data-i18n="modelsStep6">Simply copy and paste into the CodeTweak editor, and save the script</li>
+                <li data-i18n="modelsStep7">Load lolbeans.io, and press escape, and then you will have the menu to load skins</li>
+                <li data-i18n="modelsStep8">The editor accepts .glb files, I personally use sketchfab to find these</li>
             </ol>
 
             <section class="models-guide-images" aria-labelledby="models-images-title">
                 <figure>
                     <img src="images/Screenshot%202026-11-01%20at%209.12.41%20PM.png" alt="Chrome Web Store search results for CodeTweak" loading="lazy">
-                    <figcaption>Search for CodeTweak in the Chrome Web Store.</figcaption>
+                    <figcaption data-i18n="modelsFig1">Search for CodeTweak in the Chrome Web Store.</figcaption>
                 </figure>
                 <figure>
                     <img src="images/Screenshot%202026-11-01%20at%209.12.53%20PM.png" alt="CodeTweak extension page in the Chrome Web Store" loading="lazy">
-                    <figcaption>Install the CodeTweak extension.</figcaption>
+                    <figcaption data-i18n="modelsFig2">Install the CodeTweak extension.</figcaption>
                 </figure>
                 <figure>
                     <img src="images/Screenshot%202026-11-01%20at%209.13.05%20PM.png" alt="CodeTweak extension settings with User Scripts enabled" loading="lazy">
-                    <figcaption>Enable User Scripts in the extension settings.</figcaption>
+                    <figcaption data-i18n="modelsFig3">Enable User Scripts in the extension settings.</figcaption>
                 </figure>
                 <figure>
                     <img src="images/Screenshot%202026-11-01%20at%209.13.29%20PM.png" alt="The full userscript selected for copying" loading="lazy">
-                    <figcaption>Copy the complete script from the code box at the bottom of this page.</figcaption>
+                    <figcaption data-i18n="modelsFig4">Copy the complete script from the code box at the bottom of this page.</figcaption>
                 </figure>
                 <figure>
                     <img src="images/Screenshot%202026-11-01%20at%209.13.39%20PM.png" alt="CodeTweak extension popup with the plus button highlighted" loading="lazy">
-                    <figcaption>Use the plus button to create a new script.</figcaption>
+                    <figcaption data-i18n="modelsFig5">Use the plus button to create a new script.</figcaption>
                 </figure>
                 <figure>
                     <img src="images/Screenshot%202026-11-01%20at%209.13.49%20PM.png" alt="CodeTweak script editor" loading="lazy">
-                    <figcaption>Paste the script in the CodeTweak editor and save it.</figcaption>
+                    <figcaption data-i18n="modelsFig6">Paste the script in the CodeTweak editor and save it.</figcaption>
                 </figure>
                 <figure>
                     <img src="images/Screenshot%202026-11-01%20at%209.13.59%20PM.png" alt="Lolbeans running with the Bean Model panel open" loading="lazy">
-                    <figcaption>On Lolbeans, press Escape to open the Bean Model panel.</figcaption>
+                    <figcaption data-i18n="modelsFig7">On Lolbeans, press Escape to open the Bean Model panel.</figcaption>
                 </figure>
             </section>
 
             <section class="models-script-section" aria-label="Script code">
-                <p>The script below is made entirely by @mrblankcode</p>
+                <p data-i18n="modelsScriptCredit">The script below is made entirely by @mrblankcode</p>
                 <div class="models-script-box">
                     <div class="models-script-actions">
-                        <button id="copy-model-script" type="button" disabled>Copy entire script</button>
-                        <a href="js/lolbeans-character-spoof.user.js" download>Download userscript</a>
+                        <button id="copy-model-script" type="button" data-i18n="copyScriptBtn" disabled>Copy entire script</button>
+                        <a href="js/lolbeans-character-spoof.user.js" data-i18n="downloadScriptBtn" download>Download userscript</a>
                     </div>
-                    <textarea id="model-script-source" rows="24" readonly spellcheck="false" aria-label="Full Lolbeans character model userscript">Loading the full script...</textarea>
-                    <p id="model-script-status" role="status" aria-live="polite">Loading the supplied script...</p>
+                    <textarea id="model-script-source" rows="24" readonly spellcheck="false" aria-label="Full Lolbeans character model userscript" data-i18n="loadingFullScript">Loading the full script...</textarea>
+                    <p id="model-script-status" role="status" aria-live="polite" data-i18n="loadingSuppliedScript">Loading the supplied script...</p>
                 </div>
             </section>
         </main>

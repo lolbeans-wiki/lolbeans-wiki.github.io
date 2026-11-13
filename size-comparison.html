@@ -10,16 +10,16 @@
 <body>
 
     <div id="size-sub-panel" class="sub-screen-panel">
-        <a class="back-button-top" href="index.html">Back to Skill Measure</a>
+        <a class="back-button-top" href="index.html" data-i18n="backToSkillMeasure">Back to Skill Measure</a>
         <div class="size-comparison">
-            <h1 class="title">Size Comparison by Skill</h1>
+            <h1 class="title" data-i18n="sizeComparisonTitle">Size Comparison by Skill</h1>
             <div class="search-wrap size-search-wrap">
-                <input class="size-player-search" id="size-player-search" type="search" placeholder="Search a player..." autocomplete="off">
+                <input class="size-player-search" id="size-player-search" type="search" placeholder="Search a player..." data-i18n-placeholder="searchPlayerPlaceholder" autocomplete="off">
                 <div id="size-name-suggestions" class="name-suggestions"></div>
             </div>
             <div class="size-comparison-stage" id="size-comparison-stage" aria-live="polite"></div>
             <section class="size-leaderboard" aria-labelledby="size-leaderboard-title">
-                <p id="size-leaderboard-status" class="size-leaderboard-status" aria-live="polite">Loading leaderboard...</p>
+                <p id="size-leaderboard-status" class="size-leaderboard-status" aria-live="polite" data-i18n="loadingLeaderboard">Loading leaderboard...</p>
                 <ol class="size-player-chart" id="size-leaderboard-rows" aria-label="Players ranked by size"></ol>
             </section>
         </div>

@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Chat - US Lolbeans server Web</title>
+    <title data-i18n="liveChatTitle">Live Chat - US Lolbeans server Web</title>
     <link rel="icon" type="image/png" href="images/download.png">
     <link rel="stylesheet" href="css/styles.css?v=20261107-button-hover-v6">
 </head>
 <body class="live-chat-page">
     <main class="live-chat-shell">
-        <a class="live-chat-back" href="extras.html">Back to Extras</a>
-        <h1 class="live-chat-title">Live Chat</h1>
+        <a class="live-chat-back" href="extras.html" data-i18n="backToExtras">Back to Extras</a>
+        <h1 class="live-chat-title" data-i18n="liveChatHeading">Live Chat</h1>
         <form class="live-chat-nickname-form" id="live-chat-nickname-form">
             <div class="live-chat-nickname-controls">
-                <input id="live-chat-nickname" name="nickname" type="text" maxlength="20" autocomplete="nickname" aria-label="Your nickname" placeholder="Your nickname" required>
-                <button type="submit">Join Chat</button>
+                <input id="live-chat-nickname" name="nickname" type="text" maxlength="20" autocomplete="nickname" aria-label="Your nickname" placeholder="Your nickname" data-i18n-placeholder="nicknamePlaceholder" required>
+                <button type="submit" data-i18n="joinChatBtn">Join Chat</button>
             </div>
         </form>
         <div class="live-chat-chat-layout">
             <div class="live-chat-frame" id="live-chat-frame">
-                <p class="live-chat-prompt" id="live-chat-prompt">Choose a nickname to join the chat.</p>
+                <p class="live-chat-prompt" id="live-chat-prompt" data-i18n="liveChatPrompt">Choose a nickname to join the chat.</p>
             </div>
         </div>
     </main>
     <script src="js/live-chat.js"></script>
+    <script src="js/common.js"></script>
 </body>
 </html>

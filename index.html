@@ -3,43 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>US Lolbeans server Web</title>
+    <title data-i18n="pageTitle">US Lolbeans server Web</title>
     <link rel="icon" type="image/png" href="images/download.png">
     <link rel="stylesheet" href="css/styles.css?v=20261107-button-hover-v6">
+    <style>
+        /* Language Switcher Styling - Locked to Far Left */
+        .language-bar {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 8px 0;
+            margin: 0;
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .language-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lang-btn {
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 8px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .lang-btn:hover {
+            background-color: #333;
+            border-color: #666;
+        }
+
+        .lang-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            background-color: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 8px;
+            min-width: 200px;
+            max-height: 320px;
+            overflow-y: auto;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+            padding: 4px 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .lang-menu.open {
+            display: block;
+        }
+
+        .lang-option {
+            width: 100%;
+            background: none;
+            border: none;
+            color: #f1f1f1;
+            text-align: left;
+            padding: 9px 14px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lang-option:hover {
+            background-color: #333;
+        }
+
+        .lang-option.active {
+            background-color: #2b4c7e;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body data-discord-invite>
 
-
     <nav class="tab-list" aria-label="Page sections">
-  <a class="tab-button" href="index.html" aria-current="page">Home</a>
-  <a class="tab-button" href="skill-measure.html">Skill Measure</a>
-  <a class="tab-button" href="extras.html">Super Cool stuff</a>
-  <a class="tab-button" href="about.html">About</a>
+        <a class="tab-button" href="index.html" aria-current="page" data-i18n="navHome">Home</a>
+        <a class="tab-button" href="skill-measure.html" data-i18n="navSkill">Skill Measure</a>
+        <a class="tab-button" href="extras.html" data-i18n="navExtras">Super Cool stuff</a>
+        <a class="tab-button" href="about.html" data-i18n="navAbout">About</a>
     </nav>
 
-    <section >
-        <h1>Not Recommended for Mobile Devices</h1>
+    <!-- Far-Left Language Switcher Button -->
+    <div class="language-bar">
+        <div class="language-dropdown">
+            <button id="lang-toggle-btn" class="lang-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span>🌐 <span data-i18n="langButton">Languages</span></span>
+                <span>▾</span>
+            </button>
+            <ul id="lang-menu" class="lang-menu" role="listbox">
+                <li><button type="button" class="lang-option active" data-lang="en">English</button></li>
+                <li><button type="button" class="lang-option" data-lang="bn">বাংলা</button></li>
+                <li><button type="button" class="lang-option" data-lang="fr">Français</button></li>
+                <li><button type="button" class="lang-option" data-lang="hi">हिन्दी</button></li>
+                <li><button type="button" class="lang-option" data-lang="id">Bahasa Indonesia</button></li>
+                <li><button type="button" class="lang-option" data-lang="ja">日本語</button></li>
+                <li><button type="button" class="lang-option" data-lang="zh">普通话</button></li>
+                <li><button type="button" class="lang-option" data-lang="ar">العربية الفصحى الحديثة</button></li>
+                <li><button type="button" class="lang-option" data-lang="pt">Português</button></li>
+                <li><button type="button" class="lang-option" data-lang="ru">Русский</button></li>
+                <li><button type="button" class="lang-option" data-lang="es">Español</button></li>
+                <li><button type="button" class="lang-option" data-lang="ur">اردو</button></li>
+            </ul>
+        </div>
+    </div>
+
+    <section>
+        <h1 data-i18n="mobileWarning">Not Recommended for Mobile Devices</h1>
     </section>
 
+    <div id="offline-screen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; color:#fff; flex-direction:column; justify-content:center; align-items:center; z-index:99999; font-family:sans-serif; text-align:center;">
+        <img src="images/offline.png" alt="Offline" style="max-width:80%; max-height:50vh; margin-bottom:20px;">
+        <h1 style="font-size:2rem; margin:0;" data-i18n="offlineMsg">Check your internet connection</h1>
+    </div>
 
     <script src="js/sheet-data.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/common.js"></script>
-</body>
-</html>
-<div id="offline-screen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; color:#fff; flex-direction:column; justify-content:center; align-items:center; z-index:99999; font-family:sans-serif; text-align:center;">
-  <!-- 
-    Tip: Replace 'your-image-filename.png' with your local image file name, 
-    OR paste a Base64 data string inside the src="" to embed it permanently.
-  -->
-  <img src="/Users/dennisdimov/lolbeans-wiki.github.io/Screenshot 2026-11-09 at 1.30.45 PM.png" alt="Offline" style="max-width:80%; max-height:50vh; margin-bottom:20px;">
-  <h1 style="font-size:2rem; margin:0;">Check your internet connection</h1>
-</div>
 
-<script>
-  const o = document.getElementById('offline-screen');
-  const check = () => o.style.display = navigator.onLine ? 'none' : 'flex';
-  window.addEventListener('online', check);
-  window.addEventListener('offline', check);
-  check();
-</script>
+    <script>
+        const o = document.getElementById('offline-screen');
+        const check = () => o.style.display = navigator.onLine ? 'none' : 'flex';
+        window.addEventListener('online', check);
+        window.addEventListener('offline', check);
+        check();
