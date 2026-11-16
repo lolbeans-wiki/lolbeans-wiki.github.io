@@ -7,7 +7,6 @@
     <link rel="icon" type="image/png" href="images/download.png">
     <link rel="stylesheet" href="css/styles.css?v=20261109-server-stats-v8">
     <style>
-        /* Ensures cards render side-by-side in a flexible row */
         .character-gallery {
             display: flex;
             flex-wrap: wrap;
@@ -15,7 +14,6 @@
             align-items: flex-start;
         }
 
-        /* Scopes hover tooltips strictly to individual player cards */
         .character-wrapper {
             position: relative;
             display: flex;
@@ -23,18 +21,17 @@
             align-items: center;
         }
 
-        /* Tooltip positioning, text wrapping, and boundary fixes */
         .character-wrapper .achievement-tooltip {
             display: none;
             position: absolute;
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
-            white-space: normal;       /* Allows text to wrap into multiple lines */
-            max-width: 220px;          /* Prevents the tooltip box from becoming too wide */
-            width: max-content;        /* Fits neatly around shorter text */
+            white-space: normal;
+            max-width: 220px;
+            width: max-content;
             text-align: center;
-            word-wrap: break-word;     /* Wraps long words properly */
+            word-wrap: break-word;
             z-index: 10;
         }
 
@@ -42,7 +39,6 @@
             display: block;
         }
 
-        /* Scaled-down layout specifically for the Bots section */
         .tier-bots {
             gap: 10px;
         }
@@ -72,11 +68,11 @@
     <a class="server-stats-back" href="about.html" data-i18n="backToAbout">Back to About</a>
     <h1 class="title" data-i18n="allServerMembers">All server members so far (57 of them)</h1>
 
-    <!-- OWNERS (alphabetical) -->
+    <!-- OWNERS -->
     <div class="tier-container">
         <h2 class="section-role-title" data-i18n="tierOwners">Owners</h2>
         <div class="character-gallery tier-owners">
-            
+
             <!-- Owner 1: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ -->
             <div class="character-wrapper">
                 <div class="player-name-tag">Ᏽꓓⲙⲁ⳽ⲧⲉⲅ✔</div>
@@ -91,7 +87,7 @@
                 <div class="achievement-tooltip" data-i18n="owner2Tip">AURA LEGEND HANDSOME Kingy guy also known as ྾𝓘𝓷𝓭𝓲𝓰𝓸྾</div>
             </div>
 
-            <!-- Hidden placeholder template for future Owners -->
+            <!-- placeholder for the next owner -->
             <div class="character-wrapper">
                 <div class="player-name-tag" data-i18n="playerNameHere">PLAYER NAME HERE</div>
                 <div class="gallery-icon placeholder-box"></div>
@@ -103,7 +99,7 @@
 
     <hr class="tier-separator">
 
-    <!-- ADMINS (alphabetical) -->
+    <!-- ADMINS  -->
     <div class="tier-container">
         <h2 class="section-role-title" data-i18n="tierAdmins">Admins</h2>
         <div class="character-gallery tier-admins">
@@ -127,7 +123,7 @@
 
     <hr class="tier-separator">
 
-    <!-- MODS (alphabetical) -->
+    <!-- MODS -->
     <div class="tier-container">
         <h2 class="section-role-title" data-i18n="tierMods">Mods</h2>
         <div class="character-gallery tier-mods">
@@ -172,7 +168,7 @@
 
     <hr class="tier-separator">
 
-    <!-- MEMBERS (alphabetical) -->
+    <!-- MEMBERS  -->
     <div class="tier-container">
         <h2 class="section-role-title" data-i18n="tierMembers">Members</h2>
         <div class="character-gallery tier-members">
@@ -435,7 +431,7 @@
 
     <hr class="tier-separator">
 
-    <!-- BOTS (alphabetical) -->
+    <!-- BOTS -->
     <div class="tier-container">
         <h2 class="section-role-title" data-i18n="tierBots">Bots</h2>
         <div class="character-gallery tier-bots">
