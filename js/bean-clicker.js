@@ -511,3 +511,11 @@ beanResetProgressButton.addEventListener('click', async () => {
         reportStorageError(error);
     }
 });
+const bgm = new Audio('audio/477069_Background-Music-loop.mp3');
+bgm.loop = true;
+
+document.addEventListener('click', () => {
+    if (bgm.paused) {
+        bgm.play().catch(() => {});
+    }
+}, { once: true });
