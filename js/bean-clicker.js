@@ -28,13 +28,14 @@ let beanCoins = 0;
 let beanLifetimeCoins = 0;
 let beanWorkers = 0;
 let beanClickUpgrades = 0;
+let beanNotSusBikers = 0;
 let hasMahjicUpgrade = false;
 let hasMajikHandUpgrade = false;
-let hasNotSusBikerUpgrade = false;
 let hasFastClickReward = false;
 const beanClickTimestamps = [];
 let nextWorkerCost = 100;
 let nextClickUpgradeCost = 1000;
+let nextNotSusBikerCost = 20000;
 let isProgressReady = false;
 let lastIncomeUpdate = Date.now();
 let saveQueue = Promise.resolve();
@@ -117,12 +118,13 @@ function getBeanProgressSnapshot() {
         lifetimeCoins: beanLifetimeCoins,
         workers: beanWorkers,
         clickUpgrades: beanClickUpgrades,
+        notSusBikers: beanNotSusBikers,
         hasMahjicUpgrade,
         hasMajikHandUpgrade,
-        hasNotSusBikerUpgrade,
         hasFastClickReward,
         nextWorkerCost,
         nextClickUpgradeCost,
+        nextNotSusBikerCost,
         lastActive: Date.now()
     };
 }
@@ -133,9 +135,9 @@ function saveBeanProgress(immediate = false) {
         && beanLifetimeCoins === 0
         && beanWorkers === 0
         && beanClickUpgrades === 0
+        && beanNotSusBikers === 0
         && !hasMahjicUpgrade
         && !hasMajikHandUpgrade
-        && !hasNotSusBikerUpgrade
         && !hasFastClickReward) {
         return;
     }
@@ -173,7 +175,6 @@ function restoreBeanProgress(progress) {
         || !validNumber(progress.lastActive)
         || typeof progress.hasMahjicUpgrade !== 'boolean'
         || typeof progress.hasMajikHandUpgrade !== 'boolean'
-        || typeof progress.hasNotSusBikerUpgrade !== 'boolean'
         || typeof progress.hasFastClickReward !== 'boolean') {
         throw new Error('Saved Bean Clicker progress is invalid.');
     }
@@ -182,19 +183,20 @@ function restoreBeanProgress(progress) {
     beanLifetimeCoins = Math.max(progress.lifetimeCoins, beanCoins);
     beanWorkers = progress.workers;
     beanClickUpgrades = progress.clickUpgrades;
+    beanNotSusBikers = typeof progress.notSusBikers === 'number' ? progress.notSusBikers : (progress.hasNotSusBikerUpgrade ? 1 : 0);
     hasMahjicUpgrade = progress.hasMahjicUpgrade;
     hasMajikHandUpgrade = progress.hasMajikHandUpgrade;
-    hasNotSusBikerUpgrade = progress.hasNotSusBikerUpgrade;
     hasFastClickReward = progress.hasFastClickReward;
     nextWorkerCost = progress.nextWorkerCost;
     nextClickUpgradeCost = progress.nextClickUpgradeCost;
+    nextNotSusBikerCost = progress.nextNotSusBikerCost || (20000 * Math.pow(1.15, beanNotSusBikers));
     return calculateOfflineEarnings(progress.lastActive);
 }
 
 function calculateOfflineEarnings(lastActive) {
     const elapsedSeconds = Math.max(0, (Date.now() - lastActive) / 1000);
     const baseRate = beanWorkers * 0.5 * (hasMahjicUpgrade ? 5 : 1)
-        + (hasNotSusBikerUpgrade ? 1000 : 0);
+        + (beanNotSusBikers * 1000);
     if (elapsedSeconds === 0 || baseRate === 0) return 0;
 
     let remainingSeconds = elapsedSeconds;
@@ -249,35 +251,45 @@ function updateBeanClickerDisplay() {
     beanRain.classList.toggle('has-mahjic-upgrade', hasMahjicUpgrade);
     beanRain.classList.toggle('has-majik-hand-upgrade', hasMajikHandUpgrade);
     beanCoinCount.textContent = formatBeanCoins(beanCoins);
+    
     const coinsPerSecond = beanWorkers * 0.5 * (hasMahjicUpgrade ? 5 : 1)
-        + (hasNotSusBikerUpgrade ? 1000 : 0);
+        + (beanNotSusBikers * 1000);
     beanWorkersPerSecond.textContent = `${formatBeanCoins(coinsPerSecond * speed)} coins per second`;
+    
     const coinsPerClick = ((beanClickUpgrades + 1) * (hasMajikHandUpgrade ? 5 : 1)
-        + (hasNotSusBikerUpgrade ? 1000 : 0)) * speed;
+        + (beanNotSusBikers * 1000)) * speed;
     beanCoinsPerClick.textContent = `${formatBeanCoins(coinsPerClick)} ${coinsPerClick === 1 ? 'coin' : 'coins'} per click`;
+    
     beanWorkerCostElement.textContent = String(nextWorkerCost);
     beanWorkerOwnedCount.textContent = String(beanWorkers);
     beanWorkerOwnedCount.setAttribute('aria-label', `${beanWorkers} Bean Workers owned`);
     buyBeanWorkerButton.setAttribute('aria-label', `Buy Bean Worker for ${nextWorkerCost} coins`);
     buyBeanWorkerButton.disabled = !isProgressReady || beanCoins < nextWorkerCost;
+    
     beanClickUpgradeCostElement.textContent = String(nextClickUpgradeCost);
     beanClickUpgradeOwnedCount.textContent = String(beanClickUpgrades);
     beanClickUpgradeOwnedCount.setAttribute('aria-label', `${beanClickUpgrades} Bean Editors owned`);
     buyBeanClickUpgradeButton.setAttribute('aria-label', `Buy Bean Editor for ${nextClickUpgradeCost} coins`);
     buyBeanClickUpgradeButton.disabled = !isProgressReady || beanCoins < nextClickUpgradeCost;
+    
     buyMahjicUpgradeButton.hidden = hasMahjicUpgrade;
     buyMahjicUpgradeButton.disabled = !isProgressReady || beanCoins < 500;
     mahjicUpgradeCostElement.textContent = '500';
+    
     buyMajikHandUpgradeButton.hidden = hasMajikHandUpgrade;
     buyMajikHandUpgradeButton.disabled = !isProgressReady || beanCoins < 1000;
-    beanNotSusBikerOwnedCount.textContent = String(Number(hasNotSusBikerUpgrade));
+    
+    const bikerCostSpan = document.getElementById('not-sus-biker-upgrade-cost');
+    if (bikerCostSpan) bikerCostSpan.textContent = String(Math.round(nextNotSusBikerCost));
+    beanNotSusBikerOwnedCount.textContent = String(beanNotSusBikers);
     beanNotSusBikerOwnedCount.setAttribute(
         'aria-label',
-        `${Number(hasNotSusBikerUpgrade)} NOT sus bikers owned`
+        `${beanNotSusBikers} NOT sus bikers owned`
     );
+    buyNotSusBikerUpgradeButton.setAttribute('aria-label', `Buy NOT sus biker for ${Math.round(nextNotSusBikerCost)} coins`);
     buyNotSusBikerUpgradeButton.disabled = !isProgressReady
-        || hasNotSusBikerUpgrade
-        || beanCoins < 20000;
+        || beanCoins < nextNotSusBikerCost;
+        
     beanCoin.disabled = !isProgressReady;
     beanFastClickReward.disabled = !isProgressReady;
     beanResetProgressButton.disabled = !isProgressReady;
@@ -287,7 +299,7 @@ function updateBeanTravelers() {
     const purchasedBeans = [
         { image: 'images/bean-worker.png', count: beanWorkers },
         { image: 'images/bean-click-upgrade.png', count: beanClickUpgrades },
-        { image: 'images/bean-not-sus-biker.png', count: Number(hasNotSusBikerUpgrade) }
+        { image: 'images/bean-not-sus-biker.png', count: beanNotSusBikers }
     ];
     const travelers = document.createDocumentFragment();
     let travelerIndex = 0;
@@ -378,7 +390,7 @@ beanCoin.addEventListener('click', () => {
 
     const { speed } = getBeanProgress();
     addBeanCoins(((beanClickUpgrades + 1) * (hasMajikHandUpgrade ? 5 : 1)
-        + (hasNotSusBikerUpgrade ? 1000 : 0)) * speed);
+        + (beanNotSusBikers * 1000)) * speed);
     if (beanCoins >= 100
         && beanClickTimestamps.length > 10
         && !hasFastClickReward) {
@@ -441,10 +453,11 @@ buyMajikHandUpgradeButton.addEventListener('click', () => {
 });
 
 buyNotSusBikerUpgradeButton.addEventListener('click', () => {
-    if (!isProgressReady || hasNotSusBikerUpgrade || beanCoins < 20000) return;
+    if (!isProgressReady || beanCoins < nextNotSusBikerCost) return;
 
-    beanCoins -= 20000;
-    hasNotSusBikerUpgrade = true;
+    beanCoins -= nextNotSusBikerCost;
+    beanNotSusBikers += 1;
+    nextNotSusBikerCost = Math.ceil(nextNotSusBikerCost * 1.15);
     updateBeanClickerDisplay();
     updateBeanTravelers();
     saveBeanProgress();
@@ -457,7 +470,7 @@ window.setInterval(() => {
     if (!isProgressReady) return;
     const { speed } = getBeanProgress();
     const coinsPerSecond = (beanWorkers * 0.5 * (hasMahjicUpgrade ? 5 : 1)
-        + (hasNotSusBikerUpgrade ? 1000 : 0)) * speed;
+        + (beanNotSusBikers * 1000)) * speed;
     if (coinsPerSecond > 0 && elapsedSeconds > 0) {
         addBeanCoins(coinsPerSecond * elapsedSeconds);
         updateBeanClickerDisplay();
@@ -487,12 +500,13 @@ beanResetProgressButton.addEventListener('click', async () => {
         beanLifetimeCoins = 0;
         beanWorkers = 0;
         beanClickUpgrades = 0;
+        beanNotSusBikers = 0;
         hasMahjicUpgrade = false;
         hasMajikHandUpgrade = false;
-        hasNotSusBikerUpgrade = false;
         hasFastClickReward = false;
         nextWorkerCost = 100;
         nextClickUpgradeCost = 1000;
+        nextNotSusBikerCost = 20000;
         lastIncomeUpdate = Date.now();
         isProgressReady = true;
         beanOfflineEarnings.hidden = true;
@@ -511,6 +525,7 @@ beanResetProgressButton.addEventListener('click', async () => {
         reportStorageError(error);
     }
 });
+
 const bgm = new Audio('audio/477069_Background-Music-loop.mp3');
 bgm.loop = true;
 
