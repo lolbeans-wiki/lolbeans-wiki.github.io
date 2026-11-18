@@ -501,3 +501,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('siteLanguage') || 'en';
     applySiteLanguage(savedLang);
 });
+// Button and Tab Click Sound Effect
+const clickSound = new Audio('audio/soundshelfstudio-sci-fi-ui-hover-596257 (4).mp3');
+document.addEventListener('click', (e) => {
+    if (e.target.closest('button, .tab-button')) {
+        clickSound.currentTime = 0;
+        clickSound.play().catch(() => {});
+    }
+});
