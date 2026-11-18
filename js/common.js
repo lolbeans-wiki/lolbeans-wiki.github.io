@@ -509,7 +509,7 @@ document.addEventListener('click', e => {
 
     const t = b.textContent.trim().toLowerCase();
 
-    if (t.includes('fun fact generator')) {
+    if (t.includes('fun fact') || t.includes('fact')) {
         s.currentTime = 0;
         s.play().catch(() => {});
     }
