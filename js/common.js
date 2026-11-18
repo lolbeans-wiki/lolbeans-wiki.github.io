@@ -507,17 +507,9 @@ document.addEventListener('click', e => {
     const b = e.target.closest('a, button');
     if (!b) return;
 
-    const h = b.getAttribute('href') || '';
     const t = b.textContent.trim().toLowerCase();
 
-    if (
-        h.includes('tag-guide') || h.includes('models') || h.includes('maps') || 
-        h.includes('minecraft') || h.includes('bean') || h.includes('fact') || 
-        h.includes('alek') || h.includes('chat') ||
-        t.includes('tag guide') || t.includes('models') || t.includes('maps') || 
-        t.includes('minecraft') || t.includes('bean clicker') || t.includes('fun fact') || 
-        t.includes('bouncy alek') || t.includes('live chat')
-    ) {
+    if (t.includes('fun fact generator')) {
         s.currentTime = 0;
         s.play().catch(() => {});
     }
