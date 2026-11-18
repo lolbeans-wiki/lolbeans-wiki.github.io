@@ -501,14 +501,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('siteLanguage') || 'en';
     applySiteLanguage(savedLang);
 });
-// Button and Tab Click Sound Effect
 const clickSound = new Audio('audio/u_xg7ssi08yr-button-clicks-572422.mp3');
 
 document.addEventListener('click', (e) => {
-    if (e.target.closest('#bouncy-alek, .bouncy-alek, #cookie-clicker, .cookie-clicker')) return;
+    const btn = e.target.closest('button, .tab-button, .btn, a');
+    if (!btn) return;
+    if (btn.closest('#bouncy-alek, .bouncy-alek, #bean-clicker, .bean-clicker, #cookie-clicker, .cookie-clicker, .game-area, .modal-content')) return;
 
-    if (e.target.closest('button, .tab-button')) {
-        clickSound.currentTime = 0;
-        clickSound.play().catch(() => {});
-    }
+    clickSound.currentTime = 0;
+    clickSound.play().catch(() => {});
 });
