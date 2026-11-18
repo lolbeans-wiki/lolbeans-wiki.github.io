@@ -501,13 +501,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('siteLanguage') || 'en';
     applySiteLanguage(savedLang);
 });
-const clickSound = new Audio('audio/u_xg7ssi08yr-button-clicks-572422.mp3');
+const s = new Audio('audio/u_xg7ssi08yr-button-clicks-572422.mp3');
 
-document.addEventListener('click', (e) => {
-    const btn = e.target.closest('button, .tab-button, .btn, a');
-    if (!btn) return;
-    if (btn.closest('#bouncy-alek, .bouncy-alek, #bean-clicker, .bean-clicker, #cookie-clicker, .cookie-clicker, .game-area, .modal-content')) return;
+document.addEventListener('click', e => {
+    const b = e.target.closest('a, button');
+    if (!b) return;
 
-    clickSound.currentTime = 0;
-    clickSound.play().catch(() => {});
+    const h = b.getAttribute('href') || '';
+    const t = b.textContent.trim().toLowerCase();
+
+    if (
+        h.includes('tag-guide') || h.includes('models') || h.includes('maps') || 
+        h.includes('minecraft') || h.includes('bean') || h.includes('fact') || 
+        h.includes('alek') || h.includes('chat') ||
+        t.includes('tag guide') || t.includes('models') || t.includes('maps') || 
+        t.includes('minecraft') || t.includes('bean clicker') || t.includes('fun fact') || 
+        t.includes('bouncy alek') || t.includes('live chat')
+    ) {
+        s.currentTime = 0;
+        s.play().catch(() => {});
+    }
 });
