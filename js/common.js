@@ -502,8 +502,10 @@ document.addEventListener('DOMContentLoaded', () => {
     applySiteLanguage(savedLang);
 });
 // Button and Tab Click Sound Effect
-const clickSound = new Audio('audio/soundshelfstudio-sci-fi-ui-hover-596257 (4).mp3');
+const clickSound = new Audio('audio/u_xg7ssi08yr-button-clicks-572422.mp3');
 document.addEventListener('click', (e) => {
+    if (e.target.closest('#bouncy-alek, .bouncy-alek')) return;
+
     if (e.target.closest('button, .tab-button')) {
         clickSound.currentTime = 0;
         clickSound.play().catch(() => {});
