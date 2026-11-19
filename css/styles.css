@@ -1997,7 +1997,7 @@ body.fun-thingies-active .bean-side {
 .bean-clicker-count,
 .bean-worker-offer,
 .bean-upgrades h2 {
-    text-shadow: 0 0 var(--bean-glow-blur, 4px) rgba(255, 230, 0, var(--bean-glow-opacity, 0.15));
+ text-shadow: 0 0 var(--bean-glow-blur, 4px) rgba(255, 230, 0, var(--bean-glow-opacity, 0.15));
 }
 
 .bean-coin img,
@@ -2302,7 +2302,6 @@ a.discord-invite-go:hover {
     border-radius: 16px;
 }
 
-
 /* Hi its MrBlankCoding, ima just add my shit here */
 /* This is all for fuzzy search */
 .search-wrap {
@@ -2356,6 +2355,7 @@ a.discord-invite-go:hover {
 .skill-measure-actions a.button-link {
     background: linear-gradient(135deg, #ff0000 0%, #8b0000 100%);
 }
+
 /* Push the entire section down from the title */
 .tier-container {
     margin-top: 50px;
@@ -2370,92 +2370,6 @@ a.discord-invite-go:hover {
     margin-bottom: 25px;
     letter-spacing: 2px;
     text-transform: uppercase;
-}
-
-/* Character gallery container */
-.character-gallery {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 60px;
-    padding: 10px 50px;
-}
-
-/* Individual character wrapper - centered layout */
-.character-wrapper {
-    position: relative;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    text-align: center;
-}
-
-/* Hide placeholder wrappers from visitors */
-.character-wrapper:has(.placeholder-box) {
-    display: none !important;
-}
-
-/* Red player name tag directly centered above the bean */
-/* Red player name tag - perfectly scaled to text with a safe maximum width */
-.player-name-tag {
-    background-color: #ff2222;
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 3px 8px;
-    border-radius: 4px;
-    margin: 0 auto 10px auto;
-    text-align: center;
-    max-width: 140px;           /* Prevents buttons from getting too wide */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;    /* Keeps long names tidy */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-    display: inline-block;      /* Scales tightly to each name size */
-}
-/* Clean transparent images with extra brightness and hover scaling */
-.gallery-icon {
-    border: none;
-    outline: none;
-    background: transparent;
-    object-fit: contain;
-    filter: brightness(1.25);
-    transition: transform 0.2s ease, filter 0.2s ease;
-    display: block;
-    margin: 0 auto;
-}
-
-.gallery-icon:hover {
-    transform: scale(1.08);
-    filter: brightness(1.4);
-}
-
-/* Push the entire section down from the title */
-.tier-container {
-    margin-top: 50px;
-}
-
-/* Centered white section titles */
-/* Base player name tag - lowered spacing */
-.player-name-tag {
-    background-color: #ff2222;
-    color: #ffffff;
-    font-weight: bold;
-    border-radius: 4px;
-    margin: 0 auto 20px auto;       /* Lowers buttons away from title */
-    text-align: center;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    white-space: normal;
-    line-height: 1.1;
-    overflow: hidden;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
 /* Tier 1: OWNERS (Largest) */
@@ -2489,6 +2403,7 @@ a.discord-invite-go:hover {
     font-size: 9px;
     padding: 3px 4px;
 }
+
 /* Character gallery container - closer spacing */
 .character-gallery {
     display: flex;
@@ -2496,7 +2411,7 @@ a.discord-invite-go:hover {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 30px; /* Reduced gap so beans sit closer together */
+    gap: 30px;
     padding: 10px 20px;
 }
 
@@ -2522,13 +2437,17 @@ a.discord-invite-go:hover {
     color: #ffffff;
     font-size: 13px;
     font-weight: bold;
-    padding: 4px 12px;
     border-radius: 4px;
-    margin: 0 auto 10px auto;
+    margin: 0 auto 20px auto;
+    padding: 4px 12px;
     text-align: center;
-    white-space: nowrap;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.1;
+    overflow: hidden;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-    display: inline-block;
 }
 
 /* Uniform image sizing & proportions */
@@ -2612,94 +2531,89 @@ a.discord-invite-go:hover {
     visibility: visible;
     opacity: 1;
 }
+
 .super-little-gray-button {
-  display: inline-block !important;
-  font-size: 10px !important;
-  color: #aaaaaa !important;
-  background-color: #1f1f1f !important;
-  border: 1px solid #333333 !important;
-  padding: 2px 6px !important;
-  border-radius: 3px !important;
-  text-decoration: none !important;
-  margin-top: 15px !important;
+    display: inline-block !important;
+    font-size: 10px !important;
+    color: #aaaaaa !important;
+    background-color: #1f1f1f !important;
+    border: 1px solid #333333 !important;
+    padding: 2px 6px !important;
+    border-radius: 3px !important;
+    text-decoration: none !important;
+    margin-top: 15px !important;
 }
 
 .super-little-gray-button:hover,
 .super-little-gray-button:active,
 .super-little-gray-button:focus {
-  background-color: #2a2a2a !important;
-  color: #cccccc !important;
-  text-decoration: none !important;}
-  .planning-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #0b0b0b;
-  z-index: 99999;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    background-color: #2a2a2a !important;
+    color: #cccccc !important;
+    text-decoration: none !important;
+}
+
+.planning-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0b0b0b;
+    z-index: 99999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .planning-overlay h2 {
-  color: #ffffff !important;
-  font-size: 28px !important;
-  margin-bottom: 20px !important;
+    color: #ffffff !important;
+    font-size: 28px !important;
+    margin-bottom: 20px !important;
 }
 
 .planning-overlay .planning-list li {
-  color: #cccccc !important;
-  font-size: 16px !important;
-  padding: 6px 0;
-  border-bottom: 1px solid #ff0000;
+    color: #cccccc !important;
+    font-size: 16px !important;
+    padding: 6px 0;
+    border-bottom: 1px solid #ff0000;
 }
 
 .overlay-back-btn {
-  background-color: #f4f2f2 !important;
-  color: #ffffff !important;
-  border: 1px solid #444444 !important;
-  padding: 10px 20px !important;
-  border-radius: 6px !important;
-  font-size: 14px !important;
-  cursor: pointer !important;
-  margin-top: 25px !important;
+    background-color: #f4f2f2 !important;
+    color: #ffffff !important;
+    border: 1px solid #444444 !important;
+    padding: 10px 20px !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    margin-top: 25px !important;
 }
 
 .overlay-back-btn:hover {
-  background-color: #3a3a3a !important;
+    background-color: #3a3a3a !important;
 }
+
 /* Base page styling */
 body.server-stats-page {
-    background-color: #1a1a1a; /* Fallback dark/grey tone, or use #e5e5e5 for a light grey */
+    background-color: #1a1a1a;
     position: relative;
     margin: 0;
     min-height: 100vh;
     overflow-x: hidden;
-    color: #ffffff; /* Ensures text stays readable */
+    color: #ffffff;
 }
 
 /* Ambient Red, White, and Blue Blurry Background Spots */
-body.server-stats-page::before { 
+body.server-stats-page::before {
     content: '';
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: -1; /* Keeps the effect strictly behind all your content */
-    background-color: #2b2b2d; /* Slightly grey background base */
-}
-/* --- BACKGROUND --- */
-body {
-    background-color: #030305 !important;
-    position: relative;
-    margin: 0;
-    min-height: 100vh;
-    overflow-x: hidden;
-    color: #ffffff !important;
+    z-index: -1;
+    background-color: #2b2b2d;
 }
 
 /* --- BACKGROUND --- */
@@ -2721,7 +2635,7 @@ body::before {
     height: 100vh;
     z-index: -1;
     background-color: #020204 !important;
-    background-image: 
+    background-image:
         radial-gradient(circle at 20% 30%, rgba(160, 15, 40, 0.17) 0%, transparent 43%),
         radial-gradient(circle at 80% 20%, rgba(15, 55, 150, 0.17) 0%, transparent 47%),
         radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.02) 0%, transparent 52%),
@@ -2731,6 +2645,8 @@ body::before {
     -webkit-filter: blur(115px);
     pointer-events: none;
 }
+
+/* --- MUSIC SWITCHER (TOP-LEFT, NO WIGGLE, NO AI FLUFF) --- */
 .top-controls-bar {
     display: flex;
     flex-wrap: wrap;
@@ -2742,85 +2658,9 @@ body::before {
     z-index: 1000;
 }
 
-.music-box {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.music-row {
-    display: flex;
-    align-items: stretch;
-    gap: 4px;
-}
-
-.music-switch-btn {
-    background-color: #d91e2a;
-    color: #ffffff;
-    border: 1px solid #ff4d58;
-    border-bottom: 3px solid #8a0f17;
-    padding: 7px 11px;
-    font-size: 13px;
-    font-weight: 700;
-    border-radius: 3px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.music-switch-btn:hover {
-    background-color: #e6222f;
-}
-
-.music-switch-btn:active {
-    transform: translateY(1px);
-    border-bottom-width: 2px;
-}
-
-.track-tag {
-    background: rgba(0, 0, 0, 0.35);
-    padding: 1px 5px;
-    border-radius: 2px;
-    font-size: 11px;
-    font-family: monospace;
-}
-
-.music-mute-btn {
-    background-color: #1c1c1c;
-    color: #e0e0e0;
-    border: 1px solid #444;
-    border-bottom: 3px solid #111;
-    padding: 7px 9px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
-.music-mute-btn:hover {
-    background-color: #2a2a2a;
-    color: #fff;
-}
-
-.music-mute-btn.muted {
-    background-color: #3a1215;
-    border-color: #8a0f17;
-    color: #ff6b74;
-}
-
-.music-credits {
-    font-size: 9px;
-    color: #9e9e9e;
-    margin-top: 3px;
-    padding-left: 1px;
-    line-height: 1.1;
-}
 .music-box,
 .music-box * {
     animation: none !important;
-    transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease !important;
     transform: none !important;
 }
 
@@ -2828,7 +2668,8 @@ body::before {
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
-    margin: 4px 0 0 0;
+    align-self: flex-start;
+    margin: 6px 0 0 0;
     position: relative;
     z-index: 999;
 }
@@ -2840,23 +2681,24 @@ body::before {
 }
 
 .music-switch-btn {
-    background-color: #d91e2a;
+    background-color: #c91824;
     color: #ffffff;
-    border: 1px solid #ff4d58;
-    border-bottom: 2px solid #8a0f17;
+    border: 1px solid #8f0d16;
+    border-radius: 3px;
     padding: 6px 10px;
     font-size: 13px;
     font-weight: 700;
-    border-radius: 3px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    transition: background-color 0.12s ease;
 }
 
 .music-switch-btn:hover,
 .music-switch-btn:active {
-    background-color: #e6222f;
+    background-color: #e01e2b;
+    border-radius: 3px !important;
 }
 
 .track-tag {
@@ -2868,27 +2710,28 @@ body::before {
 }
 
 .music-mute-btn {
-    background-color: #1c1c1c;
-    color: #e0e0e0;
-    border: 1px solid #444;
-    border-bottom: 2px solid #111;
+    background-color: #181818;
+    color: #dcdcdc;
+    border: 1px solid #3a3a3a;
+    border-radius: 3px;
     padding: 6px 8px;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    border-radius: 3px;
     cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
 
 .music-mute-btn:hover,
 .music-mute-btn:active {
-    background-color: #2a2a2a;
-    color: #fff;
+    background-color: #262626;
+    color: #ffffff;
+    border-radius: 3px !important;
 }
 
 .music-mute-btn.muted {
-    background-color: #3a1215;
-    border-color: #8a0f17;
+    background-color: #361013;
+    border-color: #7c141c;
     color: #ff6b74;
 }
 
