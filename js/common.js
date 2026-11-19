@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 0. Persistent Music Switcher (8 tracks, looped, saved in localStorage)
-    const musicTracks = [
-        { file: 'SPCookie - Flavorful Factory (1).mp3', credits: 'Credits: (10s) Mr Marsh' },
+    // Music switcher (8 tracks, looped, manual play/pause)
+    const playlist = [
         { file: 'SPCookie - Shikimori.mp3', credits: 'Credits: (10s) Mr Marsh' },
+        { file: 'SPCookie - Flavorful Factory (1).mp3', credits: 'Credits: (10s) Mr Marsh' },
         { file: 'SPCookie - Sunshine.mp3', credits: 'Credits: (10s) Mr Marsh' },
         { file: 'SPCookie - Triangle Dash.mp3', credits: 'Credits: (10s) Mr Marsh' },
         { file: 'Video Project 35 (1).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
@@ -12,85 +12,99 @@ document.addEventListener('DOMContentLoaded', () => {
         { file: 'Video Project 35.m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' }
     ];
 
-    const TRACK_STORAGE_KEY = 'lolbeans_music_track_index';
-    const MUTE_STORAGE_KEY = 'lolbeans_music_muted';
+    const trackKey = 'lolbeans_music_track_index';
+    const playKey = 'lolbeans_music_playing';
 
-    let currentTrackIndex = parseInt(localStorage.getItem(TRACK_STORAGE_KEY) || '0', 10);
-    if (Number.isNaN(currentTrackIndex) || currentTrackIndex < 0 || currentTrackIndex >= musicTracks.length) {
-        currentTrackIndex = 0;
+    let trackIdx = parseInt(localStorage.getItem(trackKey) || '0', 10);
+    if (Number.isNaN(trackIdx) || trackIdx < 0 || trackIdx >= playlist.length) {
+        trackIdx = 0;
     }
 
-    let isMusicMuted = localStorage.getItem(MUTE_STORAGE_KEY) === 'true';
+    let shouldResume = localStorage.getItem(playKey) === 'true';
 
-    const bgMusic = new Audio();
-    bgMusic.loop = true;
-    bgMusic.preload = 'auto';
-    bgMusic.muted = isMusicMuted;
+    const player = new Audio();
+    player.loop = true;
+    player.preload = 'auto';
 
-    function resolveTrackSrc(index) {
-        return `audio/${encodeURIComponent(musicTracks[index].file)}`;
-    }
+    function updateMusicLabels() {
+        const numLabel = document.getElementById('music-track-num');
+        const creditLabel = document.getElementById('music-credits');
+        const playBtn = document.getElementById('music-mute-btn') || document.getElementById('music-toggle-btn');
+        const active = !player.paused;
 
-    function refreshMusicUi() {
-        const trackNumEl = document.getElementById('music-track-num');
-        const creditsEl = document.getElementById('music-credits');
-        const muteBtn = document.getElementById('music-mute-btn');
-
-        if (trackNumEl) {
-            trackNumEl.textContent = `${currentTrackIndex + 1}/${musicTracks.length}`;
-        }
-        if (creditsEl) {
-            creditsEl.textContent = musicTracks[currentTrackIndex].credits;
-        }
-        if (muteBtn) {
-            muteBtn.textContent = isMusicMuted ? 'UNMUTE' : 'MUTE';
-            muteBtn.classList.toggle('muted', isMusicMuted);
+        if (numLabel) numLabel.textContent = `${trackIdx + 1}/${playlist.length}`;
+        if (creditLabel) creditLabel.textContent = playlist[trackIdx].credits;
+        if (playBtn) {
+            playBtn.textContent = active ? 'PAUSE' : 'PLAY';
+            playBtn.classList.toggle('muted', !active);
         }
     }
 
-    function setMusicTrack(index, shouldPlay) {
-        currentTrackIndex = ((index % musicTracks.length) + musicTracks.length) % musicTracks.length;
-        localStorage.setItem(TRACK_STORAGE_KEY, String(currentTrackIndex));
-        bgMusic.src = resolveTrackSrc(currentTrackIndex);
-        bgMusic.load();
-        refreshMusicUi();
+    function selectTrack(idx, autoPlay) {
+        trackIdx = ((idx % playlist.length) + playlist.length) % playlist.length;
+        localStorage.setItem(trackKey, String(trackIdx));
+        player.src = `audio/${encodeURIComponent(playlist[trackIdx].file)}`;
+        player.load();
 
-        if (shouldPlay) {
-            bgMusic.play().catch(() => {});
+        if (!autoPlay) {
+            player.pause();
+            updateMusicLabels();
+            return;
         }
-    }
 
-    setMusicTrack(currentTrackIndex, false);
-
-    const unlockAudio = () => {
-        if (!bgMusic.src) {
-            setMusicTrack(currentTrackIndex, true);
-        } else {
-            bgMusic.play().catch(() => {});
-        }
-        document.removeEventListener('pointerdown', unlockAudio);
-        document.removeEventListener('keydown', unlockAudio);
-    };
-    document.addEventListener('pointerdown', unlockAudio, { once: true });
-    document.addEventListener('keydown', unlockAudio, { once: true });
-
-    const switchMusicBtn = document.getElementById('music-switcher-btn');
-    if (switchMusicBtn) {
-        switchMusicBtn.addEventListener('click', () => {
-            setMusicTrack(currentTrackIndex + 1, true);
+        player.play().then(() => {
+            shouldResume = true;
+            localStorage.setItem(playKey, 'true');
+            updateMusicLabels();
+        }).catch(() => {
+            shouldResume = false;
+            localStorage.setItem(playKey, 'false');
+            updateMusicLabels();
         });
     }
 
-    const muteMusicBtn = document.getElementById('music-mute-btn');
-    if (muteMusicBtn) {
-        muteMusicBtn.addEventListener('click', () => {
-            isMusicMuted = !isMusicMuted;
-            localStorage.setItem(MUTE_STORAGE_KEY, String(isMusicMuted));
-            bgMusic.muted = isMusicMuted;
-            refreshMusicUi();
-            if (!isMusicMuted && bgMusic.paused) {
-                bgMusic.play().catch(() => {});
+    selectTrack(trackIdx, false);
+
+    if (shouldResume) {
+        const resumePlayback = () => {
+            if (shouldResume && player.paused) {
+                player.play().then(updateMusicLabels).catch(() => {});
             }
+            document.removeEventListener('pointerdown', resumePlayback);
+            document.removeEventListener('keydown', resumePlayback);
+        };
+        document.addEventListener('pointerdown', resumePlayback, { once: true });
+        document.addEventListener('keydown', resumePlayback, { once: true });
+    }
+
+    const nextTrackBtn = document.getElementById('music-switcher-btn');
+    if (nextTrackBtn) {
+        nextTrackBtn.addEventListener('click', () => {
+            selectTrack(trackIdx + 1, shouldResume || !player.paused);
+        });
+    }
+
+    const playPauseBtn = document.getElementById('music-mute-btn') || document.getElementById('music-toggle-btn');
+    if (playPauseBtn) {
+        playPauseBtn.addEventListener('click', () => {
+            if (!player.paused) {
+                player.pause();
+                shouldResume = false;
+                localStorage.setItem(playKey, 'false');
+                updateMusicLabels();
+                return;
+            }
+
+            if (!player.src) {
+                selectTrack(trackIdx, true);
+                return;
+            }
+
+            player.play().then(() => {
+                shouldResume = true;
+                localStorage.setItem(playKey, 'true');
+                updateMusicLabels();
+            }).catch(() => {});
         });
     }
 
@@ -221,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
             searchPlayerStats: "Search Player Stats",
             sizeComparison: "Size Comparison",
             winGrinders: "Win Grinders",
-            // Tag Guide Section Keys
             tagGuidePageTitle: "Tag Guide - US Lolbeans server Web",
             backToExtras: "Back to Extras",
             guideCredits: "CREDITS: (10s) Mr Marsh",
@@ -415,14 +428,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ===== TRANSLATION ENGINE =====
-    // Your hand-written dictionary (above) is used for elements marked data-i18n.
-    // EVERYTHING ELSE on the page is translated automatically by Google Translate.
     const RTL_LANGS = ['ar', 'ur'];
     const GOOGLE_CODES = { bn: 'bn', fr: 'fr', hi: 'hi', id: 'id', ja: 'ja', zh: 'zh-CN', ar: 'ar', pt: 'pt', ru: 'ru', es: 'es', ur: 'ur' };
     let googleLoaded = false;
 
-    // --- Part A: your dictionary, for data-i18n elements ---
     function translateKeyed(el, lang) {
         const key = el.getAttribute('data-i18n');
         const dict = siteTranslations[lang] || {};
@@ -458,7 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
         scope.querySelectorAll('[data-i18n]').forEach((el) => translateKeyed(el, lang));
     }
 
-    // --- Part B: Google Translate for everything else ---
     function getCookie(name) {
         const row = document.cookie.split('; ').find((r) => r.startsWith(name + '='));
         return row ? decodeURIComponent(row.slice(name.length + 1)) : '';
@@ -596,121 +604,3 @@ document.addEventListener('click', (event) => {
         funFactClickSound.play().catch(() => {});
     }
 });
-// 0. Persistent Music Switcher (8 tracks, looped, manual PLAY/PAUSE)
-    const musicTracks = [
-        { file: 'SPCookie - Shikimori.mp3', credits: 'Credits: (10s) Mr Marsh' },
-        { file: 'SPCookie - Flavorful Factory (1).mp3', credits: 'Credits: (10s) Mr Marsh' },
-        { file: 'SPCookie - Sunshine.mp3', credits: 'Credits: (10s) Mr Marsh' },
-        { file: 'SPCookie - Triangle Dash.mp3', credits: 'Credits: (10s) Mr Marsh' },
-        { file: 'Video Project 35 (1).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
-        { file: 'Video Project 35 (2).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
-        { file: 'Video Project 35 (3).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
-        { file: 'Video Project 35.m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' }
-    ];
-
-    const TRACK_STORAGE_KEY = 'lolbeans_music_track_index';
-    const PLAYING_STORAGE_KEY = 'lolbeans_music_playing';
-
-    let currentTrackIndex = parseInt(localStorage.getItem(TRACK_STORAGE_KEY) || '0', 10);
-    if (Number.isNaN(currentTrackIndex) || currentTrackIndex < 0 || currentTrackIndex >= musicTracks.length) {
-        currentTrackIndex = 0;
-    }
-
-    let wantsPlaying = localStorage.getItem(PLAYING_STORAGE_KEY) === 'true';
-
-    const bgMusic = new Audio();
-    bgMusic.loop = true;
-    bgMusic.preload = 'auto';
-
-    function resolveTrackSrc(index) {
-        return `audio/${encodeURIComponent(musicTracks[index].file)}`;
-    }
-
-    function refreshMusicUi() {
-        const trackNumEl = document.getElementById('music-track-num');
-        const creditsEl = document.getElementById('music-credits');
-        const playPauseBtn = document.getElementById('music-mute-btn') || document.getElementById('music-toggle-btn');
-        const isPlaying = !bgMusic.paused;
-
-        if (trackNumEl) {
-            trackNumEl.textContent = `${currentTrackIndex + 1}/${musicTracks.length}`;
-        }
-        if (creditsEl) {
-            creditsEl.textContent = musicTracks[currentTrackIndex].credits;
-        }
-        if (playPauseBtn) {
-            playPauseBtn.textContent = isPlaying ? 'PAUSE' : 'PLAY';
-            playPauseBtn.classList.toggle('muted', !isPlaying);
-        }
-    }
-
-    function setMusicTrack(index, shouldPlay) {
-        currentTrackIndex = ((index % musicTracks.length) + musicTracks.length) % musicTracks.length;
-        localStorage.setItem(TRACK_STORAGE_KEY, String(currentTrackIndex));
-        bgMusic.src = resolveTrackSrc(currentTrackIndex);
-        bgMusic.load();
-
-        if (shouldPlay) {
-            bgMusic.play()
-                .then(() => {
-                    wantsPlaying = true;
-                    localStorage.setItem(PLAYING_STORAGE_KEY, 'true');
-                    refreshMusicUi();
-                })
-                .catch(() => {
-                    wantsPlaying = false;
-                    localStorage.setItem(PLAYING_STORAGE_KEY, 'false');
-                    refreshMusicUi();
-                });
-        } else {
-            bgMusic.pause();
-            refreshMusicUi();
-        }
-    }
-
-    // Load track without autoplaying on load
-    setMusicTrack(currentTrackIndex, false);
-
-    // Resume only if it was playing before and the user clicks somewhere on the page
-    if (wantsPlaying) {
-        const resumeOnce = () => {
-            if (wantsPlaying && bgMusic.paused) {
-                bgMusic.play().then(refreshMusicUi).catch(() => {});
-            }
-            document.removeEventListener('pointerdown', resumeOnce);
-            document.removeEventListener('keydown', resumeOnce);
-        };
-        document.addEventListener('pointerdown', resumeOnce, { once: true });
-        document.addEventListener('keydown', resumeOnce, { once: true });
-    }
-
-    const switchMusicBtn = document.getElementById('music-switcher-btn');
-    if (switchMusicBtn) {
-        switchMusicBtn.addEventListener('click', () => {
-            setMusicTrack(currentTrackIndex + 1, wantsPlaying || !bgMusic.paused);
-        });
-    }
-
-    const playPauseBtn = document.getElementById('music-mute-btn') || document.getElementById('music-toggle-btn');
-    if (playPauseBtn) {
-        playPauseBtn.addEventListener('click', () => {
-            if (bgMusic.paused) {
-                if (!bgMusic.src) {
-                    setMusicTrack(currentTrackIndex, true);
-                    return;
-                }
-                bgMusic.play()
-                    .then(() => {
-                        wantsPlaying = true;
-                        localStorage.setItem(PLAYING_STORAGE_KEY, 'true');
-                        refreshMusicUi();
-                    })
-                    .catch(() => {});
-            } else {
-                bgMusic.pause();
-                wantsPlaying = false;
-                localStorage.setItem(PLAYING_STORAGE_KEY, 'false');
-                refreshMusicUi();
-            }
-        });
-    }
