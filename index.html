@@ -12,6 +12,7 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
+            align-self: flex-start;
             padding: 8px 0;
             margin: 0;
             margin-left: 0 !important;
@@ -123,6 +124,16 @@
         </div>
     </div>
 
+    <div class="music-box">
+        <div class="music-row">
+            <button id="music-switcher-btn" class="music-switch-btn" type="button">
+                Music switcher <span id="music-track-num" class="track-tag">1/8</span>
+            </button>
+            <button id="music-mute-btn" class="music-mute-btn" type="button">MUTE</button>
+        </div>
+        <div id="music-credits" class="music-credits">Credits: (10s) Mr Marsh</div>
+    </div>
+
     <section>
         <h1 data-i18n="mobileWarning">Not Recommended for Mobile Devices</h1>
     </section>
@@ -143,21 +154,5 @@
         window.addEventListener('offline', check);
         check();
     </script>
-    <div class="music-box">
-    <div class="music-row">
-        <button id="music-switcher-btn" class="music-switch-btn" type="button">
-            Music switcher <span id="music-track-num" class="track-tag">1/8</span>
-        </button>
-        <button id="music-mute-btn" class="music-mute-btn" type="button">MUTE</button>
-    </div>
-    <div id="music-credits" class="music-credits">Credits: (10s) Mr Marsh</div>
-</div>
-<div class="music-left-wrap">
-    <div class="music-row">
-        <button id="music-switcher-btn" class="music-switch-btn" type="button">
-            Music switcher <span id="music-track-num" class="track-tag">1/8</span>
-        </button>
-        <button id="music-mute-btn" class="music-mute-btn" type="button">MUTE</button>
-    </div>
-    <div id="music-credits" class="music-credits">Credits: (10s) Mr Marsh</div>
-</div>
+</body>
+</html>
