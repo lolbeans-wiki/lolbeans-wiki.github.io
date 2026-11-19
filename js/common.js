@@ -1,5 +1,99 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // 0. Persistent Music Switcher (8 tracks, looped, saved in localStorage)
+    const musicTracks = [
+        { file: 'SPCookie - Flavorful Factory (1).mp3', credits: 'Credits: (10s) Mr Marsh' },
+        { file: 'SPCookie - Shikimori.mp3', credits: 'Credits: (10s) Mr Marsh' },
+        { file: 'SPCookie - Sunshine.mp3', credits: 'Credits: (10s) Mr Marsh' },
+        { file: 'SPCookie - Triangle Dash.mp3', credits: 'Credits: (10s) Mr Marsh' },
+        { file: 'Video Project 35 (1).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
+        { file: 'Video Project 35 (2).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
+        { file: 'Video Project 35 (3).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
+        { file: 'Video Project 35.m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' }
+    ];
+
+    const TRACK_STORAGE_KEY = 'lolbeans_music_track_index';
+    const MUTE_STORAGE_KEY = 'lolbeans_music_muted';
+
+    let currentTrackIndex = parseInt(localStorage.getItem(TRACK_STORAGE_KEY) || '0', 10);
+    if (Number.isNaN(currentTrackIndex) || currentTrackIndex < 0 || currentTrackIndex >= musicTracks.length) {
+        currentTrackIndex = 0;
+    }
+
+    let isMusicMuted = localStorage.getItem(MUTE_STORAGE_KEY) === 'true';
+
+    const bgMusic = new Audio();
+    bgMusic.loop = true;
+    bgMusic.preload = 'auto';
+    bgMusic.muted = isMusicMuted;
+
+    function resolveTrackSrc(index) {
+        return `audio/${encodeURIComponent(musicTracks[index].file)}`;
+    }
+
+    function refreshMusicUi() {
+        const trackNumEl = document.getElementById('music-track-num');
+        const creditsEl = document.getElementById('music-credits');
+        const muteBtn = document.getElementById('music-mute-btn');
+
+        if (trackNumEl) {
+            trackNumEl.textContent = `${currentTrackIndex + 1}/${musicTracks.length}`;
+        }
+        if (creditsEl) {
+            creditsEl.textContent = musicTracks[currentTrackIndex].credits;
+        }
+        if (muteBtn) {
+            muteBtn.textContent = isMusicMuted ? 'UNMUTE' : 'MUTE';
+            muteBtn.classList.toggle('muted', isMusicMuted);
+        }
+    }
+
+    function setMusicTrack(index, shouldPlay) {
+        currentTrackIndex = ((index % musicTracks.length) + musicTracks.length) % musicTracks.length;
+        localStorage.setItem(TRACK_STORAGE_KEY, String(currentTrackIndex));
+        bgMusic.src = resolveTrackSrc(currentTrackIndex);
+        bgMusic.load();
+        refreshMusicUi();
+
+        if (shouldPlay) {
+            bgMusic.play().catch(() => {});
+        }
+    }
+
+    setMusicTrack(currentTrackIndex, false);
+
+    const unlockAudio = () => {
+        if (!bgMusic.src) {
+            setMusicTrack(currentTrackIndex, true);
+        } else {
+            bgMusic.play().catch(() => {});
+        }
+        document.removeEventListener('pointerdown', unlockAudio);
+        document.removeEventListener('keydown', unlockAudio);
+    };
+    document.addEventListener('pointerdown', unlockAudio, { once: true });
+    document.addEventListener('keydown', unlockAudio, { once: true });
+
+    const switchMusicBtn = document.getElementById('music-switcher-btn');
+    if (switchMusicBtn) {
+        switchMusicBtn.addEventListener('click', () => {
+            setMusicTrack(currentTrackIndex + 1, true);
+        });
+    }
+
+    const muteMusicBtn = document.getElementById('music-mute-btn');
+    if (muteMusicBtn) {
+        muteMusicBtn.addEventListener('click', () => {
+            isMusicMuted = !isMusicMuted;
+            localStorage.setItem(MUTE_STORAGE_KEY, String(isMusicMuted));
+            bgMusic.muted = isMusicMuted;
+            refreshMusicUi();
+            if (!isMusicMuted && bgMusic.paused) {
+                bgMusic.play().catch(() => {});
+            }
+        });
+    }
+
     // 1. Googly Eyes Logic
     document.addEventListener('dragstart', (e) => {
         if (e.target instanceof HTMLImageElement) e.preventDefault();
@@ -332,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function translateKeyed(el, lang) {
         const key = el.getAttribute('data-i18n');
         const dict = siteTranslations[lang] || {};
-        const hand = dict[key] != null;                       // do we have a hand-written translation?
+        const hand = dict[key] != null;
         const value = hand ? dict[key] : siteTranslations.en[key];
         if (value == null) return;
 
@@ -349,7 +443,6 @@ document.addEventListener('DOMContentLoaded', () => {
             else el.textContent = value;
         }
 
-        // Hand-written text is protected from Google; anything else is left for Google to translate
         if (hand && lang !== 'en') {
             el.setAttribute('translate', 'no');
             el.classList.add('notranslate');
@@ -381,7 +474,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (googleLoaded) return;
         googleLoaded = true;
 
-        // Hide Google's toolbar/banner so only your own language menu is visible
         const style = document.createElement('style');
         style.textContent = [
             '#google_translate_element{display:none !important}',
@@ -411,17 +503,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(script);
     }
 
-    // ===== KEEP PLAYER NAMES IN ENGLISH (never machine-translated) =====
-    // Add more selectors to any list below to protect more things.
-    // '*' = every page. Other keys are page file names (without .html).
-    // You can also add  translate="no"  or  data-keep-english  to any element in the HTML.
     const NAME_GUESSES = ['[class*="name" i]', '[class*="row" i]', '[class*="entry" i]', '[class*="item" i]', '[class*="result" i]', '[class*="suggest" i]', 'td', 'li'];
     const KEEP_ENGLISH = {
         '*': ['input', 'datalist', '[data-keep-english]'],
         'player-stats': NAME_GUESSES,
         'stats2': NAME_GUESSES,
         'win-grinders': NAME_GUESSES,
-        // Size comparison: only the player-name part of each card (keeps "smaller than leader" translated)
         'size-comparison': ['[class*="name" i]', '[class*="player" i] h3', '[class*="player" i] h4', '[class*="card" i] h3', '[class*="card" i] h4', '[class*="card" i] strong', '[class*="card" i] b'],
         'server-stats': NAME_GUESSES.concat(['button'])
     };
@@ -438,7 +525,6 @@ document.addEventListener('DOMContentLoaded', () => {
         el.querySelectorAll(keepSelector).forEach(mark);
     }
 
-    // --- Main function (same name your menu already uses) ---
     function applySiteLanguage(lang, userInitiated) {
         if (!siteTranslations[lang]) lang = 'en';
 
@@ -451,17 +537,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         localStorage.setItem('siteLanguage', lang);
 
-        // Tell Google which language to use (it remembers via a cookie, so every page matches)
         const wanted = lang === 'en' ? '' : '/en/' + GOOGLE_CODES[lang];
         const had = getCookie('googtrans');
         if (wanted !== had) {
             setGoogleCookie(wanted);
-            if (userInitiated) { location.reload(); return; }   // clean switch between languages
+            if (userInitiated) { location.reload(); return; }
         }
         if (wanted) loadGoogleTranslate();
     }
 
-    // Keep your dictionary working for elements other scripts add later
     new MutationObserver((mutations) => {
         const lang = localStorage.getItem('siteLanguage') || 'en';
         mutations.forEach((m) => m.addedNodes.forEach((n) => {
@@ -470,13 +554,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }).observe(document.body, { childList: true, subtree: true });
 
-    // Setup Dropdown Events (Only runs on pages where the language button exists)
     const toggleBtn = document.getElementById('lang-toggle-btn');
     const langMenu = document.getElementById('lang-menu');
     const langOptions = document.querySelectorAll('.lang-option');
 
     if (toggleBtn && langMenu) {
-        langMenu.setAttribute('translate', 'no'); // keep language names like "Español" untouched
+        langMenu.setAttribute('translate', 'no');
         toggleBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const isOpen = langMenu.classList.toggle('open');
@@ -497,20 +580,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Automatically apply saved language on EVERY page load
     const savedLang = localStorage.getItem('siteLanguage') || 'en';
     applySiteLanguage(savedLang);
 });
-const s = new Audio('audio/u_xg7ssi08yr-button-clicks-572422.mp3');
 
-document.addEventListener('click', e => {
-    const b = e.target.closest('a, button');
-    if (!b) return;
+const funFactClickSound = new Audio('audio/u_xg7ssi08yr-button-clicks-572422.mp3');
 
-    const t = b.textContent.trim().toLowerCase();
+document.addEventListener('click', (event) => {
+    const targetButton = event.target.closest('a, button');
+    if (!targetButton) return;
 
-    if (t.includes('fun fact') || t.includes('fact')) {
-        s.currentTime = 0;
-        s.play().catch(() => {});
+    const label = targetButton.textContent.trim().toLowerCase();
+    if (label.includes('fun fact') || label.includes('fact')) {
+        funFactClickSound.currentTime = 0;
+        funFactClickSound.play().catch(() => {});
     }
 });
