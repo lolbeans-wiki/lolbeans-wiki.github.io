@@ -596,3 +596,121 @@ document.addEventListener('click', (event) => {
         funFactClickSound.play().catch(() => {});
     }
 });
+// 0. Persistent Music Switcher (8 tracks, looped, manual PLAY/PAUSE)
+    const musicTracks = [
+        { file: 'SPCookie - Shikimori.mp3', credits: 'Credits: (10s) Mr Marsh' },
+        { file: 'SPCookie - Flavorful Factory (1).mp3', credits: 'Credits: (10s) Mr Marsh' },
+        { file: 'SPCookie - Sunshine.mp3', credits: 'Credits: (10s) Mr Marsh' },
+        { file: 'SPCookie - Triangle Dash.mp3', credits: 'Credits: (10s) Mr Marsh' },
+        { file: 'Video Project 35 (1).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
+        { file: 'Video Project 35 (2).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
+        { file: 'Video Project 35 (3).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
+        { file: 'Video Project 35.m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' }
+    ];
+
+    const TRACK_STORAGE_KEY = 'lolbeans_music_track_index';
+    const PLAYING_STORAGE_KEY = 'lolbeans_music_playing';
+
+    let currentTrackIndex = parseInt(localStorage.getItem(TRACK_STORAGE_KEY) || '0', 10);
+    if (Number.isNaN(currentTrackIndex) || currentTrackIndex < 0 || currentTrackIndex >= musicTracks.length) {
+        currentTrackIndex = 0;
+    }
+
+    let wantsPlaying = localStorage.getItem(PLAYING_STORAGE_KEY) === 'true';
+
+    const bgMusic = new Audio();
+    bgMusic.loop = true;
+    bgMusic.preload = 'auto';
+
+    function resolveTrackSrc(index) {
+        return `audio/${encodeURIComponent(musicTracks[index].file)}`;
+    }
+
+    function refreshMusicUi() {
+        const trackNumEl = document.getElementById('music-track-num');
+        const creditsEl = document.getElementById('music-credits');
+        const playPauseBtn = document.getElementById('music-mute-btn') || document.getElementById('music-toggle-btn');
+        const isPlaying = !bgMusic.paused;
+
+        if (trackNumEl) {
+            trackNumEl.textContent = `${currentTrackIndex + 1}/${musicTracks.length}`;
+        }
+        if (creditsEl) {
+            creditsEl.textContent = musicTracks[currentTrackIndex].credits;
+        }
+        if (playPauseBtn) {
+            playPauseBtn.textContent = isPlaying ? 'PAUSE' : 'PLAY';
+            playPauseBtn.classList.toggle('muted', !isPlaying);
+        }
+    }
+
+    function setMusicTrack(index, shouldPlay) {
+        currentTrackIndex = ((index % musicTracks.length) + musicTracks.length) % musicTracks.length;
+        localStorage.setItem(TRACK_STORAGE_KEY, String(currentTrackIndex));
+        bgMusic.src = resolveTrackSrc(currentTrackIndex);
+        bgMusic.load();
+
+        if (shouldPlay) {
+            bgMusic.play()
+                .then(() => {
+                    wantsPlaying = true;
+                    localStorage.setItem(PLAYING_STORAGE_KEY, 'true');
+                    refreshMusicUi();
+                })
+                .catch(() => {
+                    wantsPlaying = false;
+                    localStorage.setItem(PLAYING_STORAGE_KEY, 'false');
+                    refreshMusicUi();
+                });
+        } else {
+            bgMusic.pause();
+            refreshMusicUi();
+        }
+    }
+
+    // Load track without autoplaying on load
+    setMusicTrack(currentTrackIndex, false);
+
+    // Resume only if it was playing before and the user clicks somewhere on the page
+    if (wantsPlaying) {
+        const resumeOnce = () => {
+            if (wantsPlaying && bgMusic.paused) {
+                bgMusic.play().then(refreshMusicUi).catch(() => {});
+            }
+            document.removeEventListener('pointerdown', resumeOnce);
+            document.removeEventListener('keydown', resumeOnce);
+        };
+        document.addEventListener('pointerdown', resumeOnce, { once: true });
+        document.addEventListener('keydown', resumeOnce, { once: true });
+    }
+
+    const switchMusicBtn = document.getElementById('music-switcher-btn');
+    if (switchMusicBtn) {
+        switchMusicBtn.addEventListener('click', () => {
+            setMusicTrack(currentTrackIndex + 1, wantsPlaying || !bgMusic.paused);
+        });
+    }
+
+    const playPauseBtn = document.getElementById('music-mute-btn') || document.getElementById('music-toggle-btn');
+    if (playPauseBtn) {
+        playPauseBtn.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                if (!bgMusic.src) {
+                    setMusicTrack(currentTrackIndex, true);
+                    return;
+                }
+                bgMusic.play()
+                    .then(() => {
+                        wantsPlaying = true;
+                        localStorage.setItem(PLAYING_STORAGE_KEY, 'true');
+                        refreshMusicUi();
+                    })
+                    .catch(() => {});
+            } else {
+                bgMusic.pause();
+                wantsPlaying = false;
+                localStorage.setItem(PLAYING_STORAGE_KEY, 'false');
+                refreshMusicUi();
+            }
+        });
+    }
