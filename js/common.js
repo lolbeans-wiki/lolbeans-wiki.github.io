@@ -1,110 +1,72 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const box = document.querySelector('.music-box');
+    const switchBtn = document.getElementById('music-switcher-btn');
+    const playBtn = document.getElementById('music-mute-btn') || document.getElementById('music-toggle-btn');
 
-    // Music switcher (8 tracks, looped, manual play/pause)
-    const playlist = [
-        { file: 'SPCookie - Shikimori.mp3', credits: 'Credits: (10s) Mr Marsh' },
-        { file: 'SPCookie - Flavorful Factory (1).mp3', credits: 'Credits: (10s) Mr Marsh' },
-        { file: 'SPCookie - Sunshine.mp3', credits: 'Credits: (10s) Mr Marsh' },
-        { file: 'SPCookie - Triangle Dash.mp3', credits: 'Credits: (10s) Mr Marsh' },
-        { file: 'Video Project 35 (1).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
-        { file: 'Video Project 35 (2).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
-        { file: 'Video Project 35 (3).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
-        { file: 'Video Project 35.m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' }
-    ];
+    if (box && switchBtn && playBtn) {
+        const songs = [
+            { file: 'SPCookie - Shikimori.mp3', credits: 'Credits: (10s) Mr Marsh' },
+            { file: 'SPCookie - Flavorful Factory (1).mp3', credits: 'Credits: (10s) Mr Marsh' },
+            { file: 'SPCookie - Sunshine.mp3', credits: 'Credits: (10s) Mr Marsh' },
+            { file: 'SPCookie - Triangle Dash.mp3', credits: 'Credits: (10s) Mr Marsh' },
+            { file: 'Video Project 35 (1).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
+            { file: 'Video Project 35 (2).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
+            { file: 'Video Project 35 (3).m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' },
+            { file: 'Video Project 35.m4a', credits: 'Credits: Ᏽꓓⲙⲁ⳽ⲧⲉⲅ ✔' }
+        ];
 
-    const trackKey = 'lolbeans_music_track_index';
-    const playKey = 'lolbeans_music_playing';
+        const savedIdx = parseInt(localStorage.getItem('lolbeans_music_track_index') || '0', 10);
+        let idx = Number.isNaN(savedIdx) || savedIdx < 0 || savedIdx >= songs.length ? 0 : savedIdx;
 
-    let trackIdx = parseInt(localStorage.getItem(trackKey) || '0', 10);
-    if (Number.isNaN(trackIdx) || trackIdx < 0 || trackIdx >= playlist.length) {
-        trackIdx = 0;
-    }
+        const audio = new Audio();
+        audio.loop = true;
+        audio.preload = 'auto';
 
-    let shouldResume = localStorage.getItem(playKey) === 'true';
+        const trackNum = document.getElementById('music-track-num');
+        const creditsBox = document.getElementById('music-credits');
 
-    const player = new Audio();
-    player.loop = true;
-    player.preload = 'auto';
-
-    function updateMusicLabels() {
-        const numLabel = document.getElementById('music-track-num');
-        const creditLabel = document.getElementById('music-credits');
-        const playBtn = document.getElementById('music-mute-btn') || document.getElementById('music-toggle-btn');
-        const active = !player.paused;
-
-        if (numLabel) numLabel.textContent = `${trackIdx + 1}/${playlist.length}`;
-        if (creditLabel) creditLabel.textContent = playlist[trackIdx].credits;
-        if (playBtn) {
-            playBtn.textContent = active ? 'PAUSE' : 'PLAY';
-            playBtn.classList.toggle('muted', !active);
-        }
-    }
-
-    function selectTrack(idx, autoPlay) {
-        trackIdx = ((idx % playlist.length) + playlist.length) % playlist.length;
-        localStorage.setItem(trackKey, String(trackIdx));
-        player.src = `audio/${encodeURIComponent(playlist[trackIdx].file)}`;
-        player.load();
-
-        if (!autoPlay) {
-            player.pause();
-            updateMusicLabels();
-            return;
+        function syncLabels() {
+            const playing = !audio.paused;
+            if (trackNum) trackNum.textContent = `${idx + 1}/${songs.length}`;
+            if (creditsBox) creditsBox.textContent = songs[idx].credits;
+            playBtn.textContent = playing ? 'PAUSE' : 'PLAY';
+            playBtn.classList.toggle('muted', !playing);
         }
 
-        player.play().then(() => {
-            shouldResume = true;
-            localStorage.setItem(playKey, 'true');
-            updateMusicLabels();
-        }).catch(() => {
-            shouldResume = false;
-            localStorage.setItem(playKey, 'false');
-            updateMusicLabels();
-        });
-    }
+        function loadSong(next, startPlaying) {
+            idx = ((next % songs.length) + songs.length) % songs.length;
+            localStorage.setItem('lolbeans_music_track_index', String(idx));
+            audio.src = `audio/${encodeURIComponent(songs[idx].file)}`;
+            audio.load();
 
-    selectTrack(trackIdx, false);
-
-    if (shouldResume) {
-        const resumePlayback = () => {
-            if (shouldResume && player.paused) {
-                player.play().then(updateMusicLabels).catch(() => {});
-            }
-            document.removeEventListener('pointerdown', resumePlayback);
-            document.removeEventListener('keydown', resumePlayback);
-        };
-        document.addEventListener('pointerdown', resumePlayback, { once: true });
-        document.addEventListener('keydown', resumePlayback, { once: true });
-    }
-
-    const nextTrackBtn = document.getElementById('music-switcher-btn');
-    if (nextTrackBtn) {
-        nextTrackBtn.addEventListener('click', () => {
-            selectTrack(trackIdx + 1, shouldResume || !player.paused);
-        });
-    }
-
-    const playPauseBtn = document.getElementById('music-mute-btn') || document.getElementById('music-toggle-btn');
-    if (playPauseBtn) {
-        playPauseBtn.addEventListener('click', () => {
-            if (!player.paused) {
-                player.pause();
-                shouldResume = false;
-                localStorage.setItem(playKey, 'false');
-                updateMusicLabels();
+            if (!startPlaying) {
+                audio.pause();
+                syncLabels();
                 return;
             }
 
-            if (!player.src) {
-                selectTrack(trackIdx, true);
+            audio.play().then(syncLabels).catch(syncLabels);
+        }
+
+        loadSong(idx, false);
+
+        switchBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            loadSong(idx + 1, !audio.paused);
+        });
+
+        playBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!audio.paused) {
+                audio.pause();
+                syncLabels();
                 return;
             }
-
-            player.play().then(() => {
-                shouldResume = true;
-                localStorage.setItem(playKey, 'true');
-                updateMusicLabels();
-            }).catch(() => {});
+            if (!audio.src) {
+                loadSong(idx, true);
+                return;
+            }
+            audio.play().then(syncLabels).catch(() => {});
         });
     }
 
@@ -235,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             searchPlayerStats: "Search Player Stats",
             sizeComparison: "Size Comparison",
             winGrinders: "Win Grinders",
+            // Tag Guide Section Keys
             tagGuidePageTitle: "Tag Guide - US Lolbeans server Web",
             backToExtras: "Back to Extras",
             guideCredits: "CREDITS: (10s) Mr Marsh",
@@ -428,14 +391,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // ===== TRANSLATION ENGINE =====
+    // Your hand-written dictionary (above) is used for elements marked data-i18n.
+    // EVERYTHING ELSE on the page is translated automatically by Google Translate.
     const RTL_LANGS = ['ar', 'ur'];
     const GOOGLE_CODES = { bn: 'bn', fr: 'fr', hi: 'hi', id: 'id', ja: 'ja', zh: 'zh-CN', ar: 'ar', pt: 'pt', ru: 'ru', es: 'es', ur: 'ur' };
     let googleLoaded = false;
 
+    // --- Part A: your dictionary, for data-i18n elements ---
     function translateKeyed(el, lang) {
         const key = el.getAttribute('data-i18n');
         const dict = siteTranslations[lang] || {};
-        const hand = dict[key] != null;
+        const hand = dict[key] != null;                       // do we have a hand-written translation?
         const value = hand ? dict[key] : siteTranslations.en[key];
         if (value == null) return;
 
@@ -452,6 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
             else el.textContent = value;
         }
 
+        // Hand-written text is protected from Google; anything else is left for Google to translate
         if (hand && lang !== 'en') {
             el.setAttribute('translate', 'no');
             el.classList.add('notranslate');
@@ -467,6 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scope.querySelectorAll('[data-i18n]').forEach((el) => translateKeyed(el, lang));
     }
 
+    // --- Part B: Google Translate for everything else ---
     function getCookie(name) {
         const row = document.cookie.split('; ').find((r) => r.startsWith(name + '='));
         return row ? decodeURIComponent(row.slice(name.length + 1)) : '';
@@ -482,6 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (googleLoaded) return;
         googleLoaded = true;
 
+        // Hide Google's toolbar/banner so only your own language menu is visible
         const style = document.createElement('style');
         style.textContent = [
             '#google_translate_element{display:none !important}',
@@ -511,12 +481,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(script);
     }
 
+    // ===== KEEP PLAYER NAMES IN ENGLISH (never machine-translated) =====
+    // Add more selectors to any list below to protect more things.
+    // '*' = every page. Other keys are page file names (without .html).
+    // You can also add  translate="no"  or  data-keep-english  to any element in the HTML.
     const NAME_GUESSES = ['[class*="name" i]', '[class*="row" i]', '[class*="entry" i]', '[class*="item" i]', '[class*="result" i]', '[class*="suggest" i]', 'td', 'li'];
     const KEEP_ENGLISH = {
         '*': ['input', 'datalist', '[data-keep-english]'],
         'player-stats': NAME_GUESSES,
         'stats2': NAME_GUESSES,
         'win-grinders': NAME_GUESSES,
+        // Size comparison: only the player-name part of each card (keeps "smaller than leader" translated)
         'size-comparison': ['[class*="name" i]', '[class*="player" i] h3', '[class*="player" i] h4', '[class*="card" i] h3', '[class*="card" i] h4', '[class*="card" i] strong', '[class*="card" i] b'],
         'server-stats': NAME_GUESSES.concat(['button'])
     };
@@ -533,6 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.querySelectorAll(keepSelector).forEach(mark);
     }
 
+    // --- Main function (same name your menu already uses) ---
     function applySiteLanguage(lang, userInitiated) {
         if (!siteTranslations[lang]) lang = 'en';
 
@@ -545,15 +521,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         localStorage.setItem('siteLanguage', lang);
 
+        // Tell Google which language to use (it remembers via a cookie, so every page matches)
         const wanted = lang === 'en' ? '' : '/en/' + GOOGLE_CODES[lang];
         const had = getCookie('googtrans');
         if (wanted !== had) {
             setGoogleCookie(wanted);
-            if (userInitiated) { location.reload(); return; }
+            if (userInitiated) { location.reload(); return; }   // clean switch between languages
         }
         if (wanted) loadGoogleTranslate();
     }
 
+    // Keep your dictionary working for elements other scripts add later
     new MutationObserver((mutations) => {
         const lang = localStorage.getItem('siteLanguage') || 'en';
         mutations.forEach((m) => m.addedNodes.forEach((n) => {
@@ -562,12 +540,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }).observe(document.body, { childList: true, subtree: true });
 
+    // Setup Dropdown Events (Only runs on pages where the language button exists)
     const toggleBtn = document.getElementById('lang-toggle-btn');
     const langMenu = document.getElementById('lang-menu');
     const langOptions = document.querySelectorAll('.lang-option');
 
     if (toggleBtn && langMenu) {
-        langMenu.setAttribute('translate', 'no');
+        langMenu.setAttribute('translate', 'no'); // keep language names like "Español" untouched
         toggleBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const isOpen = langMenu.classList.toggle('open');
@@ -588,19 +567,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Automatically apply saved language on EVERY page load
     const savedLang = localStorage.getItem('siteLanguage') || 'en';
     applySiteLanguage(savedLang);
 });
 
-const funFactClickSound = new Audio('audio/u_xg7ssi08yr-button-clicks-572422.mp3');
+const s = new Audio('audio/u_xg7ssi08yr-button-clicks-572422.mp3');
 
-document.addEventListener('click', (event) => {
-    const targetButton = event.target.closest('a, button');
-    if (!targetButton) return;
+document.addEventListener('click', e => {
+    const b = e.target.closest('a, button');
+    if (!b) return;
 
-    const label = targetButton.textContent.trim().toLowerCase();
-    if (label.includes('fun fact') || label.includes('fact')) {
-        funFactClickSound.currentTime = 0;
-        funFactClickSound.play().catch(() => {});
+    const t = b.textContent.trim().toLowerCase();
+
+    if (t.includes('fun fact') || t.includes('fact')) {
+        s.currentTime = 0;
+        s.play().catch(() => {});
     }
 });
