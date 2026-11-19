@@ -2817,3 +2817,85 @@ body::before {
     padding-left: 1px;
     line-height: 1.1;
 }
+.music-box,
+.music-box * {
+    animation: none !important;
+    transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease !important;
+    transform: none !important;
+}
+
+.music-box {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 4px 0 0 0;
+    position: relative;
+    z-index: 999;
+}
+
+.music-row {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+}
+
+.music-switch-btn {
+    background-color: #d91e2a;
+    color: #ffffff;
+    border: 1px solid #ff4d58;
+    border-bottom: 2px solid #8a0f17;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 3px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.music-switch-btn:hover,
+.music-switch-btn:active {
+    background-color: #e6222f;
+}
+
+.track-tag {
+    background: rgba(0, 0, 0, 0.35);
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-family: monospace;
+}
+
+.music-mute-btn {
+    background-color: #1c1c1c;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    border-bottom: 2px solid #111;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.music-mute-btn:hover,
+.music-mute-btn:active {
+    background-color: #2a2a2a;
+    color: #fff;
+}
+
+.music-mute-btn.muted {
+    background-color: #3a1215;
+    border-color: #8a0f17;
+    color: #ff6b74;
+}
+
+.music-credits {
+    font-size: 9px;
+    color: #9e9e9e;
+    margin-top: 2px;
+    padding-left: 1px;
+    line-height: 1.1;
+}
