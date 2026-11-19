@@ -40,3 +40,37 @@
     <script src="js/common.js"></script>
 </body>
 </html>
+<div class="top-controls-bar">
+    <!-- Your existing Language Switcher -->
+    <div class="language-dropdown">
+        <button id="lang-toggle-btn" class="lang-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <span>🌐 <span data-i18n="langButton">Languages</span></span>
+            <span>▾</span>
+        </button>
+        <ul id="lang-menu" class="lang-menu" role="listbox">
+            <li><button type="button" class="lang-option active" data-lang="en">English</button></li>
+            <li><button type="button" class="lang-option" data-lang="bn">বাংলা</button></li>
+            <li><button type="button" class="lang-option" data-lang="fr">Français</button></li>
+            <li><button type="button" class="lang-option" data-lang="hi">हिन्दी</button></li>
+            <li><button type="button" class="lang-option" data-lang="id">Bahasa Indonesia</button></li>
+            <li><button type="button" class="lang-option" data-lang="ja">日本語</button></li>
+            <li><button type="button" class="lang-option" data-lang="zh">普通话</button></li>
+            <li><button type="button" class="lang-option" data-lang="ar">العربية الفصحى الحديثة</button></li>
+            <li><button type="button" class="lang-option" data-lang="pt">Português</button></li>
+            <li><button type="button" class="lang-option" data-lang="ru">Русский</button></li>
+            <li><button type="button" class="lang-option" data-lang="es">Español</button></li>
+            <li><button type="button" class="lang-option" data-lang="ur">اردو</button></li>
+        </ul>
+    </div>
+
+    <!-- Custom Music Switcher -->
+    <div class="music-box">
+        <div class="music-row">
+            <button id="music-switcher-btn" class="music-switch-btn" type="button">
+                Music switcher <span id="music-track-num" class="track-tag">1/8</span>
+            </button>
+            <button id="music-mute-btn" class="music-mute-btn" type="button">MUTE</button>
+        </div>
+        <div id="music-credits" class="music-credits">Credits: (10s) Mr Marsh</div>
+    </div>
+</div>
