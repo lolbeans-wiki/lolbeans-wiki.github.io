@@ -31,7 +31,7 @@
 
             <h2 data-i18n="mapsHeader">Maps</h2>
             <div class="message_from_e">
-                <h1 data-i18n="hiItsE">Hi its e</h1>
+                <h1><s style="opacity: 0.6;" data-i18n="hiItsE">Hi its e</s> <span>Hi its GDmaster</span></h1>
                 <p>
                     <s style="opacity: 0.6;">
                         <span data-i18n="mapMissingLogic1">A lot of these maps are missing the game logic</span>
@@ -53,7 +53,7 @@
             <div class="maps-how-to">
                 <h2 data-i18n="howToUseHeader">HOW TO USE</h2>
                 <div class="maps-how-to-steps">
-                    <p>1. Click one of the map buttons above to open/grab the VIA map file</p>
+                    <p>1. Click one of the map buttons above to download the VIA map file</p>
                     <p>2. Open VIA and load the map file from your computer</p>
                     <p>3. Practice and explore the maps</p>
                 </div>
@@ -62,5 +62,18 @@
     </section>
 
     <script src="js/common.js"></script>
+    <script>
+        document.querySelectorAll('.button-link[data-map]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const mapName = btn.dataset.map;
+                const link = document.createElement('a');
+                link.href = `maps/${mapName}.via`;
+                link.download = `${mapName}.via`;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            });
+        });
+    </script>
 </body>
 </html>
