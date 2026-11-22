@@ -2772,3 +2772,41 @@ body::before {
     font-size: 32px;
     padding: 20px 34px;
 }
+@media (max-width: 768px) {
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .tutorial-center p, h1, h2 {
+        font-size: 26px !important;
+        padding: 0 15px;
+    }
+
+    .tutorial-center a {
+        font-size: 24px !important;
+    }
+
+    button, .back-button-top, nav a, .tab {
+        max-width: 90vw;
+        white-space: normal;
+        word-wrap: break-word;
+        font-size: 16px !important;
+        padding: 10px 16px !important;
+        margin: 6px auto;
+    }
+
+    nav, .tabs, .button-group, .row {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+
+    img, table {
+        max-width: 95vw !important;
+        height: auto !important;
+    }
+}
