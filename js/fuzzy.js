@@ -1,89 +1,84 @@
-const FUZZY_EXACT_SCORE = 1000;
+const BOOST = 1000;
 
-function normalizeName(value) {
-    return String(value).toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+function stripName(s) {
+    return String(s).toLowerCase().trim().replace(/[^a-z0-9]/g, '');
 }
 
-function levenshteinDistance(a, b) {
+function dist(a, b) {
     if (a === b) return 0;
     if (!a.length) return b.length;
     if (!b.length) return a.length;
-    let previous = new Array(b.length + 1);
-    let current = new Array(b.length + 1);
-    for (let j = 0; j <= b.length; j++) previous[j] = j;
+
+    let row1 = [];
+    let row2 = [];
+    for (let j = 0; j <= b.length; j++) row1[j] = j;
+
     for (let i = 1; i <= a.length; i++) {
-        current[0] = i;
+        row2[0] = i;
         for (let j = 1; j <= b.length; j++) {
-            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-            current[j] = Math.min(
-                previous[j] + 1,      // deletion
-                current[j - 1] + 1,   // insertion
-                previous[j - 1] + cost // substitution
-            );
+            const c = a[i - 1] === b[j - 1] ? 0 : 1;
+            row2[j] = Math.min(row1[j] + 1, row2[j - 1] + 1, row1[j - 1] + c);
         }
-        [previous, current] = [current, previous];
+        row1 = row2;
+        row2 = [];
     }
-    return previous[b.length];
+    return row1[b.length];
 }
 
 function fuzzySearchPlayers(query, limit = 7) {
-    const search = String(query).trim();
-    if (!search || typeof leaderboardData === 'undefined' || !leaderboardData.length) return [];
+    const q = String(query).trim();
+    if (!q || typeof leaderboardData === 'undefined' || !leaderboardData.length) return [];
 
-    const results = fuzzysort.go(search, leaderboardData, {
-        limit: limit || 0,
-        key: 'name'
-    });
+    const hits = fuzzysort.go(q, leaderboardData, { limit: limit || 0, key: 'name' });
+    const norm = stripName(q);
 
-    const normalizedQuery = normalizeName(search);
-    return results.map(result => ({
-        player: result.obj,
-        index: leaderboardData.indexOf(result.obj),
-        score: normalizeName(result.obj.name) === normalizedQuery ? FUZZY_EXACT_SCORE : result.score
+    return hits.map(h => ({
+        player: h.obj,
+        index: leaderboardData.indexOf(h.obj),
+        score: stripName(h.obj.name) === norm ? BOOST : h.score
     }));
 }
 
 function closestPlayerNames(query, limit = 3) {
-    const normalized = normalizeName(query);
-    if (!normalized || typeof leaderboardData === 'undefined' || !leaderboardData.length) return [];
+    const norm = stripName(query);
+    if (!norm || typeof leaderboardData === 'undefined' || !leaderboardData.length) return [];
+
     return leaderboardData
         .map((player, index) => {
-            const candidate = normalizeName(player.name);
-            const maxLength = Math.max(normalized.length, candidate.length) || 1;
-            const similarity = candidate.includes(normalized)
-                ? 1
-                : 1 - levenshteinDistance(normalized, candidate) / maxLength;
+            const clean = stripName(player.name);
+            const max = Math.max(norm.length, clean.length) || 1;
+            const similarity = clean.includes(norm) ? 1 : 1 - dist(norm, clean) / max;
             return { player, index, similarity };
         })
-        .sort((first, second) => second.similarity - first.similarity || first.index - second.index)
+        .sort((x, y) => y.similarity - x.similarity || x.index - y.index)
         .slice(0, limit);
 }
 
 // attach click event listnte to input
-function attachNameAutocomplete(options) {
-    const input = options.input;
-    const listEl = options.listEl;
-    const limit = options.limit || 7;
-    const onSelect = options.onSelect;
+function attachNameAutocomplete(cfg) {
+    const input = cfg.input;
+    const listEl = cfg.listEl;
+    const limit = cfg.limit || 7;
+    const onSelect = cfg.onSelect;
     if (!input || !listEl) return;
 
-    let items = [];
-    let activeIndex = -1;
+    let list = [];
+    let cur = -1;
 
     function close() {
-        items = [];
-        activeIndex = -1;
-        listEl.replaceChildren();
+        list = [];
+        cur = -1;
+        listEl.innerHTML = '';
         listEl.classList.remove('open');
     }
 
-    function highlight() {
-        Array.from(listEl.children).forEach((child, idx) => {
-            child.classList.toggle('active', idx === activeIndex);
-        });
+    function paintActive() {
+        for (let i = 0; i < listEl.children.length; i++) {
+            listEl.children[i].classList.toggle('active', i === cur);
+        }
     }
 
-    function choose(item) {
+    function select(item) {
         if (!item) return;
         input.value = item.player.name;
         close();
@@ -91,38 +86,42 @@ function attachNameAutocomplete(options) {
     }
 
     input.addEventListener('input', () => {
-        if (!input.value.trim()) {
-            close();
-            return;
-        }
-        items = fuzzySearchPlayers(input.value, limit);
-        activeIndex = -1;
-        listEl.replaceChildren();
-        if (!items.length) {
+        if (!input.value.trim()) return close();
+
+        list = fuzzySearchPlayers(input.value, limit);
+        cur = -1;
+        listEl.innerHTML = '';
+
+        if (!list.length) {
             listEl.classList.remove('open');
             return;
         }
-        items.forEach(item => {
-            const row = document.createElement('div');
-            row.className = 'suggestion-item';
-            const name = document.createElement('span');
-            name.textContent = item.player.name;
-            const meta = document.createElement('span');
-            meta.className = 'suggestion-meta';
-            meta.textContent = `#${item.index + 1}`;
-            row.append(name, meta);
+
+        list.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+
+            const n = document.createElement('span');
+            n.textContent = item.player.name;
+
+            const r = document.createElement('span');
+            r.className = 'suggestion-meta';
+            r.textContent = '#' + (item.index + 1);
+
+            div.append(n, r);
             // make suree we fire the event before closing
-            row.addEventListener('mousedown', (event) => {
-                event.preventDefault();
-                choose(item);
+            div.addEventListener('mousedown', e => {
+                e.preventDefault();
+                select(item);
             });
-            listEl.appendChild(row);
+            listEl.appendChild(div);
         });
+
         listEl.classList.add('open');
     });
 
     input.addEventListener('focus', () => {
-        if (input.value.trim() && !items.length) input.dispatchEvent(new Event('input'));
+        if (input.value.trim() && !list.length) input.dispatchEvent(new Event('input'));
     });
 
     input.addEventListener('blur', () => {
@@ -130,20 +129,20 @@ function attachNameAutocomplete(options) {
         setTimeout(close, 150);
     });
 
-    input.addEventListener('keydown', (event) => {
-        if (!items.length) return;
-        if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            activeIndex = (activeIndex + 1) % items.length;
-            highlight();
-        } else if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            activeIndex = (activeIndex - 1 + items.length) % items.length;
-            highlight();
-        } else if (event.key === 'Enter' && activeIndex >= 0) {
-            event.preventDefault();
-            choose(items[activeIndex]);
-        } else if (event.key === 'Escape') {
+    input.addEventListener('keydown', e => {
+        if (!list.length) return;
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            cur = (cur + 1) % list.length;
+            paintActive();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            cur = (cur - 1 + list.length) % list.length;
+            paintActive();
+        } else if (e.key === 'Enter' && cur >= 0) {
+            e.preventDefault();
+            select(list[cur]);
+        } else if (e.key === 'Escape') {
             close();
         }
     });

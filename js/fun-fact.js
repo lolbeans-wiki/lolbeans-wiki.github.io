@@ -1,5 +1,3 @@
-// ===== FUN FACT GENERATOR =====
-// To add images: set image: "yourfile.png" on any fact. To add facts: add another line.
 const FUN_FACTS = [
     { image: null, text: `You can actually jump over the fence without needing a partner in devils trick, it requires you to time it and waste a very short second, The player Aspect has gotten 4 seconds with this trick before. But its not easy to do.` },
     { image: "images/nasty-seals-1-9s.png", text: `Nasty Seals used to have a bug that let you skip through the entire level in 1-2 seconds, it got patched tho.` },
@@ -104,89 +102,93 @@ const FUN_FACTS = [
     { image: null, text: `https://www.youtube.com/watch?v=gxLdOLgBIQ8 this is the most popular lolbeans video as far as I know, surpassing over 230k views!` },
 ];
 
-let factTimerInterval = null;
-
-function getBirthdayTarget() {
-    // Oct 14, 2027 (local midnight); once passed, resets to 365 days later, repeating.
-    const target = new Date(2027, 9, 14, 0, 0, 0);
-    const now = new Date();
-    while (now >= target) target.setDate(target.getDate() + 365);
-    return target;
-}
-
-function updateFactTimer() {
-    const diff = getBirthdayTarget() - new Date();
-    const total = Math.max(0, Math.floor(diff / 1000));
-    const d = Math.floor(total / 86400);
-    const h = Math.floor((total % 86400) / 3600);
-    const m = Math.floor((total % 3600) / 60);
-    const s = total % 60;
-    document.getElementById('fact-timer').textContent = `${d}d ${h}h ${m}m ${s}s`;
-}
-
-function stopFactTimer() {
-    if (factTimerInterval) clearInterval(factTimerInterval);
-    factTimerInterval = null;
-}
-
-function renderFactText(text) {
-    const el = document.getElementById('fact-text');
-    el.replaceChildren();
-    text.split(/(https?:\/\/\S+)/g).forEach((part) => {
-        if (/^https?:\/\//.test(part)) {
-            const a = document.createElement('a');
-            a.href = part;
-            a.textContent = part;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            a.style.color = '#8db8ff';
-            el.appendChild(a);
-        } else if (part) {
-            el.appendChild(document.createTextNode(part));
-        }
-    });
-}
-
-function generateFunFact() {
-    // Equal chance for each fact: 1 / FUN_FACTS.length (exactly 1% at 100 facts)
-    const fact = FUN_FACTS[Math.floor(Math.random() * FUN_FACTS.length)];
-    stopFactTimer();
-    document.getElementById('fact-box').hidden = false;
-    renderFactText(fact.text);
-
-    const img = document.getElementById('fact-image');
-    if (fact.image) { img.src = fact.image; img.hidden = false; }
-    else { img.hidden = true; img.removeAttribute('src'); }
-
-    const cookieBtn = document.getElementById('fact-cookie');
-    const cookieMsg = document.getElementById('fact-cookie-msg');
-    cookieMsg.hidden = true;
-    cookieMsg.textContent = '';
-    cookieBtn.hidden = !fact.cookie;
-    cookieBtn.disabled = false;
-
-    const timerEl = document.getElementById('fact-timer');
-    if (fact.timer) {
-        timerEl.hidden = false;
-        updateFactTimer();
-        factTimerInterval = setInterval(updateFactTimer, 1000);
-    } else {
-        timerEl.hidden = true;
-    }
-}
-
-document.getElementById('generate-fact-btn').addEventListener('click', generateFunFact);
-
 const COOKIE_MESSAGES = [
     () => `Your lucky number is ${Math.floor(Math.random() * 100) + 1}`,
     () => `There's nothing here, get scammed lol`,
     () => `Someone Ugly is gonna make your day pretty today`,
     () => `that shrek looking biker in the shop is selling weed, dont tell anyone`
 ];
-document.getElementById('fact-cookie').addEventListener('click', (event) => {
-    const cookieBtn = event.currentTarget;
-    if (cookieBtn.disabled) return;
-    cookieBtn.disabled = true; // one reveal per cookie; generate the fact again for a new one
+
+let timerId = null;
+
+function nextBirthday() {
+    const d = new Date(2027, 9, 14, 0, 0, 0);
+    const now = new Date();
+    while (now >= d) d.setDate(d.getDate() + 365);
+    return d;
+}
+
+function tickTimer() {
+    const left = Math.max(0, Math.floor((nextBirthday() - new Date()) / 1000));
+    const days = Math.floor(left / 86400);
+    const hrs = Math.floor((left % 86400) / 3600);
+    const mins = Math.floor((left % 3600) / 60);
+    const secs = left % 60;
+    document.getElementById('fact-timer').textContent = `${days}d ${hrs}h ${mins}m ${secs}s`;
+}
+
+function clearTimer() {
+    clearInterval(timerId);
+    timerId = null;
+}
+
+function setFactText(str) {
+    const box = document.getElementById('fact-text');
+    box.replaceChildren();
+    for (const part of str.split(/(https?:\/\/\S+)/g)) {
+        if (/^https?:\/\//.test(part)) {
+            const link = document.createElement('a');
+            link.href = part;
+            link.textContent = part;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.style.color = '#8db8ff';
+            box.appendChild(link);
+        } else if (part) {
+            box.appendChild(document.createTextNode(part));
+        }
+    }
+}
+
+function showFact() {
+    const pick = FUN_FACTS[Math.floor(Math.random() * FUN_FACTS.length)];
+    clearTimer();
+
+    document.getElementById('fact-box').hidden = false;
+    setFactText(pick.text);
+
+    const img = document.getElementById('fact-image');
+    if (pick.image) {
+        img.src = pick.image;
+        img.hidden = false;
+    } else {
+        img.hidden = true;
+        img.removeAttribute('src');
+    }
+
+    const cookieBtn = document.getElementById('fact-cookie');
+    const cookieMsg = document.getElementById('fact-cookie-msg');
+    cookieMsg.hidden = true;
+    cookieMsg.textContent = '';
+    cookieBtn.hidden = !pick.cookie;
+    cookieBtn.disabled = false;
+
+    const timerEl = document.getElementById('fact-timer');
+    if (pick.timer) {
+        timerEl.hidden = false;
+        tickTimer();
+        timerId = setInterval(tickTimer, 1000);
+    } else {
+        timerEl.hidden = true;
+    }
+}
+
+document.getElementById('generate-fact-btn').addEventListener('click', showFact);
+
+document.getElementById('fact-cookie').addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    if (btn.disabled) return;
+    btn.disabled = true;
     const msg = document.getElementById('fact-cookie-msg');
     msg.textContent = COOKIE_MESSAGES[Math.floor(Math.random() * COOKIE_MESSAGES.length)]();
     msg.hidden = false;
