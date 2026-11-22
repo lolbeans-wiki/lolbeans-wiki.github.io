@@ -2742,3 +2742,33 @@ body::before {
     padding-left: 1px;
     line-height: 1.1;
 }
+.tutorial-center img {
+    width: 120px;
+    max-width: 100%;
+    height: auto;
+}
+.tutorial-center {
+    text-align: center;
+    margin-top: 140px;
+}
+
+.tutorial-center p {
+    font-size: 52px;
+    margin-bottom: 36px;
+}
+
+.tutorial-center a {
+    font-size: 46px;
+}
+
+.tutorial-center img {
+    width: 650px;
+    max-width: 95%;
+    height: auto;
+    margin-top: 36px;
+}
+
+#minecraft-sub-panel .back-button-top {
+    font-size: 32px;
+    padding: 20px 34px;
+}
