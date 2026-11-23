@@ -40,7 +40,7 @@ const FUN_FACTS = [
     { image: null, text: `I'm running out of facts` },
     { image: null, text: `Whats the rarest Block in Minecraft?` },
     { image: null, text: `There's always a chance a random noob gets 11s on silly slide because the slide has a chance of launching you to the finish line from hitting you to hard with the spinning thingies.` },
-    { image: null, text: `The Boulderhill Caterpillar boost trick only works with air movement on, as much as many other things.` },
+    { image: null, text: `The Boulderhill Caterpillar boost trick only works with air movement on, as much as many other things. thats why the trick was only used in an actual speedrun just year ago although discovered years before` },
     { image: null, text: `Beacon bay is considered by many to be the only map thats better to do with Air movement toggled off. Since the platforms at the end give you a much bigger boost with it.` },
     { image: null, text: `The Crawling superpower is getting a tiny bit of hate because of how hilariously cursed it looks` },
     { image: null, cookie: true, text: `You get a lucky Bean Cookie! Click to see whats inside` },
