@@ -207,7 +207,6 @@ function drawRowLines() {
                 seenTops.push(top);
                 const line = document.createElement('div');
                 line.className = 'row-floor-line';
-                // 15px higher above the row's top/nametag area
                 line.style.top = (top - 15) + 'px';
                 gallery.appendChild(line);
             }
