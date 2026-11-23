@@ -7,7 +7,6 @@
     <link rel="icon" type="image/png" href="images/download.png">
     <link rel="stylesheet" href="css/styles.css?v=20261107-button-hover-v6">
     <style>
-        /* Chat on the left (as wide as possible), Lolbeans game on the right */
         .live-chat-shell {
             width: min(2200px, calc(100% - 24px)) !important;
             max-width: none !important;
@@ -23,13 +22,13 @@
             max-width: none !important;
         }
         .live-chat-chat-layout > .live-chat-frame {
-            flex: 1 1 0 !important;   /* takes ALL the leftover space */
+            flex: 1 1 0 !important;
             min-width: 0 !important;
             width: auto !important;
             max-width: none !important;
         }
         .live-chat-game {
-            flex: 0 0 clamp(520px, 38vw, 720px);   /* Lolbeans width: unchanged */
+            flex: 0 0 clamp(520px, 38vw, 720px);
             min-width: 0;
             display: flex;
             flex-direction: column;
@@ -70,6 +69,7 @@
         }
         .live-chat-game.is-hidden iframe { display: none; }
         .live-chat-game.is-hidden { flex: 0 0 auto; }
+
         @media (max-width: 1000px) {
             .live-chat-chat-layout { flex-direction: column; }
             .live-chat-game { flex: 0 0 auto; width: 100%; }
@@ -81,19 +81,21 @@
     <main class="live-chat-shell">
         <a class="live-chat-back" href="extras.html" data-i18n="backToExtras">Back to Extras</a>
         <h1 class="live-chat-title" data-i18n="liveChatHeading">Live Chat</h1>
+
         <form class="live-chat-nickname-form" id="live-chat-nickname-form">
             <div class="live-chat-nickname-controls">
-                <input id="live-chat-nickname" name="nickname" type="text" maxlength="20" autocomplete="nickname" aria-label="Your nickname" placeholder="Your nickname" data-i18n-placeholder="nicknamePlaceholder" required>
+                <input id="live-chat-nickname" name="nickname" type="text" maxlength="20"
+                    autocomplete="nickname" aria-label="Your nickname"
+                    placeholder="Your nickname" data-i18n-placeholder="nicknamePlaceholder" required>
                 <button type="submit" data-i18n="joinChatBtn">Join Chat</button>
             </div>
         </form>
+
         <div class="live-chat-chat-layout">
-            <!-- Left: the chat -->
             <div class="live-chat-frame" id="live-chat-frame">
                 <p class="live-chat-prompt" id="live-chat-prompt" data-i18n="liveChatPrompt">Choose a nickname to join the chat.</p>
             </div>
 
-            <!-- Right: Lolbeans.io game to play when bored -->
             <section class="live-chat-game" id="live-chat-game">
                 <div class="live-chat-game-bar">
                     <span>Bored? Play Lolbeans.io</span>
@@ -112,21 +114,21 @@
             </section>
         </div>
     </main>
+
     <script>
-        // Hide/Show the game (hiding also stops the game and its sound)
-        (function () {
-            const box = document.getElementById('live-chat-game');
-            const frame = document.getElementById('live-chat-game-frame');
-            const btn = document.getElementById('live-chat-game-toggle');
-            const url = frame.getAttribute('src');
-            btn.addEventListener('click', () => {
-                const hide = !box.classList.contains('is-hidden');
-                box.classList.toggle('is-hidden', hide);
-                frame.setAttribute('src', hide ? 'about:blank' : url);
-                btn.textContent = hide ? 'Show' : 'Hide';
-                btn.setAttribute('aria-expanded', String(!hide));
-            });
-        })();
+        // hiding swaps the iframe to about:blank so the game stops and the sound cuts off
+        const gameBox = document.getElementById('live-chat-game');
+        const gameFrame = document.getElementById('live-chat-game-frame');
+        const gameToggle = document.getElementById('live-chat-game-toggle');
+        const gameUrl = gameFrame.getAttribute('src');
+
+        gameToggle.addEventListener('click', () => {
+            const hide = !gameBox.classList.contains('is-hidden');
+            gameBox.classList.toggle('is-hidden', hide);
+            gameFrame.setAttribute('src', hide ? 'about:blank' : gameUrl);
+            gameToggle.textContent = hide ? 'Show' : 'Hide';
+            gameToggle.setAttribute('aria-expanded', String(!hide));
+        });
     </script>
     <script src="js/live-chat.js"></script>
     <script src="js/common.js"></script>
