@@ -6,31 +6,17 @@
     <title data-i18n="mapsPageTitle">Maps - US Lolbeans server Web</title>
     <link rel="icon" type="image/png" href="images/download.png">
     <link rel="stylesheet" href="css/styles.css?v=20261107-button-hover-v6">
-    <style>
-        .back-link {
-            display: inline-block;
-            margin-bottom: 24px;
-            padding: 10px 20px;
-            background: #2b2b2d;
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background-color 0.2s;
-        }
-        .back-link:hover { background: #3a3a3d; }
-    </style>
 </head>
 <body class="maps-page">
 
-    <div class="bean-side bean-side-left map-practice-preview">
+    <div class="bean-side bean-side-left map-practice-preview" aria-hidden="true">
         <img src="images/map-practice-circus.png" alt="">
     </div>
-    <div class="bean-side bean-side-right map-practice-preview">
+    <div class="bean-side bean-side-right map-practice-preview" aria-hidden="true">
         <img src="images/map-practice-islands.png" alt="">
     </div>
 
-    <nav class="tab-list">
+    <nav class="tab-list" aria-label="Page sections">
         <a class="tab-button" href="index.html" data-i18n="navHome">Home</a>
         <a class="tab-button" href="skill-measure.html" data-i18n="navSkill">Skill Measure</a>
         <a class="tab-button" href="extras.html" aria-current="page" data-i18n="navExtras">Super Cool stuff</a>
@@ -39,26 +25,25 @@
 
     <section class="tab-panel">
         <div class="fun-content">
-            <a class="back-link" href="extras.html" data-i18n="backToExtras">← Back to Super Cool stuff</a>
+            <!-- Back Button: Gray, positioned top-left -->
+            <div style="text-align: left; margin-bottom: 24px;">
+                <a href="extras.html" data-i18n="backToExtras" style="display: inline-block; background-color: #2b2b2d; color: #ffffff; padding: 10px 20px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.15); font-weight: 500; transition: background-color 0.2s;">← Back to Super Cool stuff</a>
+            </div>
 
             <h2 data-i18n="mapsHeader">Maps</h2>
-
             <div class="message_from_e">
                 <h1 data-i18n="hiItsE">Hi its e</h1>
                 <p data-i18n="mapMissingLogic1">A lot of these maps are missing the game logic</p>
                 <p data-i18n="mapMissingLogic2">So if you want to play them, you will have to add the game logic yourself</p>
                 <p data-i18n="mapMissingLogic3">IE: Kill areas &amp; Checkpoints</p>
                 <p data-i18n="mapMissingLogic4">Also more are coming im just lazy</p>
-                <p data-i18n="mapMissingLogic5">UPDATE BY GDMASTER: To prevent cheating, some useless background objects and textures were deleted, so the maps look different but this does NOT affect gameplay. Altho some maps like escape tsunami do have annoying disfunctions that dont prevent a good run but make it a bit unbalanced with dying objects, again, only if you fail</p>
             </div>
-
             <a class="button-link" href="maps/BeaconBay-v8.lol" download>Download BeaconBay-v8.lol</a>
-            <a class="button-link" href="maps/EscapeTsunami-v1.lold" download>Download EscapeTsunami-v1.lol</a>
+            <a class="button-link" href="maps/EscapeTsunami-v1.lol" download>Download EscapeTsunami-v1.lol</a>
             <a class="button-link" href="maps/NeonCity-v1.lol" download>Download NeonCity-v1.lol</a>
-            <a class="button-link" href="maps/PolarPath-v2.lold" download>Download PolarPath-v2.lol</a>
+            <a class="button-link" href="maps/PolarPath-v2.lol" download>Download PolarPath-v2.lol</a>
             <a class="button-link" href="maps/SplashDash-v2.lol" download>Download SplashDash-v2.lol</a>
             <a class="button-link" href="maps/CircusContest-v1.lol" download>Download CircusContest-v1.lol</a>
-
             <div class="maps-how-to">
                 <h2 data-i18n="howToUseHeader">HOW TO USE</h2>
                 <div class="maps-how-to-steps">
