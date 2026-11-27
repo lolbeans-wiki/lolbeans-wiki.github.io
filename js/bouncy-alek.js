@@ -1,124 +1,133 @@
-const crossingAleks = [...document.querySelectorAll('.slow-crossing')];
-let crossingStates = [];
-let crossingFrame = 0;
-let previousCrossingFrame = 0;
+// the two aleks that wander around the whole screen and bump into each other
+const wanderers = [...document.querySelectorAll('.slow-crossing')];
+let balls = [];
+let rafId = 0;
+let lastTime = 0;
 
-function resetCrossingAleks() {
-    if (!crossingAleks.length) return;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const firstSize = crossingAleks[0].getBoundingClientRect().width || 60;
-    const secondSize = crossingAleks[1] ? crossingAleks[1].getBoundingClientRect().width || 60 : 60;
-    crossingStates = [
-        { element: crossingAleks[0], x: 24, y: viewportHeight * 0.2, vx: 108, vy: 36, size: firstSize },
-        crossingAleks[1] ? { element: crossingAleks[1], x: viewportWidth - secondSize - 24, y: viewportHeight * 0.76, vx: -96, vy: -30, size: secondSize } : null
-    ].filter(Boolean);
+function setupBalls() {
+    if (!wanderers.length) return;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const widthOf = (el) => el.getBoundingClientRect().width || 60;
+
+    const sizeA = widthOf(wanderers[0]);
+    balls = [{ el: wanderers[0], x: 24, y: h * 0.2, vx: 108, vy: 36, size: sizeA }];
+
+    if (wanderers[1]) {
+        const sizeB = widthOf(wanderers[1]);
+        balls.push({ el: wanderers[1], x: w - sizeB - 24, y: h * 0.76, vx: -96, vy: -30, size: sizeB });
+    }
 }
 
-function animateCrossingAleks(timestamp) {
-    if (!document.body.classList.contains('fun-thingies-active') || crossingAleks.length === 0) {
-        crossingFrame = 0;
-        previousCrossingFrame = 0;
+// simple bounce: swap the speed along the line between the two centres, then push them apart
+function bumpTogether(a, b) {
+    const dx = a.x + a.size / 2 - b.x - b.size / 2;
+    const dy = a.y + a.size * 0.625 - b.y - b.size * 0.625;
+    const dist = Math.hypot(dx, dy) || 1;
+    const minDist = (a.size + b.size) * 0.42;
+    if (dist >= minDist) return;
+
+    const nx = dx / dist;
+    const ny = dy / dist;
+    const approach = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+    if (approach < 0) {
+        a.vx -= approach * nx;
+        a.vy -= approach * ny;
+        b.vx += approach * nx;
+        b.vy += approach * ny;
+    }
+
+    const push = (minDist - dist) / 2;
+    a.x += nx * push;
+    a.y += ny * push;
+    b.x -= nx * push;
+    b.y -= ny * push;
+}
+
+function moveBalls(time) {
+    if (!document.body.classList.contains('fun-thingies-active') || !wanderers.length) {
+        rafId = 0;
+        lastTime = 0;
         return;
     }
 
-    const deltaSeconds = previousCrossingFrame
-        ? Math.min((timestamp - previousCrossingFrame) / 1000, 0.05)
-        : 0;
-    previousCrossingFrame = timestamp;
+    // cap the time step so they don't jump after you come back to the tab
+    const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.05) : 0;
+    lastTime = time;
 
-    crossingStates.forEach((state) => {
-        state.x += state.vx * deltaSeconds;
-        state.y += state.vy * deltaSeconds;
+    for (const b of balls) {
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
 
-        const maxX = Math.max(0, window.innerWidth - state.size);
-        const maxY = Math.max(0, window.innerHeight - state.size * 1.25);
-        if (state.x <= 0 || state.x >= maxX) {
-            state.x = Math.max(0, Math.min(state.x, maxX));
-            state.vx *= -1;
+        const maxX = Math.max(0, window.innerWidth - b.size);
+        const maxY = Math.max(0, window.innerHeight - b.size * 1.25);
+        if (b.x <= 0 || b.x >= maxX) {
+            b.x = Math.max(0, Math.min(b.x, maxX));
+            b.vx *= -1;
         }
-        if (state.y <= 0 || state.y >= maxY) {
-            state.y = Math.max(0, Math.min(state.y, maxY));
-            state.vy *= -1;
-        }
-    });
-
-    if (crossingStates.length >= 2) {
-        const [first, second] = crossingStates;
-        const dx = first.x + first.size / 2 - second.x - second.size / 2;
-        const dy = first.y + first.size * 0.625 - second.y - second.size * 0.625;
-        const distance = Math.hypot(dx, dy) || 1;
-        const minDistance = (first.size + second.size) * 0.42;
-
-        if (distance < minDistance) {
-            const normalX = dx / distance;
-            const normalY = dy / distance;
-            const relativeSpeed = (first.vx - second.vx) * normalX + (first.vy - second.vy) * normalY;
-
-            if (relativeSpeed < 0) {
-                first.vx -= relativeSpeed * normalX;
-                first.vy -= relativeSpeed * normalY;
-                second.vx += relativeSpeed * normalX;
-                second.vy += relativeSpeed * normalY;
-            }
-
-            const overlap = minDistance - distance;
-            first.x += normalX * overlap / 2;
-            first.y += normalY * overlap / 2;
-            second.x -= normalX * overlap / 2;
-            second.y -= normalY * overlap / 2;
+        if (b.y <= 0 || b.y >= maxY) {
+            b.y = Math.max(0, Math.min(b.y, maxY));
+            b.vy *= -1;
         }
     }
 
-    crossingStates.forEach((state) => {
-        state.element.style.left = `${state.x}px`;
-        state.element.style.top = `${state.y}px`;
-    });
+    if (balls.length >= 2) bumpTogether(balls[0], balls[1]);
 
-    crossingFrame = requestAnimationFrame(animateCrossingAleks);
+    for (const b of balls) {
+        b.el.style.left = b.x + 'px';
+        b.el.style.top = b.y + 'px';
+    }
+
+    rafId = requestAnimationFrame(moveBalls);
 }
 
-function startCrossingAleks() {
-    if (crossingFrame || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    resetCrossingAleks();
-    previousCrossingFrame = 0;
-    crossingFrame = requestAnimationFrame(animateCrossingAleks);
+function startBalls() {
+    if (rafId || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    setupBalls();
+    lastTime = 0;
+    rafId = requestAnimationFrame(moveBalls);
 }
 
-startCrossingAleks();
+startBalls();
 
-document.addEventListener("DOMContentLoaded", () => {
-    // 1. Background Music Loop Handler
-    const bgMusic = document.getElementById("bg-music");
+document.addEventListener('DOMContentLoaded', () => {
+    // background music. browsers block autoplay, so if it fails we wait for the first click or key
+    const bgMusic = document.getElementById('bg-music');
     if (bgMusic) {
         bgMusic.volume = 0.4;
-        
-        const unlockAudio = () => {
-            bgMusic.play().catch(e => console.log("Waiting for user interaction"));
-            window.removeEventListener("click", unlockAudio);
-            window.removeEventListener("keydown", unlockAudio);
+
+        const unlock = () => {
+            bgMusic.play().catch(() => {});
+            window.removeEventListener('click', unlock);
+            window.removeEventListener('keydown', unlock);
         };
 
         bgMusic.play().catch(() => {
-            window.addEventListener("click", unlockAudio);
-            window.addEventListener("keydown", unlockAudio);
+            window.addEventListener('click', unlock);
+            window.addEventListener('keydown', unlock);
         });
     }
 
-    // Helper to play sound effects safely at 1x speed
     function playSound(path) {
-        const sound = new Audio(path);
-        sound.play().catch(err => console.warn("Audio play failed:", err));
+        new Audio(path).play().catch(() => {});
     }
 
-    // ===== Sound-reactive popup image =====
-    // Appears with a sound, changes size / stretches every time the sound hits,
-    // and disappears when the sound is finished.
-    const revealImageSrc = 'images/Screenshot%202026-11-13%20at%205.04.38%20PM.png';
-    new Image().src = revealImageSrc; // preload so it shows instantly
+    const explosionSound = 'audio/explosion.mp3';
+    const cleckSound = 'audio/cleck-sound.mp3';
+    const spinSounds = [
+        'audio/spin-1.mp3',
+        'audio/spin-2.mp3',
+        'audio/spin-3.mp3',
+        'audio/spin-4.mp3'
+    ];
+    const explosionImage = 'images/images.jpeg';
+
+    // popup image that jumps around to the volume of a sound and goes away when it ends
+    const popupImage = 'images/Screenshot%202026-11-13%20at%205.04.38%20PM.png';
+    new Image().src = popupImage; // preload so it shows right away
     let audioCtx = null;
 
-    function playWithReactiveImage(soundPath, imageSrc) {
+    function playWithPopup(soundPath, imageSrc) {
         const sound = new Audio(soundPath);
         const img = document.createElement('img');
         img.src = imageSrc;
@@ -130,10 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let analyser = null;
         let data = null;
-        let rafId = 0;
-        let finished = false;
+        let raf = 0;
+        let done = false;
 
-        // Listen to the real audio volume (only on a real website; on file:// it would mute the sound)
+        // read the real volume, but only over http(s). on file:// this mutes the sound
         if (location.protocol.indexOf('http') === 0) {
             try {
                 const AC = window.AudioContext || window.webkitAudioContext;
@@ -151,42 +160,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function finish() {
-            if (finished) return;
-            finished = true;
-            cancelAnimationFrame(rafId);
+            if (done) return;
+            done = true;
+            cancelAnimationFrame(raf);
             img.remove();
         }
 
         let lastLevel = 0;
         let lastSwitch = 0;
-        let size = 1, stretchX = 1, stretchY = 1;
+        let size = 1;
+        let stretchX = 1;
+        let stretchY = 1;
 
-        function pickNewShape() {
-            size = 0.7 + Math.random() * 1.0;                 // 0.7x to 1.7x
-            if (Math.random() < 0.5) {                        // wide and squashed
+        // random size, and either wide + flat or tall + skinny
+        function newShape() {
+            size = 0.7 + Math.random();
+            if (Math.random() < 0.5) {
                 stretchX = 1.4 + Math.random() * 0.8;
                 stretchY = 0.6 + Math.random() * 0.3;
-            } else {                                          // tall and skinny
+            } else {
                 stretchX = 0.6 + Math.random() * 0.3;
                 stretchY = 1.4 + Math.random() * 0.8;
             }
         }
 
         function frame(now) {
-            if (finished) return;
+            if (done) return;
+
             let level;
             if (analyser) {
                 analyser.getByteFrequencyData(data);
                 let sum = 0;
                 for (let i = 0; i < data.length; i++) sum += data[i];
-                level = (sum / data.length) / 255;
+                level = sum / data.length / 255;
             } else {
-                level = 0.2 + Math.random() * 0.6;            // fallback when the volume can't be read
+                level = 0.2 + Math.random() * 0.6; // can't read the volume so fake it
             }
 
             const hit = level > lastLevel + 0.05 || now - lastSwitch > 160;
             if (hit && level > 0.02) {
-                pickNewShape();
+                newShape();
                 lastSwitch = now;
             }
             lastLevel = level;
@@ -194,71 +207,59 @@ document.addEventListener("DOMContentLoaded", () => {
             const pulse = 1 + level * 0.4;
             img.style.transform = 'translate(-50%,-50%) scale(' +
                 (stretchX * size * pulse) + ',' + (stretchY * size * pulse) + ')';
-            rafId = requestAnimationFrame(frame);
+            raf = requestAnimationFrame(frame);
         }
 
         sound.addEventListener('ended', finish);
         sound.addEventListener('error', finish);
         document.body.appendChild(img);
-        sound.play().then(() => { rafId = requestAnimationFrame(frame); }).catch(finish);
+        sound.play().then(() => { raf = requestAnimationFrame(frame); }).catch(finish);
     }
 
-    const explosionSoundSrc = "audio/explosion.mp3";
-    const cleckSoundSrc = "audio/cleck-sound.mp3";
-    const spinSounds = [
-        "audio/spin-1.mp3",
-        "audio/spin-2.mp3",
-        "audio/spin-3.mp3",
-        "audio/spin-4.mp3"
-    ];
-    const explosionImage = 'images/images.jpeg';
+    // swaps the alek for the explosion picture and locks the button
+    function blowUp(button) {
+        playSound(explosionSound);
+        const img = button.querySelector('.alek-image');
+        if (img) img.src = explosionImage;
+        button.classList.add('is-transformed');
+        button.disabled = true;
+    }
 
-    // 1. "Dont clek me" Alek -> triggers explosion.mp3
-    const clickExplosionAlek = document.getElementById('click-explosion-alek');
-    if (clickExplosionAlek) {
-        clickExplosionAlek.addEventListener('click', () => {
-            playSound(explosionSoundSrc);
-            const img = clickExplosionAlek.querySelector('.alek-image');
+    // "dont clek me" alek, explodes on the first click
+    const dontClek = document.getElementById('click-explosion-alek');
+    if (dontClek) {
+        dontClek.addEventListener('click', () => blowUp(dontClek), { once: true });
+    }
+
+    // "click me" alek, plays the cleck sound with the popup image
+    const thanky = document.getElementById('thanky-alek');
+    if (thanky) {
+        thanky.addEventListener('click', () => {
+            playWithPopup(cleckSound, popupImage);
+            thanky.classList.add('is-stopped');
+            const img = thanky.querySelector('.alek-image');
             if (img) img.src = explosionImage;
-            clickExplosionAlek.classList.add('is-transformed');
-            clickExplosionAlek.disabled = true;
+            thanky.classList.add('is-transformed');
+            const msg = document.getElementById('thanky-message');
+            if (msg) msg.textContent = 'thanki yoyu';
         }, { once: true });
     }
 
-    // 2. "Click me" Alek -> cleck sound + sound-reactive popup image
-    const thankyAlek = document.getElementById('thanky-alek');
-    if (thankyAlek) {
-        thankyAlek.addEventListener('click', () => {
-            playWithReactiveImage(cleckSoundSrc, revealImageSrc);
-            thankyAlek.classList.add('is-stopped');
-            const img = thankyAlek.querySelector('.alek-image');
-            if (img) img.src = explosionImage;
-            thankyAlek.classList.add('is-transformed');
-            const thankyMsg = document.getElementById('thanky-message');
-            if (thankyMsg) thankyMsg.textContent = 'thanki yoyu';
-        }, { once: true });
-    }
+    // spinning alek, spins faster every click and explodes on the 8th
+    const spinner = document.getElementById('spin-alek');
+    if (spinner) {
+        let clicks = 0;
+        const maxClicks = 8;
 
-    // 4. Spinning Alek -> triggers spin sounds, then explosion.mp3
-    const spinAlek = document.getElementById('spin-alek');
-    if (spinAlek) {
-        let spinClickCount = 0;
-        const maxSpinClicks = 8;
+        spinner.addEventListener('click', () => {
+            clicks += 1;
+            const duration = Math.max(0.28, 1.4 - clicks * 0.14);
+            spinner.style.setProperty('--spin-duration', duration + 's');
 
-        spinAlek.addEventListener('click', () => {
-            spinClickCount += 1;
-            const spinDuration = Math.max(0.28, 1.4 - spinClickCount * 0.14);
-            spinAlek.style.setProperty('--spin-duration', `${spinDuration}s`);
-
-            if (spinClickCount < maxSpinClicks) {
-                const randomSound = spinSounds[Math.floor(Math.random() * spinSounds.length)];
-                playSound(randomSound);
+            if (clicks < maxClicks) {
+                playSound(spinSounds[Math.floor(Math.random() * spinSounds.length)]);
             } else {
-                playSound(explosionSoundSrc);
-                const img = spinAlek.querySelector('.alek-image');
-                if (img) img.src = explosionImage;
-                spinAlek.classList.add('is-transformed');
-                spinAlek.disabled = true;
+                blowUp(spinner);
             }
         });
     }
