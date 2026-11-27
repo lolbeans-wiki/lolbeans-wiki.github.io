@@ -1,4 +1,3 @@
-// the two aleks that wander around the whole screen and bump into each other
 const wanderers = [...document.querySelectorAll('.slow-crossing')];
 let balls = [];
 let rafId = 0;
@@ -19,7 +18,6 @@ function setupBalls() {
     }
 }
 
-// simple bounce: swap the speed along the line between the two centres, then push them apart
 function bumpTogether(a, b) {
     const dx = a.x + a.size / 2 - b.x - b.size / 2;
     const dy = a.y + a.size * 0.625 - b.y - b.size * 0.625;
@@ -51,7 +49,6 @@ function moveBalls(time) {
         return;
     }
 
-    // cap the time step so they don't jump after you come back to the tab
     const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.05) : 0;
     lastTime = time;
 
@@ -91,7 +88,6 @@ function startBalls() {
 startBalls();
 
 document.addEventListener('DOMContentLoaded', () => {
-    // background music. browsers block autoplay, so if it fails we wait for the first click or key
     const bgMusic = document.getElementById('bg-music');
     if (bgMusic) {
         bgMusic.volume = 0.4;
@@ -122,9 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const explosionImage = 'images/images.jpeg';
 
-    // popup image that jumps around to the volume of a sound and goes away when it ends
     const popupImage = 'images/Screenshot%202026-11-13%20at%205.04.38%20PM.png';
-    new Image().src = popupImage; // preload so it shows right away
+    new Image().src = popupImage;
     let audioCtx = null;
 
     function playWithPopup(soundPath, imageSrc) {
@@ -142,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let raf = 0;
         let done = false;
 
-        // read the real volume, but only over http(s). on file:// this mutes the sound
         if (location.protocol.indexOf('http') === 0) {
             try {
                 const AC = window.AudioContext || window.webkitAudioContext;
@@ -172,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let stretchX = 1;
         let stretchY = 1;
 
-        // random size, and either wide + flat or tall + skinny
         function newShape() {
             size = 0.7 + Math.random();
             if (Math.random() < 0.5) {
@@ -194,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (let i = 0; i < data.length; i++) sum += data[i];
                 level = sum / data.length / 255;
             } else {
-                level = 0.2 + Math.random() * 0.6; // can't read the volume so fake it
+                level = 0.2 + Math.random() * 0.6;
             }
 
             const hit = level > lastLevel + 0.05 || now - lastSwitch > 160;
@@ -216,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sound.play().then(() => { raf = requestAnimationFrame(frame); }).catch(finish);
     }
 
-    // swaps the alek for the explosion picture and locks the button
     function blowUp(button) {
         playSound(explosionSound);
         const img = button.querySelector('.alek-image');
@@ -225,13 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
         button.disabled = true;
     }
 
-    // "dont clek me" alek, explodes on the first click
     const dontClek = document.getElementById('click-explosion-alek');
     if (dontClek) {
         dontClek.addEventListener('click', () => blowUp(dontClek), { once: true });
     }
 
-    // "click me" alek, plays the cleck sound with the popup image
     const thanky = document.getElementById('thanky-alek');
     if (thanky) {
         thanky.addEventListener('click', () => {
@@ -245,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { once: true });
     }
 
-    // spinning alek, spins faster every click and explodes on the 8th
     const spinner = document.getElementById('spin-alek');
     if (spinner) {
         let clicks = 0;
