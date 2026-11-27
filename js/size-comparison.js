@@ -1,185 +1,167 @@
-const beanHues = new Map(); // keeps each bean's random color stable while searching
-const TOP_BEAN_WIDTH = 200;
-const CHART_BEAN_SCALE = 0.45;
-const CHART_SIZE_SENSITIVITY = 5;
-const BEAN_IMAGE_SOURCE = 'images/LolbeansRender.webp';
-let sizeRulerPositions = [];
+const hues = new Map();
+const TOP_WIDTH = 200;
+const CHART_SCALE = 0.45;
+const CHART_SENS = 5;
+const BEAN_IMG = 'images/LolbeansRender.webp';
+let rulers = [];
 
-function positionSizeRulers() {
+function placeRulers() {
     const stage = document.getElementById('size-comparison-stage');
     if (!stage) return;
-
-    const stageTop = stage.getBoundingClientRect().top;
-    sizeRulerPositions.forEach(({ ruler, image }) => {
-        ruler.style.setProperty('--ruler-top', `${image.getBoundingClientRect().top - stageTop + 9}px`);
+    const top = stage.getBoundingClientRect().top;
+    rulers.forEach(({ ruler, image }) => {
+        ruler.style.setProperty('--ruler-top', `${image.getBoundingClientRect().top - top + 9}px`);
     });
 }
 
-function getRankedPlayers() {
+function rankedPlayers() {
     return leaderboardData
-        .filter((player) => {
-            const rank = Number(player.rawCells[0]);
-            return Number.isInteger(rank)
-                && rank >= 1
-                && rank <= 352
-                && player.name.trim().toLowerCase() !== 'doggywoof';
+        .filter((p) => {
+            const rank = Number(p.rawCells[0]);
+            return Number.isInteger(rank) && rank >= 1 && rank <= 352 && p.name.trim().toLowerCase() !== 'doggywoof';
         })
-        .sort((first, second) => Number(first.rawCells[0]) - Number(second.rawCells[0]));
+        .sort((a, b) => Number(a.rawCells[0]) - Number(b.rawCells[0]));
 }
 
-function getSizeDifferencePercent(player, referencePlayer) {
-    return Math.max(0, (Number(player.score) / Number(referencePlayer.score) - 1) * 100);
+function smallerBy(p, ref) {
+    return Math.max(0, (Number(p.score) / Number(ref.score) - 1) * 100);
 }
 
-function getBeanWidth(player, referencePlayer) {
-    const difference = getSizeDifferencePercent(player, referencePlayer);
-    return Math.max(20, TOP_BEAN_WIDTH / (1 + difference / 100));
+function beanWidth(p, ref, sens = 1) {
+    const diff = smallerBy(p, ref) * sens;
+    return Math.max(20, TOP_WIDTH / (1 + diff / 100));
 }
 
-function getChartBeanWidth(player, referencePlayer) {
-    const difference = getSizeDifferencePercent(player, referencePlayer) * CHART_SIZE_SENSITIVITY;
-    return Math.max(20, TOP_BEAN_WIDTH / (1 + difference / 100)) * CHART_BEAN_SCALE;
+function hueFor(p) {
+    if (!hues.has(p.name)) hues.set(p.name, Math.floor(Math.random() * 360));
+    return hues.get(p.name);
 }
 
-function getBeanHue(player) {
-    if (!beanHues.has(player.name)) beanHues.set(player.name, Math.floor(Math.random() * 360));
-    return beanHues.get(player.name);
+function beanImage(p, width, loading = 'eager') {
+    const img = document.createElement('img');
+    img.src = BEAN_IMG;
+    img.alt = `${p.name} bean`;
+    img.draggable = false;
+    img.loading = loading;
+    img.style.filter = `hue-rotate(${hueFor(p)}deg) saturate(1.4)`;
+    img.style.setProperty('--bean-width', `${width}px`);
+    return img;
 }
 
-function createBeanImage(player, width, loading = 'eager') {
-    const image = document.createElement('img');
-    image.src = BEAN_IMAGE_SOURCE;
-    image.alt = `${player.name} bean`;
-    image.draggable = false;
-    image.loading = loading;
-    image.style.filter = `hue-rotate(${getBeanHue(player)}deg) saturate(1.4)`;
-    image.style.setProperty('--bean-width', `${width}px`);
-    return image;
-}
-
-function renderSizeLeaderboard(rankedPlayers, referencePlayer) {
+function renderLeaderboard(players, ref) {
     const rows = document.getElementById('size-leaderboard-rows');
     const status = document.getElementById('size-leaderboard-status');
     if (!rows || !status) return;
 
     rows.replaceChildren();
-    if (!rankedPlayers.length || !referencePlayer || !Number(referencePlayer.score)) {
+    if (!players.length || !ref || !Number(ref.score)) {
         status.hidden = false;
-        status.textContent = rankedPlayers.length
+        status.textContent = players.length
             ? 'Size differences are unavailable because the Top 1 score was not found.'
             : 'Loading leaderboard...';
         return;
     }
 
     status.hidden = true;
-    const fragment = document.createDocumentFragment();
-    rankedPlayers.forEach((player, index) => {
+    const frag = document.createDocumentFragment();
+    players.forEach((p, i) => {
         const row = document.createElement('li');
         row.className = 'size-player-chart-row';
+
         const details = document.createElement('div');
         details.className = 'size-player-chart-details';
         const name = document.createElement('h3');
-        const differenceLabel = document.createElement('p');
-        const difference = getSizeDifferencePercent(player, referencePlayer);
-
-        name.textContent = `#${Number(player.rawCells[0])} ${player.name}`;
-        differenceLabel.textContent = index === 0
-            ? 'Top 1'
-            : `${difference.toFixed(1)}% smaller than Top 1`;
-        details.append(name, differenceLabel);
+        const label = document.createElement('p');
+        name.textContent = `#${Number(p.rawCells[0])} ${p.name}`;
+        label.textContent = i === 0 ? 'Top 1' : `${smallerBy(p, ref).toFixed(1)}% smaller than Top 1`;
+        details.append(name, label);
 
         const figure = document.createElement('figure');
         figure.className = 'size-player-chart-figure';
-        figure.appendChild(createBeanImage(player, getChartBeanWidth(player, referencePlayer), 'lazy'));
+        figure.appendChild(beanImage(p, beanWidth(p, ref, CHART_SENS) * CHART_SCALE, 'lazy'));
+
         row.append(details, figure);
-        fragment.appendChild(row);
+        frag.appendChild(row);
     });
-    rows.appendChild(fragment);
+    rows.appendChild(frag);
+}
+
+function note(stage, text, color) {
+    const p = document.createElement('p');
+    p.textContent = text;
+    p.style.color = color;
+    p.style.fontSize = '14px';
+    stage.appendChild(p);
 }
 
 function renderSizeComparison(searchTerm = '') {
     const stage = document.getElementById('size-comparison-stage');
     if (!stage) return;
 
-    const rankedPlayers = getRankedPlayers();
-    const joshy = rankedPlayers.find((player) => player.name.trim().toLowerCase() === 'joshy');
-    renderSizeLeaderboard(rankedPlayers, joshy);
+    const players = rankedPlayers();
+    const joshy = players.find((p) => p.name.trim().toLowerCase() === 'joshy');
+    renderLeaderboard(players, joshy);
     stage.replaceChildren();
-    sizeRulerPositions = [];
-    if (!rankedPlayers.length || !joshy || !joshy.score) return;
+    rulers = [];
+    if (!players.length || !joshy || !joshy.score) return;
 
     const query = searchTerm.trim().toLowerCase();
     if (!query) {
-        const placeholder = document.createElement('p');
-        placeholder.textContent = 'Type a player name above to compare size with Top 1.';
-        placeholder.style.color = '#888888';
-        placeholder.style.fontSize = '14px';
-        stage.appendChild(placeholder);
+        note(stage, 'Type a player name above to compare size with Top 1.', '#888888');
         return;
     }
 
-    const matchedPlayer = rankedPlayers.find((player) => player.name.toLowerCase().includes(query));
-    if (!matchedPlayer) {
-        const notFound = document.createElement('p');
-        notFound.textContent = 'Player not found.';
-        notFound.style.color = '#ff4d4d';
-        notFound.style.fontSize = '14px';
-        stage.appendChild(notFound);
+    const match = players.find((p) => p.name.toLowerCase().includes(query));
+    if (!match) {
+        note(stage, 'Player not found.', '#ff4d4d');
         return;
     }
 
-    const slowerByPercent = getSizeDifferencePercent(matchedPlayer, joshy);
-    const matchedBeanWidth = getBeanWidth(matchedPlayer, joshy);
+    const percent = smallerBy(match, joshy);
 
-    // Top 1 Player (Left)
     const topFigure = document.createElement('figure');
     topFigure.className = 'size-comparison-player';
-    const topImage = createBeanImage(joshy, TOP_BEAN_WIDTH);
-    topImage.addEventListener('load', positionSizeRulers);
-
+    const topImage = beanImage(joshy, TOP_WIDTH);
+    topImage.addEventListener('load', placeRulers);
     const topCaption = document.createElement('figcaption');
     topCaption.textContent = `#${Number(joshy.rawCells[0])} ${joshy.name} (Top 1)`;
     topFigure.append(topImage, topCaption);
 
-    // Searched Player (Right)
-    const matchedFigure = document.createElement('figure');
-    matchedFigure.className = 'size-comparison-player';
-    const matchedImage = createBeanImage(matchedPlayer, matchedBeanWidth);
-    matchedImage.addEventListener('load', positionSizeRulers);
+    const matchFigure = document.createElement('figure');
+    matchFigure.className = 'size-comparison-player';
+    const matchImage = beanImage(match, beanWidth(match, joshy));
+    matchImage.addEventListener('load', placeRulers);
+    const matchCaption = document.createElement('figcaption');
+    matchCaption.textContent = `#${Number(match.rawCells[0])} ${match.name} · ${percent.toFixed(1)}% smaller`;
+    matchFigure.append(matchImage, matchCaption);
 
-    const matchedCaption = document.createElement('figcaption');
-    matchedCaption.textContent = `#${Number(matchedPlayer.rawCells[0])} ${matchedPlayer.name} · ${slowerByPercent.toFixed(1)}% smaller`;
-    matchedFigure.append(matchedImage, matchedCaption);
+    stage.append(topFigure, matchFigure);
 
-    stage.append(topFigure, matchedFigure);
-
-    // Measure Lines (Ruler) positioned exactly at the top of their heads
     const topRuler = document.createElement('div');
     topRuler.className = 'size-ruler';
     topRuler.innerHTML = `<div class="size-ruler-line" style="top: 0;"></div><span class="size-ruler-label">Top 1 Height</span>`;
 
-    const matchedRuler = document.createElement('div');
-    matchedRuler.className = 'size-ruler';
-    matchedRuler.style.left = '50%';
-    matchedRuler.innerHTML = `<div class="size-ruler-line" style="top: 0;"></div><span class="size-ruler-label">${slowerByPercent.toFixed(1)}% Smaller</span>`;
+    const matchRuler = document.createElement('div');
+    matchRuler.className = 'size-ruler';
+    matchRuler.style.left = '50%';
+    matchRuler.innerHTML = `<div class="size-ruler-line" style="top: 0;"></div><span class="size-ruler-label">${percent.toFixed(1)}% Smaller</span>`;
 
-    stage.append(topRuler, matchedRuler);
-    sizeRulerPositions = [
+    stage.append(topRuler, matchRuler);
+    rulers = [
         { ruler: topRuler, image: topImage },
-        { ruler: matchedRuler, image: matchedImage }
+        { ruler: matchRuler, image: matchImage }
     ];
-    positionSizeRulers();
+    placeRulers();
 }
 
-document.getElementById('size-player-search').addEventListener('input', (event) => {
-    renderSizeComparison(event.target.value);
-});
+const search = document.getElementById('size-player-search');
+search.addEventListener('input', (e) => renderSizeComparison(e.target.value));
 
 attachNameAutocomplete({
-    input: document.getElementById('size-player-search'),
+    input: search,
     listEl: document.getElementById('size-name-suggestions'),
-    onSelect: (player) => renderSizeComparison(player.name)
+    onSelect: (p) => renderSizeComparison(p.name)
 });
 
 loadSheetData();
-window.addEventListener('resize', positionSizeRulers);
+window.addEventListener('resize', placeRulers);
