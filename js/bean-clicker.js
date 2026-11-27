@@ -1,370 +1,329 @@
-const beanCoin = document.querySelector('#bean-coin');
-const beanCoinCount = document.querySelector('#bean-coin-count');
-const beanPanel = beanCoin.closest('.sub-screen-panel');
-const beanProgressDatabaseName = 'lolbeans-bean-clicker';
-const beanProgressStoreName = 'progress';
-const beanProgressRecordKey = 'current';
-const beanProgressDatabase = openBeanProgressDatabase();
-const beanRain = document.querySelector('#bean-rain');
-const beanTravelers = document.querySelector('#bean-travelers');
-const beanFastClickReward = document.querySelector('#bean-fast-click-reward');
-const beanWorkerCostElement = document.querySelector('#bean-worker-cost');
-const beanWorkerOwnedCount = document.querySelector('#bean-worker-owned-count');
-const beanWorkersPerSecond = document.querySelector('#bean-coins-per-second');
-const buyBeanWorkerButton = document.querySelector('#buy-bean-worker');
-const beanClickUpgradeCostElement = document.querySelector('#bean-click-upgrade-cost');
-const beanClickUpgradeOwnedCount = document.querySelector('#bean-click-upgrade-owned-count');
-const beanCoinsPerClick = document.querySelector('#bean-coins-per-click');
-const buyBeanClickUpgradeButton = document.querySelector('#buy-bean-click-upgrade');
-const mahjicUpgradeCostElement = document.querySelector('#mahjic-upgrade-cost');
-const buyMahjicUpgradeButton = document.querySelector('#buy-mahjic-upgrade');
-const buyMajikHandUpgradeButton = document.querySelector('#buy-majik-hand-upgrade');
-const buyNotSusBikerUpgradeButton = document.querySelector('#buy-not-sus-biker-upgrade');
-const beanNotSusBikerOwnedCount = document.querySelector('#bean-not-sus-biker-owned-count');
-const beanSaveStatus = document.querySelector('#bean-save-status');
-const beanOfflineEarnings = document.querySelector('#bean-offline-earnings');
-const beanResetProgressButton = document.querySelector('#bean-reset-progress');
-let beanCoins = 0;
-let beanLifetimeCoins = 0;
-let beanWorkers = 0;
-let beanClickUpgrades = 0;
-let beanNotSusBikers = 0;
-let hasMahjicUpgrade = false;
-let hasMajikHandUpgrade = false;
-let hasFastClickReward = false;
-const beanClickTimestamps = [];
-let nextWorkerCost = 100;
-let nextClickUpgradeCost = 1000;
-let nextNotSusBikerCost = 20000;
-let isProgressReady = false;
-let lastIncomeUpdate = Date.now();
+const DB_NAME = 'lolbeans-bean-clicker';
+const STORE = 'progress';
+const SAVE_KEY = 'current';
+
+const $ = (selector) => document.querySelector(selector);
+
+const coinButton = $('#bean-coin');
+const coinCount = $('#bean-coin-count');
+const panel = coinButton.closest('.sub-screen-panel');
+const rain = $('#bean-rain');
+const travelersBox = $('#bean-travelers');
+const fastRewardButton = $('#bean-fast-click-reward');
+const perSecondText = $('#bean-coins-per-second');
+const perClickText = $('#bean-coins-per-click');
+const saveStatus = $('#bean-save-status');
+const offlineText = $('#bean-offline-earnings');
+const resetButton = $('#bean-reset-progress');
+
+const workerButton = $('#buy-bean-worker');
+const workerCostText = $('#bean-worker-cost');
+const workerOwnedText = $('#bean-worker-owned-count');
+
+const editorButton = $('#buy-bean-click-upgrade');
+const editorCostText = $('#bean-click-upgrade-cost');
+const editorOwnedText = $('#bean-click-upgrade-owned-count');
+
+const mahjicButton = $('#buy-mahjic-upgrade');
+const mahjicCostText = $('#mahjic-upgrade-cost');
+const majikHandButton = $('#buy-majik-hand-upgrade');
+
+const bikerButton = $('#buy-not-sus-biker-upgrade');
+const bikerOwnedText = $('#bean-not-sus-biker-owned-count');
+const bikerCostText = document.getElementById('not-sus-biker-upgrade-cost');
+
+function freshState() {
+    return {
+        coins: 0,
+        lifetime: 0,
+        workers: 0,
+        clickUpgrades: 0,
+        bikers: 0,
+        hasMahjic: false,
+        hasMajikHand: false,
+        hasFastReward: false,
+        workerCost: 100,
+        clickCost: 1000,
+        bikerCost: 20000
+    };
+}
+
+let g = freshState();
+const clickTimes = [];
+let ready = false;
+let lastIncome = Date.now();
 let saveQueue = Promise.resolve();
 let saveTimer;
-let hasReportedStorageError = false;
+let reportedError = false;
 
-function openBeanProgressDatabase() {
+function openDatabase() {
     if (!window.indexedDB) {
-        return Promise.reject(new Error('IndexedDB is unavailable in this browser.'));
+        return Promise.reject(new Error('No IndexedDB in this browser'));
     }
 
     return new Promise((resolve, reject) => {
-        const request = window.indexedDB.open(beanProgressDatabaseName, 1);
-        request.onupgradeneeded = () => {
-            request.result.createObjectStore(beanProgressStoreName);
-        };
+        const request = window.indexedDB.open(DB_NAME, 1);
+        request.onupgradeneeded = () => request.result.createObjectStore(STORE);
         request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(
-            request.error || new Error('Could not open Bean Clicker progress storage.')
-        );
-        request.onblocked = () => reject(
-            new Error('Bean Clicker progress storage is blocked by another open tab.')
-        );
+        request.onerror = () => reject(request.error);
+        request.onblocked = () => reject(new Error('Save database is blocked by another tab'));
     });
 }
 
-function readBeanProgress(database) {
+const db = openDatabase();
+
+function dbRun(database, mode, action) {
     return new Promise((resolve, reject) => {
-        const transaction = database.transaction(beanProgressStoreName, 'readonly');
-        const request = transaction.objectStore(beanProgressStoreName).get(beanProgressRecordKey);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(
-            request.error || new Error('Could not read Bean Clicker progress.')
-        );
-        transaction.onabort = () => reject(
-            transaction.error || new Error('Reading Bean Clicker progress was interrupted.')
-        );
+        const tx = database.transaction(STORE, mode);
+        const request = action(tx.objectStore(STORE));
+        tx.oncomplete = () => resolve(request.result);
+        tx.onerror = tx.onabort = () => reject(tx.error || request.error);
     });
 }
 
-function writeBeanProgress(database, progress) {
-    return new Promise((resolve, reject) => {
-        const transaction = database.transaction(beanProgressStoreName, 'readwrite');
-        transaction.objectStore(beanProgressStoreName).put(progress, beanProgressRecordKey);
-        transaction.oncomplete = resolve;
-        transaction.onerror = () => reject(
-            transaction.error || new Error('Could not save Bean Clicker progress.')
-        );
-        transaction.onabort = () => reject(
-            transaction.error || new Error('Saving Bean Clicker progress was interrupted.')
-        );
-    });
+const readSave = (database) => dbRun(database, 'readonly', (store) => store.get(SAVE_KEY));
+const writeSave = (database, data) => dbRun(database, 'readwrite', (store) => store.put(data, SAVE_KEY));
+const deleteSave = (database) => dbRun(database, 'readwrite', (store) => store.delete(SAVE_KEY));
+
+function reportError(error) {
+    if (reportedError) return;
+    reportedError = true;
+    console.error('Bean Clicker save error:', error);
+    saveStatus.textContent = 'Progress could not be saved in this browser.';
+    saveStatus.hidden = false;
 }
 
-function deleteBeanProgress(database) {
-    return new Promise((resolve, reject) => {
-        const transaction = database.transaction(beanProgressStoreName, 'readwrite');
-        transaction.objectStore(beanProgressStoreName).delete(beanProgressRecordKey);
-        transaction.oncomplete = resolve;
-        transaction.onerror = () => reject(
-            transaction.error || new Error('Could not reset Bean Clicker progress.')
-        );
-        transaction.onabort = () => reject(
-            transaction.error || new Error('Resetting Bean Clicker progress was interrupted.')
-        );
-    });
-}
-
-function reportStorageError(error) {
-    if (hasReportedStorageError) return;
-    hasReportedStorageError = true;
-    console.error('Bean Clicker progress storage error:', error);
-    beanSaveStatus.textContent = 'Progress could not be saved in this browser.';
-    beanSaveStatus.hidden = false;
-}
-
-function getBeanProgressSnapshot() {
+function snapshot() {
     return {
-        coins: beanCoins,
-        lifetimeCoins: beanLifetimeCoins,
-        workers: beanWorkers,
-        clickUpgrades: beanClickUpgrades,
-        notSusBikers: beanNotSusBikers,
-        hasMahjicUpgrade,
-        hasMajikHandUpgrade,
-        hasFastClickReward,
-        nextWorkerCost,
-        nextClickUpgradeCost,
-        nextNotSusBikerCost,
+        coins: g.coins,
+        lifetimeCoins: g.lifetime,
+        workers: g.workers,
+        clickUpgrades: g.clickUpgrades,
+        notSusBikers: g.bikers,
+        hasMahjicUpgrade: g.hasMahjic,
+        hasMajikHandUpgrade: g.hasMajikHand,
+        hasFastClickReward: g.hasFastReward,
+        nextWorkerCost: g.workerCost,
+        nextClickUpgradeCost: g.clickCost,
+        nextNotSusBikerCost: g.bikerCost,
         lastActive: Date.now()
     };
 }
 
-function saveBeanProgress(immediate = false) {
-    if (!isProgressReady) return;
-    if (beanCoins === 0
-        && beanLifetimeCoins === 0
-        && beanWorkers === 0
-        && beanClickUpgrades === 0
-        && beanNotSusBikers === 0
-        && !hasMahjicUpgrade
-        && !hasMajikHandUpgrade
-        && !hasFastClickReward) {
-        return;
-    }
+function save(now = false) {
+    if (!ready) return;
+    const nothingYet = g.coins === 0 && g.lifetime === 0 && g.workers === 0
+        && g.clickUpgrades === 0 && g.bikers === 0
+        && !g.hasMahjic && !g.hasMajikHand && !g.hasFastReward;
+    if (nothingYet) return;
+
     const persist = () => {
         saveTimer = undefined;
-        const snapshot = getBeanProgressSnapshot();
+        const data = snapshot();
         saveQueue = saveQueue.catch(() => {}).then(async () => {
-            const database = await beanProgressDatabase;
-            await writeBeanProgress(database, snapshot);
+            await writeSave(await db, data);
         });
-        saveQueue.catch(reportStorageError);
+        saveQueue.catch(reportError);
     };
 
     window.clearTimeout(saveTimer);
-    if (immediate) {
-        persist();
-    } else {
-        saveTimer = window.setTimeout(persist, 250);
-    }
+    if (now) persist();
+    else saveTimer = window.setTimeout(persist, 250);
 }
 
-function restoreBeanProgress(progress) {
-    if (progress === undefined) return 0;
-    const validNumber = (value) => typeof value === 'number' && Number.isFinite(value) && value >= 0;
-    const validInteger = (value) => Number.isSafeInteger(value) && value >= 0;
-    if (!progress
-        || !validNumber(progress.coins)
-        || !validNumber(progress.lifetimeCoins)
-        || !validInteger(progress.workers)
-        || !validInteger(progress.clickUpgrades)
-        || !validNumber(progress.nextWorkerCost)
-        || progress.nextWorkerCost < 1
-        || !validNumber(progress.nextClickUpgradeCost)
-        || progress.nextClickUpgradeCost < 1
-        || !validNumber(progress.lastActive)
-        || typeof progress.hasMahjicUpgrade !== 'boolean'
-        || typeof progress.hasMajikHandUpgrade !== 'boolean'
-        || typeof progress.hasFastClickReward !== 'boolean') {
-        throw new Error('Saved Bean Clicker progress is invalid.');
-    }
+function restore(data) {
+    if (data === undefined) return 0;
 
-    beanCoins = progress.coins;
-    beanLifetimeCoins = Math.max(progress.lifetimeCoins, beanCoins);
-    beanWorkers = progress.workers;
-    beanClickUpgrades = progress.clickUpgrades;
-    beanNotSusBikers = typeof progress.notSusBikers === 'number' ? progress.notSusBikers : (progress.hasNotSusBikerUpgrade ? 1 : 0);
-    hasMahjicUpgrade = progress.hasMahjicUpgrade;
-    hasMajikHandUpgrade = progress.hasMajikHandUpgrade;
-    hasFastClickReward = progress.hasFastClickReward;
-    nextWorkerCost = progress.nextWorkerCost;
-    nextClickUpgradeCost = progress.nextClickUpgradeCost;
-    nextNotSusBikerCost = progress.nextNotSusBikerCost || (20000 * Math.pow(1.15, beanNotSusBikers));
-    return calculateOfflineEarnings(progress.lastActive);
+    const ok = (n) => Number.isFinite(n) && n >= 0;
+    const good = data
+        && ok(data.coins)
+        && ok(data.lifetimeCoins)
+        && ok(data.lastActive)
+        && Number.isInteger(data.workers) && data.workers >= 0
+        && Number.isInteger(data.clickUpgrades) && data.clickUpgrades >= 0
+        && data.nextWorkerCost >= 1
+        && data.nextClickUpgradeCost >= 1
+        && typeof data.hasMahjicUpgrade === 'boolean'
+        && typeof data.hasMajikHandUpgrade === 'boolean'
+        && typeof data.hasFastClickReward === 'boolean';
+    if (!good) throw new Error('Saved progress is invalid');
+
+    g.coins = data.coins;
+    g.lifetime = Math.max(data.lifetimeCoins, g.coins);
+    g.workers = data.workers;
+    g.clickUpgrades = data.clickUpgrades;
+    g.bikers = typeof data.notSusBikers === 'number' ? data.notSusBikers : (data.hasNotSusBikerUpgrade ? 1 : 0);
+    g.hasMahjic = data.hasMahjicUpgrade;
+    g.hasMajikHand = data.hasMajikHandUpgrade;
+    g.hasFastReward = data.hasFastClickReward;
+    g.workerCost = data.nextWorkerCost;
+    g.clickCost = data.nextClickUpgradeCost;
+    g.bikerCost = data.nextNotSusBikerCost || (20000 * Math.pow(1.15, g.bikers));
+    return offlineEarnings(data.lastActive);
 }
 
-function calculateOfflineEarnings(lastActive) {
-    const elapsedSeconds = Math.max(0, (Date.now() - lastActive) / 1000);
-    const baseRate = beanWorkers * 0.5 * (hasMahjicUpgrade ? 5 : 1)
-        + (beanNotSusBikers * 1000);
-    if (elapsedSeconds === 0 || baseRate === 0) return 0;
+const baseIncome = () => g.workers * 0.5 * (g.hasMahjic ? 5 : 1) + (g.bikers * 1000);
+const baseClick = () => (g.clickUpgrades + 1) * (g.hasMajikHand ? 5 : 1) + (g.bikers * 1000);
 
-    let remainingSeconds = elapsedSeconds;
-    let earned = 0;
-    let lifetimeCoins = beanLifetimeCoins;
-    while (remainingSeconds > 0) {
-        const milestones = Math.floor(lifetimeCoins / 1000);
-        const speed = Math.min(3, 1 + milestones * 0.05);
-        if (speed >= 3) {
-            earned += baseRate * speed * remainingSeconds;
-            break;
-        }
-
-        const nextMilestone = (milestones + 1) * 1000;
-        const secondsToMilestone = (nextMilestone - lifetimeCoins) / (baseRate * speed);
-        const segmentSeconds = Math.min(remainingSeconds, secondsToMilestone);
-        const segmentEarnings = baseRate * speed * segmentSeconds;
-        earned += segmentEarnings;
-        lifetimeCoins += segmentEarnings;
-        remainingSeconds -= segmentSeconds;
-        if (segmentSeconds === 0) break;
-    }
-
-    beanCoins += earned;
-    beanLifetimeCoins += earned;
-    return earned;
-}
-
-function getBeanProgress() {
-    const milestones = Math.floor(beanLifetimeCoins / 1000);
+function bonus() {
+    const steps = Math.floor(g.lifetime / 1000);
     return {
-        speed: Math.min(3, 1 + milestones * 0.05),
-        glow: Math.min(1, milestones / 20)
+        speed: Math.min(3, 1 + steps * 0.05),
+        glow: Math.min(1, steps / 20)
     };
 }
 
-function addBeanCoins(amount) {
-    beanCoins += amount;
-    beanLifetimeCoins += amount;
-    saveBeanProgress();
+function offlineEarnings(lastActive) {
+    const elapsed = Math.max(0, (Date.now() - lastActive) / 1000);
+    const rate = baseIncome();
+    if (elapsed === 0 || rate === 0) return 0;
+
+    let left = elapsed;
+    let earned = 0;
+    let lifetime = g.lifetime;
+
+    while (left > 0) {
+        const steps = Math.floor(lifetime / 1000);
+        const speed = Math.min(3, 1 + steps * 0.05);
+        if (speed >= 3) {
+            earned += rate * speed * left;
+            break;
+        }
+
+        const nextStep = (steps + 1) * 1000;
+        const secondsToStep = (nextStep - lifetime) / (rate * speed);
+        const seconds = Math.min(left, secondsToStep);
+        const gained = rate * speed * seconds;
+        earned += gained;
+        lifetime += gained;
+        left -= seconds;
+        if (seconds === 0) break;
+    }
+
+    g.coins += earned;
+    g.lifetime += earned;
+    return earned;
 }
 
-function formatBeanCoins(amount) {
+function addCoins(amount) {
+    g.coins += amount;
+    g.lifetime += amount;
+    save();
+}
+
+function format(amount) {
     return Number.isInteger(amount) ? String(amount) : amount.toFixed(1);
 }
 
-function updateBeanClickerDisplay() {
-    const { speed, glow } = getBeanProgress();
-    beanPanel.style.setProperty('--bean-speed', String(1 / speed));
-    beanPanel.style.setProperty('--bean-glow-blur', `${4 + glow * 18}px`);
-    beanPanel.style.setProperty('--bean-glow-opacity', String(0.15 + glow * 0.7));
-    beanRain.classList.toggle('has-mahjic-upgrade', hasMahjicUpgrade);
-    beanRain.classList.toggle('has-majik-hand-upgrade', hasMajikHandUpgrade);
-    beanCoinCount.textContent = formatBeanCoins(beanCoins);
-    
-    const coinsPerSecond = beanWorkers * 0.5 * (hasMahjicUpgrade ? 5 : 1)
-        + (beanNotSusBikers * 1000);
-    beanWorkersPerSecond.textContent = `${formatBeanCoins(coinsPerSecond * speed)} coins per second`;
-    
-    const coinsPerClick = ((beanClickUpgrades + 1) * (hasMajikHandUpgrade ? 5 : 1)
-        + (beanNotSusBikers * 1000)) * speed;
-    beanCoinsPerClick.textContent = `${formatBeanCoins(coinsPerClick)} ${coinsPerClick === 1 ? 'coin' : 'coins'} per click`;
-    
-    beanWorkerCostElement.textContent = String(nextWorkerCost);
-    beanWorkerOwnedCount.textContent = String(beanWorkers);
-    beanWorkerOwnedCount.setAttribute('aria-label', `${beanWorkers} Bean Workers owned`);
-    buyBeanWorkerButton.setAttribute('aria-label', `Buy Bean Worker for ${nextWorkerCost} coins`);
-    buyBeanWorkerButton.disabled = !isProgressReady || beanCoins < nextWorkerCost;
-    
-    beanClickUpgradeCostElement.textContent = String(nextClickUpgradeCost);
-    beanClickUpgradeOwnedCount.textContent = String(beanClickUpgrades);
-    beanClickUpgradeOwnedCount.setAttribute('aria-label', `${beanClickUpgrades} Bean Editors owned`);
-    buyBeanClickUpgradeButton.setAttribute('aria-label', `Buy Bean Editor for ${nextClickUpgradeCost} coins`);
-    buyBeanClickUpgradeButton.disabled = !isProgressReady || beanCoins < nextClickUpgradeCost;
-    
-    buyMahjicUpgradeButton.hidden = hasMahjicUpgrade;
-    buyMahjicUpgradeButton.disabled = !isProgressReady || beanCoins < 500;
-    mahjicUpgradeCostElement.textContent = '500';
-    
-    buyMajikHandUpgradeButton.hidden = hasMajikHandUpgrade;
-    buyMajikHandUpgradeButton.disabled = !isProgressReady || beanCoins < 1000;
-    
-    const bikerCostSpan = document.getElementById('not-sus-biker-upgrade-cost');
-    if (bikerCostSpan) bikerCostSpan.textContent = String(Math.round(nextNotSusBikerCost));
-    beanNotSusBikerOwnedCount.textContent = String(beanNotSusBikers);
-    beanNotSusBikerOwnedCount.setAttribute(
-        'aria-label',
-        `${beanNotSusBikers} NOT sus bikers owned`
-    );
-    buyNotSusBikerUpgradeButton.setAttribute('aria-label', `Buy NOT sus biker for ${Math.round(nextNotSusBikerCost)} coins`);
-    buyNotSusBikerUpgradeButton.disabled = !isProgressReady
-        || beanCoins < nextNotSusBikerCost;
-        
-    beanCoin.disabled = !isProgressReady;
-    beanFastClickReward.disabled = !isProgressReady;
-    beanResetProgressButton.disabled = !isProgressReady;
+function updateDisplay() {
+    const { speed, glow } = bonus();
+    panel.style.setProperty('--bean-speed', String(1 / speed));
+    panel.style.setProperty('--bean-glow-blur', `${4 + glow * 18}px`);
+    panel.style.setProperty('--bean-glow-opacity', String(0.15 + glow * 0.7));
+    rain.classList.toggle('has-mahjic-upgrade', g.hasMahjic);
+    rain.classList.toggle('has-majik-hand-upgrade', g.hasMajikHand);
+
+    coinCount.textContent = format(g.coins);
+    perSecondText.textContent = `${format(baseIncome() * speed)} coins per second`;
+    const perClick = baseClick() * speed;
+    perClickText.textContent = `${format(perClick)} ${perClick === 1 ? 'coin' : 'coins'} per click`;
+
+    workerCostText.textContent = String(g.workerCost);
+    workerOwnedText.textContent = String(g.workers);
+    workerOwnedText.setAttribute('aria-label', `${g.workers} Bean Workers owned`);
+    workerButton.setAttribute('aria-label', `Buy Bean Worker for ${g.workerCost} coins`);
+    workerButton.disabled = !ready || g.coins < g.workerCost;
+
+    editorCostText.textContent = String(g.clickCost);
+    editorOwnedText.textContent = String(g.clickUpgrades);
+    editorOwnedText.setAttribute('aria-label', `${g.clickUpgrades} Bean Editors owned`);
+    editorButton.setAttribute('aria-label', `Buy Bean Editor for ${g.clickCost} coins`);
+    editorButton.disabled = !ready || g.coins < g.clickCost;
+
+    mahjicButton.hidden = g.hasMahjic;
+    mahjicButton.disabled = !ready || g.coins < 500;
+    mahjicCostText.textContent = '500';
+
+    majikHandButton.hidden = g.hasMajikHand;
+    majikHandButton.disabled = !ready || g.coins < 1000;
+
+    if (bikerCostText) bikerCostText.textContent = String(Math.round(g.bikerCost));
+    bikerOwnedText.textContent = String(g.bikers);
+    bikerOwnedText.setAttribute('aria-label', `${g.bikers} NOT sus bikers owned`);
+    bikerButton.setAttribute('aria-label', `Buy NOT sus biker for ${Math.round(g.bikerCost)} coins`);
+    bikerButton.disabled = !ready || g.coins < g.bikerCost;
+
+    coinButton.disabled = !ready;
+    fastRewardButton.disabled = !ready;
+    resetButton.disabled = !ready;
 }
 
-function updateBeanTravelers() {
-    const purchasedBeans = [
-        { image: 'images/bean-worker.png', count: beanWorkers },
-        { image: 'images/bean-click-upgrade.png', count: beanClickUpgrades },
-        { image: 'images/bean-not-sus-biker.png', count: beanNotSusBikers }
+function updateTravelers() {
+    const types = [
+        { image: 'images/bean-worker.png', count: g.workers },
+        { image: 'images/bean-click-upgrade.png', count: g.clickUpgrades },
+        { image: 'images/bean-not-sus-biker.png', count: g.bikers }
     ];
-    const travelers = document.createDocumentFragment();
-    let travelerIndex = 0;
+    const fragment = document.createDocumentFragment();
+    let n = 0;
 
-    purchasedBeans.forEach(({ image, count }, beanTypeIndex) => {
-        for (let i = 0; i < Math.min(count, 50); i += 1) {
-            const traveler = document.createElement('img');
-            const duration = 10 + ((i * 7 + beanTypeIndex * 3) % 10);
-            traveler.src = image;
-            traveler.alt = '';
-            traveler.className = 'bean-traveler';
-            traveler.style.setProperty('--traveler-y', `${6 + ((travelerIndex * 29) % 88)}%`);
-            traveler.style.setProperty('--traveler-duration', `${duration}s`);
-            traveler.style.setProperty(
-                '--traveler-delay',
-                `${-((travelerIndex * 2.7) % duration)}s`
-            );
-            travelers.appendChild(traveler);
-            travelerIndex += 1;
+    types.forEach(({ image, count }, typeIndex) => {
+        for (let i = 0; i < Math.min(count, 50); i++) {
+            const bean = document.createElement('img');
+            const duration = 10 + ((i * 7 + typeIndex * 3) % 10);
+            bean.src = image;
+            bean.alt = '';
+            bean.className = 'bean-traveler';
+            bean.style.setProperty('--traveler-y', `${6 + ((n * 29) % 88)}%`);
+            bean.style.setProperty('--traveler-duration', `${duration}s`);
+            bean.style.setProperty('--traveler-delay', `${-((n * 2.7) % duration)}s`);
+            fragment.appendChild(bean);
+            n++;
         }
     });
 
-    beanTravelers.replaceChildren(travelers);
+    travelersBox.replaceChildren(fragment);
 }
 
-async function initializeBeanProgress() {
+async function loadGame() {
     try {
-        const database = await beanProgressDatabase;
-        const savedProgress = await readBeanProgress(database);
-        const offlineEarnings = restoreBeanProgress(savedProgress);
-        isProgressReady = true;
-        lastIncomeUpdate = Date.now();
-        beanSaveStatus.hidden = true;
-        updateBeanClickerDisplay();
-        updateBeanTravelers();
-        if (offlineEarnings > 0) {
-            beanOfflineEarnings.textContent = `You earned ${formatBeanCoins(offlineEarnings)} Bean Coins while away!`;
-            beanOfflineEarnings.hidden = false;
+        const database = await db;
+        const offline = restore(await readSave(database));
+        ready = true;
+        lastIncome = Date.now();
+        saveStatus.hidden = true;
+        updateDisplay();
+        updateTravelers();
+
+        if (offline > 0) {
+            offlineText.textContent = `You earned ${format(offline)} Bean Coins while away!`;
+            offlineText.hidden = false;
             window.setTimeout(() => {
-                beanOfflineEarnings.hidden = true;
+                offlineText.hidden = true;
             }, 3000);
         }
-        saveBeanProgress();
+        save();
     } catch (error) {
-        reportStorageError(error);
-        isProgressReady = true;
-        lastIncomeUpdate = Date.now();
-        updateBeanClickerDisplay();
-        updateBeanTravelers();
+        reportError(error);
+        ready = true;
+        lastIncome = Date.now();
+        updateDisplay();
+        updateTravelers();
     }
 }
 
-updateBeanClickerDisplay();
-updateBeanTravelers();
-beanFastClickReward.hidden = true;
-beanSaveStatus.textContent = 'Loading saved progress...';
-beanSaveStatus.hidden = false;
-void initializeBeanProgress();
+updateDisplay();
+updateTravelers();
+fastRewardButton.hidden = true;
+saveStatus.textContent = 'Loading saved progress...';
+saveStatus.hidden = false;
+loadGame();
 
 window.setTimeout(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const beans = document.createDocumentFragment();
-
-    for (let i = 0; i < 100; i += 1) {
+    for (let i = 0; i < 100; i++) {
         const bean = document.createElement('img');
         const duration = 8 + Math.random() * 14;
         bean.src = 'images/bean-rain.png';
@@ -376,153 +335,115 @@ window.setTimeout(() => {
         bean.style.setProperty('--bean-delay', `${-Math.random() * duration}s`);
         beans.appendChild(bean);
     }
-
-    beanRain.appendChild(beans);
+    rain.appendChild(beans);
 }, 0);
 
-beanCoin.addEventListener('click', () => {
-    if (!isProgressReady) return;
+coinButton.addEventListener('click', () => {
+    if (!ready) return;
     const now = Date.now();
-    beanClickTimestamps.push(now);
-    while (beanClickTimestamps[0] <= now - 1000) {
-        beanClickTimestamps.shift();
+
+    clickTimes.push(now);
+    while (clickTimes[0] <= now - 1000) clickTimes.shift();
+
+    addCoins(baseClick() * bonus().speed);
+
+    if (g.coins >= 100 && clickTimes.length > 10 && !g.hasFastReward) {
+        fastRewardButton.hidden = false;
     }
+    updateDisplay();
 
-    const { speed } = getBeanProgress();
-    addBeanCoins(((beanClickUpgrades + 1) * (hasMajikHandUpgrade ? 5 : 1)
-        + (beanNotSusBikers * 1000)) * speed);
-    if (beanCoins >= 100
-        && beanClickTimestamps.length > 10
-        && !hasFastClickReward) {
-        beanFastClickReward.hidden = false;
-    }
-    updateBeanClickerDisplay();
-    beanCoin.classList.remove('is-clicked');
-    void beanCoin.offsetWidth;
-    beanCoin.classList.add('is-clicked');
+    coinButton.classList.remove('is-clicked');
+    void coinButton.offsetWidth;
+    coinButton.classList.add('is-clicked');
 });
 
-beanFastClickReward.addEventListener('click', () => {
-    if (!isProgressReady || hasFastClickReward) return;
-
-    addBeanCoins(1000);
-    hasFastClickReward = true;
-    beanFastClickReward.hidden = true;
-    updateBeanClickerDisplay();
-    saveBeanProgress();
+coinButton.addEventListener('animationend', () => {
+    coinButton.classList.remove('is-clicked');
 });
 
-buyBeanWorkerButton.addEventListener('click', () => {
-    if (!isProgressReady || beanCoins < nextWorkerCost) return;
-
-    beanCoins -= nextWorkerCost;
-    beanWorkers += 1;
-    nextWorkerCost = Math.ceil(nextWorkerCost * 1.15);
-    updateBeanClickerDisplay();
-    updateBeanTravelers();
-    saveBeanProgress();
+fastRewardButton.addEventListener('click', () => {
+    if (!ready || g.hasFastReward) return;
+    addCoins(1000);
+    g.hasFastReward = true;
+    fastRewardButton.hidden = true;
+    updateDisplay();
+    save();
 });
 
-buyBeanClickUpgradeButton.addEventListener('click', () => {
-    if (!isProgressReady || beanCoins < nextClickUpgradeCost) return;
+function buyCounted(countKey, costKey) {
+    if (!ready || g.coins < g[costKey]) return;
+    g.coins -= g[costKey];
+    g[countKey] += 1;
+    g[costKey] = Math.ceil(g[costKey] * 1.15);
+    updateDisplay();
+    updateTravelers();
+    save();
+}
 
-    beanCoins -= nextClickUpgradeCost;
-    beanClickUpgrades += 1;
-    nextClickUpgradeCost = Math.ceil(nextClickUpgradeCost * 1.15);
-    updateBeanClickerDisplay();
-    updateBeanTravelers();
-    saveBeanProgress();
+workerButton.addEventListener('click', () => buyCounted('workers', 'workerCost'));
+editorButton.addEventListener('click', () => buyCounted('clickUpgrades', 'clickCost'));
+bikerButton.addEventListener('click', () => buyCounted('bikers', 'bikerCost'));
+
+mahjicButton.addEventListener('click', () => {
+    if (!ready || g.hasMahjic || g.coins < 500) return;
+    g.coins -= 500;
+    g.hasMahjic = true;
+    updateDisplay();
+    save();
 });
 
-buyMahjicUpgradeButton.addEventListener('click', () => {
-    if (!isProgressReady || hasMahjicUpgrade || beanCoins < 500) return;
-
-    beanCoins -= 500;
-    hasMahjicUpgrade = true;
-    updateBeanClickerDisplay();
-    saveBeanProgress();
-});
-
-buyMajikHandUpgradeButton.addEventListener('click', () => {
-    if (!isProgressReady || hasMajikHandUpgrade || beanCoins < 1000) return;
-
-    beanCoins -= 1000;
-    hasMajikHandUpgrade = true;
-    updateBeanClickerDisplay();
-    saveBeanProgress();
-});
-
-buyNotSusBikerUpgradeButton.addEventListener('click', () => {
-    if (!isProgressReady || beanCoins < nextNotSusBikerCost) return;
-
-    beanCoins -= nextNotSusBikerCost;
-    beanNotSusBikers += 1;
-    nextNotSusBikerCost = Math.ceil(nextNotSusBikerCost * 1.15);
-    updateBeanClickerDisplay();
-    updateBeanTravelers();
-    saveBeanProgress();
+majikHandButton.addEventListener('click', () => {
+    if (!ready || g.hasMajikHand || g.coins < 1000) return;
+    g.coins -= 1000;
+    g.hasMajikHand = true;
+    updateDisplay();
+    save();
 });
 
 window.setInterval(() => {
     const now = Date.now();
-    const elapsedSeconds = Math.max(0, (now - lastIncomeUpdate) / 1000);
-    lastIncomeUpdate = now;
-    if (!isProgressReady) return;
-    const { speed } = getBeanProgress();
-    const coinsPerSecond = (beanWorkers * 0.5 * (hasMahjicUpgrade ? 5 : 1)
-        + (beanNotSusBikers * 1000)) * speed;
-    if (coinsPerSecond > 0 && elapsedSeconds > 0) {
-        addBeanCoins(coinsPerSecond * elapsedSeconds);
-        updateBeanClickerDisplay();
+    const elapsed = Math.max(0, (now - lastIncome) / 1000);
+    lastIncome = now;
+    if (!ready) return;
+
+    const perSecond = baseIncome() * bonus().speed;
+    if (perSecond > 0 && elapsed > 0) {
+        addCoins(perSecond * elapsed);
+        updateDisplay();
     }
 }, 1000);
-window.setInterval(saveBeanProgress, 10000);
-window.addEventListener('pagehide', () => saveBeanProgress(true));
+
+window.setInterval(save, 10000);
+window.addEventListener('pagehide', () => save(true));
 document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') saveBeanProgress(true);
+    if (document.visibilityState === 'hidden') save(true);
 });
 
-beanCoin.addEventListener('animationend', () => {
-    beanCoin.classList.remove('is-clicked');
-});
-
-beanResetProgressButton.addEventListener('click', async () => {
-    if (!isProgressReady) return;
-    isProgressReady = false;
+resetButton.addEventListener('click', async () => {
+    if (!ready) return;
+    ready = false;
     window.clearTimeout(saveTimer);
     saveTimer = undefined;
-    updateBeanClickerDisplay();
+    updateDisplay();
+
     try {
         await saveQueue.catch(() => {});
-        const database = await beanProgressDatabase;
-        await deleteBeanProgress(database);
-        beanCoins = 0;
-        beanLifetimeCoins = 0;
-        beanWorkers = 0;
-        beanClickUpgrades = 0;
-        beanNotSusBikers = 0;
-        hasMahjicUpgrade = false;
-        hasMajikHandUpgrade = false;
-        hasFastClickReward = false;
-        nextWorkerCost = 100;
-        nextClickUpgradeCost = 1000;
-        nextNotSusBikerCost = 20000;
-        lastIncomeUpdate = Date.now();
-        isProgressReady = true;
-        beanOfflineEarnings.hidden = true;
-        updateBeanClickerDisplay();
-        updateBeanTravelers();
-        beanSaveStatus.textContent = 'Progress reset.';
-        beanSaveStatus.hidden = false;
+        await deleteSave(await db);
+        g = freshState();
+        lastIncome = Date.now();
+        ready = true;
+        offlineText.hidden = true;
+        updateDisplay();
+        updateTravelers();
+        saveStatus.textContent = 'Progress reset.';
+        saveStatus.hidden = false;
         window.setTimeout(() => {
-            if (beanSaveStatus.textContent === 'Progress reset.') {
-                beanSaveStatus.hidden = true;
-            }
+            if (saveStatus.textContent === 'Progress reset.') saveStatus.hidden = true;
         }, 2000);
     } catch (error) {
-        isProgressReady = true;
-        updateBeanClickerDisplay();
-        reportStorageError(error);
+        ready = true;
+        updateDisplay();
+        reportError(error);
     }
 });
 
@@ -530,7 +451,5 @@ const bgm = new Audio('audio/477069_Background-Music-loop.mp3');
 bgm.loop = true;
 
 document.addEventListener('click', () => {
-    if (bgm.paused) {
-        bgm.play().catch(() => {});
-    }
+    if (bgm.paused) bgm.play().catch(() => {});
 }, { once: true });
